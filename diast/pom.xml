@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" 
+	xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>br.pucrio.inf.les.ese</groupId>
+    <artifactId>dianalyzer</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  
+  
+  
+  <artifactId>diast</artifactId>
+  <name>diast</name>
+  <url>http://maven.apache.org</url>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
+  <dependencies>
+    <!-- Here are all your dependencies. Currently only one. These are automatically downloaded from https://mvnrepository.com/ -->
+    <dependency>
+        <groupId>com.github.javaparser</groupId>
+        <artifactId>javaparser-symbol-solver-core</artifactId>
+        <version>3.6.12</version>
+    </dependency>
+    <!-- JavaParser itself is not a dependency here. It gets included indirectly through java-symbol-solver-core -->
+  </dependencies>
+  
+</project>
