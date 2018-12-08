@@ -5,16 +5,18 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.AssignExpr;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionAnnotation;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
 public class InjectionOpenedForChange extends AbstractRule {
 	
-	Integer methodLikeSetter = 0;
+	Integer methodLikeSetter;
 	
 	/*
 	 * 
@@ -39,7 +41,6 @@ public class InjectionOpenedForChange extends AbstractRule {
 	    public void visit(MethodDeclaration methodDeclaration, Element element)
 	    {			
 			//it does not matter if it is void or it returns something
-			//String methodType = methodDeclaration.getTypeAsString();
 			
 			Boolean containsProducerAnnotation = 
 					methodDeclaration
@@ -52,9 +53,20 @@ public class InjectionOpenedForChange extends AbstractRule {
 							.matches(ProducerAnnotation.getProducerAnnotationsRegex())
 							);
 			
+			Boolean containsInjectionAnnotation = 
+					methodDeclaration
+					.getAnnotations()
+					.stream()
+					.anyMatch(
+							 an -> an
+							.getName()
+							.getIdentifier()
+							.matches(InjectionAnnotation.getInjectionAnnotationsRegex())
+							);
+			
 			//Pode ser metodo que retorna container call
 			
-			if (containsProducerAnnotation) return;
+			if (containsProducerAnnotation || containsInjectionAnnotation) return;
 			
 			NodeList<Parameter> parameters = methodDeclaration.getParameters();
 			
@@ -68,16 +80,19 @@ public class InjectionOpenedForChange extends AbstractRule {
 			
 			NodeList<Statement> statements = methodDeclaration.getBody().get().getStatements();
 			
-			//search body for reassigment of element
+			//search body for reassignment of element
 			for(Statement stmt : statements){
 				
 				if (stmt.isExpressionStmt() && stmt.asExpressionStmt().getExpression().isAssignExpr()){
 					AssignExpr expr = stmt.asExpressionStmt().getExpression().asAssignExpr();
-					String target = expr.getTarget().toString();
-					if (target.contains("this.")){
-						target = target.substring(target.indexOf("this."),target.length());
-					}
-					if(target.equals(element.getName())){
+					//String target = expr.getTarget().toString();
+					
+					FieldAccessExpr target = (FieldAccessExpr) expr.getTarget();
+					
+//					if (target.contains("this.")){
+//						target = target.substring(target.indexOf("this."),target.length());
+//					}
+					if(target.getName().toString().equals(element.getName())){
 						methodLikeSetter++;
 					}
 				}
@@ -89,6 +104,8 @@ public class InjectionOpenedForChange extends AbstractRule {
 
 	@Override
 	public ElementResult processRule(CompilationUnit cu, Element element) {
+		
+		methodLikeSetter = 0;
 		
 		methodDeclarationVisitor.visit(cu,element);
 		

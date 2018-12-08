@@ -21,4 +21,8 @@ public enum InjectionAnnotation {
 		return specific;
 	}
 	
+	public static String getInjectionAnnotationsRegex(){
+		return InjectionAnnotation.AUTOWIRED.getValue().toString() + "|" + InjectionAnnotation.INJECT.getValue().toString();
+	}
+	
 }

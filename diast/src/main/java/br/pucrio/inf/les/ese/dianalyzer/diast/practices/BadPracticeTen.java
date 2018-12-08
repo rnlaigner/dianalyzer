@@ -27,7 +27,7 @@ public class BadPracticeTen extends AbstractPractice {
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 		
         /*
-         * TODO should I consider?
+         * should I consider? I think it should not, since a container call can be wrapped in class for better modularization
          * ContainerCallIdentificator contId = new ContainerCallIdentificator();
          */
         FieldDeclarationInjectionIdentificator fieldId = new FieldDeclarationInjectionIdentificator();
@@ -41,7 +41,9 @@ public class BadPracticeTen extends AbstractPractice {
         for (Element elem : elements) {
         	ElementResult result = rule.processRule(cu, elem);
         	
-        	cuResult.addElementResult(result);
+        	if(result.getResult()){
+        		cuResult.addElementResult(result);
+        	}
         	
         }
         
