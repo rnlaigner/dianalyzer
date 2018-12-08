@@ -8,11 +8,14 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 
 public class AppearsInEveryMethod extends AbstractMethodCallVisitor {
 
-	private Integer numberOfAppearances = 0;
-	private Integer numberOfMethods = 0;
+	private Integer numberOfAppearances;
+	private Integer numberOfMethods;
 
 	@Override
 	public ElementResult processRule(CompilationUnit cu, Element element) {
+		
+		numberOfAppearances = 0;
+		numberOfMethods = 0;
 		
 		visit(cu,element);
 		

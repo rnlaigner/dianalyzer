@@ -18,7 +18,6 @@ public class BadPracticeFive extends AbstractPractice {
 
 	public BadPracticeFive(CompilationUnit cu) {
 		super(cu);
-		
 		rule = new IsNonUsedInjection();
 	}
 
@@ -37,18 +36,18 @@ public class BadPracticeFive extends AbstractPractice {
         elements.addAll(methodId.identify(cu));
         
         for (Element elem : elements) {
+        	
         	ElementResult result = rule.processRule(cu, elem);
         	
-        	cuResult.addElementResult(result);
+        	//is non used injection?
+        	if ( result.getResult() ) {
+        		cuResult.addElementResult(result);	
+        	}
         	
         }
         
         return cuResult;
-        
-        
 		
 	}
-	
-	
 
 }

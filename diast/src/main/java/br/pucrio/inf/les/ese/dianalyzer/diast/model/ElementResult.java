@@ -1,7 +1,5 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.model;
 
-import java.util.List;
-
 public class ElementResult {
 	
 	private boolean result;

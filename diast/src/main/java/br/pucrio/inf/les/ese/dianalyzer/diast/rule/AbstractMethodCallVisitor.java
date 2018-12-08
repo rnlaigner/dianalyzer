@@ -1,6 +1,10 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
+import java.util.NoSuchElementException;
+
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
@@ -38,6 +42,16 @@ public abstract class AbstractMethodCallVisitor extends AbstractRule {
 	
 	protected String getNodeName(MethodCallExpr methodCall)
 	{
+		try{
+			Expression expr = methodCall.getScope().get();
+			if(expr instanceof FieldAccessExpr){
+				return ((FieldAccessExpr) expr).getNameAsString();
+			}
+		}
+		catch(NoSuchElementException e){
+			//Nothing to do
+		}
+		
 		return methodCall.getChildNodes().get(0).toString();
 	}
 	

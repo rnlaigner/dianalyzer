@@ -12,9 +12,7 @@ public class CompilationUnitResult {
 	}
 	
 	public Boolean badPracticeIsApplied(){
-		
-		return elementsResult.stream().anyMatch( p -> p.getResult() );
-		
+		return elementsResult.size() > 0;
 	}
 	
 	public void addElementResult(ElementResult elemResult){

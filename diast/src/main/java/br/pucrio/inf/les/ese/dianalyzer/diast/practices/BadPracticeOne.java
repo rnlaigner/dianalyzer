@@ -40,17 +40,12 @@ public class BadPracticeOne extends AbstractPractice {
         
         for (Element elem : elements) {
         	
-        	
         	ElementResult result = rule.processRule(cu, elem);
         	
-        	//se element aparece em todo metodo, isso nao incorre em ma pratica
-        	if(result.getResult()){
-        		result.setResult(false);
-        	} else {
-        		result.setResult(true);
+        	//does not appear in every method?
+        	if(!result.getResult()){
+        		cuResult.addElementResult(result);
         	}
-        	
-        	cuResult.addElementResult(result);
         	
         }
         

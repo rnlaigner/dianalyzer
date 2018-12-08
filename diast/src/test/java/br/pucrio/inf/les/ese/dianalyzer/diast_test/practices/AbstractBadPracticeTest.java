@@ -28,7 +28,7 @@ import static org.hamcrest.CoreMatchers.is;
 
 public abstract class AbstractBadPracticeTest {
 	
-	protected Log log = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 	
 	private List<String> classes = new ArrayList<String>();
 	
@@ -74,9 +74,7 @@ public abstract class AbstractBadPracticeTest {
 		
 		//read files from resource folder
 		try{
-			
 			String resourceFolder = getResourceFolder(getClass());
-			
 			classes = env.readFilesFromFolder(resourceFolder, true);
 		}
 		catch(IOException e){
@@ -99,9 +97,9 @@ public abstract class AbstractBadPracticeTest {
 	    		c = getClass();
 	    	}
 	    	
-	      ResourceFolder anno = (ResourceFolder) c.getAnnotation(ResourceFolder.class);
+	        ResourceFolder anno = (ResourceFolder) c.getAnnotation(ResourceFolder.class);
 	      	
-	      return anno.value();
+	        return anno.value();
 	      
 	    }
 	    catch(Exception e){
