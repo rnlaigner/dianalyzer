@@ -13,8 +13,8 @@ public class AssignmentBusiness {
 		
 		return statements
 				.stream()
-				.filter(st -> st
-						.isExpressionStmt())
+				.filter(st -> st.isExpressionStmt() ? st
+						.asExpressionStmt().getExpression().isAssignExpr() : false)
 				.map(st -> st.asExpressionStmt().getExpression().asAssignExpr())
 				.collect(Collectors.toList());
 		

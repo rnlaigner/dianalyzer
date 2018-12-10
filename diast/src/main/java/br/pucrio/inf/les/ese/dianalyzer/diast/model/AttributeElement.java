@@ -1,7 +1,6 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.model;
 
 public class AttributeElement extends Element {
-	
 
 	private InjectionAnnotation annotation;
 	

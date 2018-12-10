@@ -18,5 +18,9 @@ public class CompilationUnitResult {
 	public void addElementResult(ElementResult elemResult){
 		elementsResult.add(elemResult);
 	}
+	
+	public void addElementResults(List<ElementResult> elementResults){
+		elementsResult.addAll(elementResults);
+	}
 
 }

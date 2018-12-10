@@ -7,18 +7,23 @@ import com.github.javaparser.ast.CompilationUnit;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ConstructorInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.FieldDeclarationInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.MethodInjectionIdentificator;
+import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.rule.InjectionAssignedToMoreThanOneAttribute;
+import br.pucrio.inf.les.ese.dianalyzer.diast.rule.MethodParameterInjectionAssignedToMoreThanOneAttribute;
 
 public class BadPracticeEleven extends AbstractPractice {
 	
-	private InjectionAssignedToMoreThanOneAttribute rule;
+	private InjectionAssignedToMoreThanOneAttribute firstRule;
+	
+	private MethodParameterInjectionAssignedToMoreThanOneAttribute secondRule;
 
 	public BadPracticeEleven(CompilationUnit cu) {
 		super(cu);
-		rule = new InjectionAssignedToMoreThanOneAttribute();
+		firstRule = new InjectionAssignedToMoreThanOneAttribute();
+		secondRule = new MethodParameterInjectionAssignedToMoreThanOneAttribute();
 	}
 
 	@Override
@@ -26,24 +31,29 @@ public class BadPracticeEleven extends AbstractPractice {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 		
-        /*
-         * TODO should I consider?
-         * ContainerCallIdentificator contId = new ContainerCallIdentificator();
-         */
         FieldDeclarationInjectionIdentificator fieldId = new FieldDeclarationInjectionIdentificator();
         ConstructorInjectionIdentificator constructorId = new ConstructorInjectionIdentificator();
         MethodInjectionIdentificator methodId = new MethodInjectionIdentificator();
+        SetMethodInjectionIdentificator setMethodId = new SetMethodInjectionIdentificator();
         
         List<Element> elements = fieldId.identify(cu);
         elements.addAll(constructorId.identify(cu));
         elements.addAll(methodId.identify(cu));
+        elements.addAll(setMethodId.identify(cu));
         
+        //uma vez que um elemento eh instanciado via injecao
+        //o objetivo da rotina abaixo eh verificar se outro atributo recebe valor deste
         for (Element elem : elements) {
-        	ElementResult result = rule.processRule(cu, elem);
-        	
-        	cuResult.addElementResult(result);
-        	
+        	ElementResult result = firstRule.processRule(cu, elem);
+        	if(result.getResult()){
+        		cuResult.addElementResult(result);	
+        	}
         }
+        
+        //a rotina abaixo agora verifica se uma injecao via parametro do metodo
+        //tem sua instancia assinalada para mais de um atributo dentro do body do metodo
+        List<ElementResult> results =  secondRule.processRule(cu);
+        cuResult.addElementResults(results);
         
         return cuResult;
 		

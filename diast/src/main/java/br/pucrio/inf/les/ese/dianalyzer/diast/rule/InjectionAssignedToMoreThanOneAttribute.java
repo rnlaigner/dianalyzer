@@ -23,14 +23,6 @@ public class InjectionAssignedToMoreThanOneAttribute extends AbstractRule {
 	    Business anotherInjection;
 	    
 	    Business variable;
-	 
-		IDAO exampleDAO;
-		
-		@Inject
-		public void setExampleDAO(ExampleDAO exampleDAO) {
-			this.genericDAO = exampleDAO; //genericDAO is an attribute of GenericBusinessImpl
-			this.exampleDAO = exampleDAO;
-		}
 		
 		public void anyMethod() {
 			variable = anotherInjection;
@@ -39,7 +31,7 @@ public class InjectionAssignedToMoreThanOneAttribute extends AbstractRule {
 	 }
 	*/
 	
-	private Integer attributeAssignment = 0;
+	private Integer attributeAssignment;
 	
 	private MethodDeclarationVisitor methodDeclarationVisitor;
 	
@@ -70,10 +62,11 @@ public class InjectionAssignedToMoreThanOneAttribute extends AbstractRule {
 			
 			NodeList<Statement> statements = methodDeclaration.getBody().get().getStatements();
 			
-			//search body for reassigment of element
+			//search body for reassignment of element
 			List<AssignExpr> list = AssignmentBusiness.getAssignmentsFromStatements(statements);
-			
+				
 			for(AssignExpr expr : list){
+				
 				String value = expr.getValue().toString();
 				if (value.contains("this.")){
 					value = value.substring(value.indexOf("this."),value.length());
@@ -81,6 +74,7 @@ public class InjectionAssignedToMoreThanOneAttribute extends AbstractRule {
 				if(value.equals(element.getName())){
 					attributeAssignment++;
 				}
+				
 			}
 			
 	    }
@@ -89,6 +83,8 @@ public class InjectionAssignedToMoreThanOneAttribute extends AbstractRule {
 
 	@Override
 	public ElementResult processRule(CompilationUnit cu, Element element) {
+		
+		attributeAssignment = 0;
 		
 		//iterate through method declarations
 		methodDeclarationVisitor.visit(cu, element);		

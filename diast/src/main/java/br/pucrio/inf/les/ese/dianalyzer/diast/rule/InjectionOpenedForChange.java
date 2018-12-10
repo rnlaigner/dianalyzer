@@ -85,13 +85,9 @@ public class InjectionOpenedForChange extends AbstractRule {
 				
 				if (stmt.isExpressionStmt() && stmt.asExpressionStmt().getExpression().isAssignExpr()){
 					AssignExpr expr = stmt.asExpressionStmt().getExpression().asAssignExpr();
-					//String target = expr.getTarget().toString();
 					
 					FieldAccessExpr target = (FieldAccessExpr) expr.getTarget();
 					
-//					if (target.contains("this.")){
-//						target = target.substring(target.indexOf("this."),target.length());
-//					}
 					if(target.getName().toString().equals(element.getName())){
 						methodLikeSetter++;
 					}
