@@ -2,7 +2,7 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.model;
 
 import java.util.List;
 
-public abstract class Element {
+public class Element {
 	
 	private List<String> modifiers;
 	
@@ -13,7 +13,7 @@ public abstract class Element {
 	private String name;
 	
 	private InjectionType injectionType;
-	
+
 	public List<String> getModifiers() {
 		return modifiers;
 	}

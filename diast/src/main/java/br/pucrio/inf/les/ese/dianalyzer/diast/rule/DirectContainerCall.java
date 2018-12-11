@@ -1,17 +1,26 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.expr.AssignExpr;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ContainerClassType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.VariableDeclarationElement;
 
 public class DirectContainerCall extends AbstractMethodCallVisitor {
 	
-	Integer containerCallCount = 0;
+	List<Element> containerCallElements = new ArrayList<Element>();
 	
 	private boolean isContainerCall(String methodCall) {
 		return ContainerClassType.SPRING.getContainerCall().equals(methodCall) || 
@@ -23,7 +32,14 @@ public class DirectContainerCall extends AbstractMethodCallVisitor {
 		
 		VariableDeclarationElement arg_ = (VariableDeclarationElement) arg;
 		
-		NameExpr nameNode = (NameExpr) methodCall.getScope().get();
+		NameExpr nameNode;
+		
+		try {
+			nameNode = (NameExpr) methodCall.getScope().get();
+		}
+		catch(NoSuchElementException | ClassCastException e){
+			return;
+		}
 		
 		if(!nameNode.getName().getIdentifier().equals(arg_.getVariableName())) return;
 		
@@ -31,7 +47,57 @@ public class DirectContainerCall extends AbstractMethodCallVisitor {
     	
 		Boolean isContainerCall = isContainerCall( methodCallStr );
 		
-		if ( isContainerCall ) containerCallCount++;		
+		if ( isContainerCall ) {
+			//TODO add element
+			//Element element = new Element();
+			
+//			element.setClassType(classType);
+//			element.setInjectionType(injectionType);
+//			element.setName(name);
+//			element.setType(type);
+			
+			//recursion over parentNode in order to get ExpressionStmt
+			Element element = getElementInjectedByContainerCall(methodCall);
+			
+			containerCallElements.add(element);
+			//containerCallCount++;		
+		}
+		
+	}
+	
+	private Element getElementInjectedByContainerCall(Node node){
+		
+		Node expr = node.clone();
+		expr.setParentNode(node.getParentNode().get());
+		
+		//if(expression instanceof ExpressionStmt)
+		
+		do {
+			
+			expr = expr.getParentNode().get();
+			
+			
+			
+		} while( !( expr instanceof ExpressionStmt ) );
+		
+		
+		
+		//expr = (ExpressionStmt) expr;
+		
+		AssignExpr assignExpr = (AssignExpr) ((ExpressionStmt) expr).getExpression();
+		
+		String targetName = assignExpr.getTarget().toString();
+		
+		Expression target = assignExpr.getTarget();
+		
+		//target.get
+		
+		Element element = new Element();
+//		element.setClassType(expr);
+		element.setInjectionType(InjectionType.CONTAINER);
+		element.setName(targetName);
+//		element.setType(type);
+		return element;
 		
 	}
 
@@ -46,7 +112,7 @@ public class DirectContainerCall extends AbstractMethodCallVisitor {
 		
 		result.setResult(false);
 		
-		if(containerCallCount > 0) result.setResult(true);
+		if(containerCallElements.size() > 0) result.setResult(true);
 		
         return result;
 		

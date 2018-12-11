@@ -59,7 +59,7 @@ public class ContainerCallIdentificator extends AbstractIdentificator {
 		
 	}
 	
-	protected String getContainerClassTypeRegex(){
+	private String getContainerClassTypeRegex(){
 		return ContainerClassType.SPRING.getClassName().toString() + "|" + ContainerClassType.CDI.getClassName().toString();
 	}
 	
