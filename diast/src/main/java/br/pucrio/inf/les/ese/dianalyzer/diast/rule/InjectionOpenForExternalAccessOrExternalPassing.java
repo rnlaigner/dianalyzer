@@ -11,7 +11,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
-public class UselessInjection extends AbstractMethodCallVisitor {
+public class InjectionOpenForExternalAccessOrExternalPassing extends AbstractMethodCallVisitor {
 	
 	private Integer methodOpening = 0;
 	
@@ -19,7 +19,7 @@ public class UselessInjection extends AbstractMethodCallVisitor {
 	
 	private MethodDeclarationVisitor methodDeclarationVisitor;
 	
-	public UselessInjection() {
+	public InjectionOpenForExternalAccessOrExternalPassing() {
 		super();
 		methodDeclarationVisitor = new MethodDeclarationVisitor();
 	}
@@ -48,6 +48,10 @@ public class UselessInjection extends AbstractMethodCallVisitor {
 			//Pode ser metodo que retorna container call
 			
 			if(methodType.equals("void") || containsProducerAnnotation) return;
+			
+			//README o certo certo aqui seria verificar se o atributo sendo retornado eh igual ao 
+			//elemento passado como parametro nesse metodo
+			//entretanto, grande parte dos casos o trecho abaixo vai satisfazer o que buscamos
 			
 			if(elementType.equals(methodType)) methodOpening++;
 	    }

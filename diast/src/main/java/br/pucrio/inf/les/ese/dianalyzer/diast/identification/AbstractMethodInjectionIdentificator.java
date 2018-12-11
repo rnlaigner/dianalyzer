@@ -10,6 +10,7 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.AssignExpr;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.stmt.Statement;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AssignmentBusiness;
@@ -33,7 +34,7 @@ public abstract class AbstractMethodInjectionIdentificator extends AbstractInjec
 		
 		NodeList<Statement> statements = getStatementsFromBody(f);
 		
-		//search body for assigment of element
+		//search body for assignment of element
 		List<AssignExpr> assignments = AssignmentBusiness.getAssignmentsFromStatements(statements);
 		
 		for (Parameter parameter : parameters) {
@@ -78,7 +79,10 @@ public abstract class AbstractMethodInjectionIdentificator extends AbstractInjec
 				}
 				
 				elem.setInjectionType(getInjectionType());
-				elem.setName(assignment.getTarget().toString());
+				
+				FieldAccessExpr fieldAccessExpr = (FieldAccessExpr) assignment.getTarget();
+				
+				elem.setName(fieldAccessExpr.getNameAsString());
 				
 				elements.add( elem );
 			}

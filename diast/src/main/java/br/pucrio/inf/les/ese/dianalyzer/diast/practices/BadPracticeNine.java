@@ -10,15 +10,15 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.identification.MethodInjectionIden
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.rule.UselessInjection;
+import br.pucrio.inf.les.ese.dianalyzer.diast.rule.InjectionOpenForExternalAccessOrExternalPassing;
 
 public class BadPracticeNine extends AbstractPractice {
 	
-	private UselessInjection rule;
+	private InjectionOpenForExternalAccessOrExternalPassing rule;
 
 	public BadPracticeNine(CompilationUnit cu) {
 		super(cu);
-		rule = new UselessInjection();
+		rule = new InjectionOpenForExternalAccessOrExternalPassing();
 	}
 
 	@Override

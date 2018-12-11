@@ -31,13 +31,14 @@ public class MultipleFormOfInjection extends AbstractRule {
 			
 			//verifica se existe
 			if (elementCountMap.containsKey(key)) {
-			    // Okay, there's a key but the value is null
+				
 				int value = elementCountMap.get(key);
 				
 				//valor um apenas uma vez
 				if(value == 1){
 					ElementResult result = new ElementResult();
 					result.setElement(element);
+					//nao preciso colocar result para esse bad practice
 					results.add(result);
 				}
 				

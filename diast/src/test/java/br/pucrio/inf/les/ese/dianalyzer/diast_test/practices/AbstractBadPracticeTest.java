@@ -57,6 +57,10 @@ public abstract class AbstractBadPracticeTest {
 	       
 	       CompilationUnitResult cuResult = practice.process();
 	       
+	       //O ideal eh que esse assert seja uma classe abstrata 
+	       //implementada pela classe concreta
+	       //A classe concreta teria os elementos esperados,
+	       //retornados dentro do cuResult
 	       assertThat( cuResult.badPracticeIsApplied(), is(Boolean.TRUE) );
     
 		}

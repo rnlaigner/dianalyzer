@@ -7,7 +7,6 @@ import java.util.NoSuchElementException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.AssignExpr;
-import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
@@ -48,19 +47,11 @@ public class DirectContainerCall extends AbstractMethodCallVisitor {
 		Boolean isContainerCall = isContainerCall( methodCallStr );
 		
 		if ( isContainerCall ) {
-			//TODO add element
-			//Element element = new Element();
 			
-//			element.setClassType(classType);
-//			element.setInjectionType(injectionType);
-//			element.setName(name);
-//			element.setType(type);
-			
-			//recursion over parentNode in order to get ExpressionStmt
+			//iterate over parentNode in order to get ExpressionStmt
 			Element element = getElementInjectedByContainerCall(methodCall);
 			
-			containerCallElements.add(element);
-			//containerCallCount++;		
+			containerCallElements.add(element);	
 		}
 		
 	}
@@ -68,35 +59,23 @@ public class DirectContainerCall extends AbstractMethodCallVisitor {
 	private Element getElementInjectedByContainerCall(Node node){
 		
 		Node expr = node.clone();
+		//clone does not set parent node
 		expr.setParentNode(node.getParentNode().get());
 		
-		//if(expression instanceof ExpressionStmt)
-		
 		do {
-			
 			expr = expr.getParentNode().get();
-			
-			
-			
 		} while( !( expr instanceof ExpressionStmt ) );
-		
-		
-		
-		//expr = (ExpressionStmt) expr;
 		
 		AssignExpr assignExpr = (AssignExpr) ((ExpressionStmt) expr).getExpression();
 		
 		String targetName = assignExpr.getTarget().toString();
 		
-		Expression target = assignExpr.getTarget();
-		
-		//target.get
-		
 		Element element = new Element();
+		//Not possible to get Type at this point
 //		element.setClassType(expr);
+//		element.setType(type);
 		element.setInjectionType(InjectionType.CONTAINER);
 		element.setName(targetName);
-//		element.setType(type);
 		return element;
 		
 	}
