@@ -13,8 +13,10 @@ import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AssignmentBusiness;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AttributeElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.MethodElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
@@ -84,8 +86,23 @@ public class MethodParameterInjectionAssignedToMoreThanOneAttribute extends Abst
 				
 				if (assignmentsFromCurrentParameter.size() > 0) {
 					
-					//bad practice
-					//TODO finish
+					MethodElement methodElement = new MethodElement();
+					
+					AttributeElement methodParameter = new AttributeElement();
+					
+					//TODO aqui poderia ser set_method tambem
+					methodParameter.setInjectionType(InjectionType.METHOD);
+					
+					//methodParameter.set
+					methodParameter.setType( parameter.getTypeAsString() );
+					
+					methodParameter.setName( parameter.getNameAsString() );
+					
+					methodElement.addParameter( methodParameter );
+					
+					methodElement.setBody(methodDeclaration.getBody().toString());
+					
+					methodParameterAssignedToMoreThanOneAttributeList.add( methodElement );
 					
 				}
 				
@@ -109,14 +126,9 @@ public class MethodParameterInjectionAssignedToMoreThanOneAttribute extends Abst
 		methodDeclarationVisitor.visit(cu, null);		
 		
 		List<ElementResult> result = new ArrayList<ElementResult>();
-		
-		//result.setElement(null);
-		
-		//result.setResult(false);
-		
-		if (!methodParameterAssignedToMoreThanOneAttributeList.isEmpty()){
-			//result.setResult(true);
-			//TODO finish 
+
+		for( MethodElement method : methodParameterAssignedToMoreThanOneAttributeList) {
+			result.add( new ElementResult(true,method) );
 		}
 		
         return result;

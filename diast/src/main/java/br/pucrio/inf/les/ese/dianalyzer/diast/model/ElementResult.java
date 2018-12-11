@@ -5,6 +5,13 @@ public class ElementResult {
 	private boolean result;
 	
 	private Element element;
+	
+	public ElementResult() {}
+	
+	public ElementResult(boolean result, Element element){
+		this.result = result;
+		this.element = element;
+	}
 
 	public boolean getResult() {
 		return result;
