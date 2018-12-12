@@ -6,25 +6,77 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.IfStmt;
+import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ConstructorInjectionIdentificator;
+import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ContainerCallIdentificator;
+import br.pucrio.inf.les.ese.dianalyzer.diast.identification.FieldDeclarationInjectionIdentificator;
+import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionIdentificator;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AssignmentBusiness;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
-public class GodDependencyInjectionClass extends AbstractRuleWithMultipleElements {
+public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
 	
+	/* Metric for God Class */
 	private static final int WMC = 46;
-	
 	private static final int ATFD = 5;
+	private static final double TCC = 0.3; 
 	
-	private Map<Element,Integer> accessToForeignDataMetric = new HashMap<Element,Integer>();
+	private MethodDeclarationVisitor methodDeclarationVisitor;
 	
 	private Map<MethodCallExpr,List<Element>> tightClassCohesionMetric = new HashMap<MethodCallExpr,List<Element>>();
 
 	public GodDependencyInjectionClass() {
 		super();
+	}
+	
+	private class MethodDeclarationVisitor extends VoidVisitorAdapter<Element> {
+		
+		@Override
+	    public void visit(MethodDeclaration methodDeclaration, Element element)
+	    {
+			Boolean containsProducerAnnotation = 
+					methodDeclaration
+					.getAnnotations()
+					.stream()
+					.anyMatch(
+							 an -> an
+							.getName()
+							.getIdentifier()
+							.matches(ProducerAnnotation.getProducerAnnotationsRegex())
+							);
+			
+			//Pode ser metodo que retorna container call
+			
+			if (containsProducerAnnotation) return;
+			
+			NodeList<Statement> statements = methodDeclaration.getBody().get().getStatements();
+			
+			//search body for reassignment of element
+			List<AssignExpr> list = AssignmentBusiness.getAssignmentsFromStatements(statements);
+				
+			for(AssignExpr expr : list){
+				
+				String value = expr.getValue().toString();
+				if (value.contains("this.")){
+					value = value.substring(value.indexOf("this."),value.length());
+				}
+				if(value.equals(element.getName())){
+					//attributeAssignment++;
+				}
+				
+			}
+			
+	    }
+		
 	}
 
 	@Override
@@ -33,21 +85,20 @@ public class GodDependencyInjectionClass extends AbstractRuleWithMultipleElement
 	}
 	
 	@Override
-	public ElementResult processRule(CompilationUnit cu, List<Element> elements) {
+	public List<ElementResult> processRule(CompilationUnit cu) {
 		
 		ElementResult result = new ElementResult();
 		
-		Map<MethodDeclaration,Integer> methodCyclomaticComplexityMap = new HashMap<MethodDeclaration,Integer>();
+		//Map<MethodDeclaration,Integer> methodCyclomaticComplexityMap = new HashMap<MethodDeclaration,Integer>();
 		
 		/*
 		 	Weighted Method Count (WMC(C)) is the sum of the
 			cyclomatic complexity of all methods in C [3] [20].
 		 */
-		//TODO define cyclomatic complexity
+		
+		int complexity = 0;
 		
 		for ( MethodDeclaration mtdDecl : cu.getChildNodesByType(MethodDeclaration.class) ) {
-			
-			int complexity = 0;
 			
 			for ( IfStmt ifStmt : mtdDecl.getChildNodesByType(IfStmt.class) ) {
 				
@@ -67,6 +118,8 @@ public class GodDependencyInjectionClass extends AbstractRuleWithMultipleElement
 			
 		}
 		
+		boolean WMCisApplied = complexity > WMC ? true : false;
+		
 		/* DEFINITION 1
 		   Access To Foreign Data (ATFD(C)) is the number of
 		   attributes of foreign classes accessed directly by class
@@ -76,13 +129,18 @@ public class GodDependencyInjectionClass extends AbstractRuleWithMultipleElement
 		   classes from which a given class accesses attributes, directly or
            via accessor-methods.
 		 */		
+
+        FieldDeclarationInjectionIdentificator fieldId = new FieldDeclarationInjectionIdentificator();
+        ConstructorInjectionIdentificator constructorId = new ConstructorInjectionIdentificator();
+        SetMethodInjectionIdentificator setMethodId = new SetMethodInjectionIdentificator();
+        ContainerCallIdentificator contId = new ContainerCallIdentificator();
+        
+        List<Element> elements = fieldId.identify(cu);
+        elements.addAll(constructorId.identify(cu));
+        elements.addAll(setMethodId.identify(cu));
+        elements.addAll(contId.identify(cu));
 		
-		for( Element element : elements ){
-			visit(cu, element);
-		}
-		
-		//TODO count the number of access to foreign data
-		
+		boolean ATFDisApplied = elements.size() > ATFD ? true : false;
 		
 		/*
 			Tight Class Cohesion (TCC(C)) is the relative number
@@ -91,7 +149,11 @@ public class GodDependencyInjectionClass extends AbstractRuleWithMultipleElement
 			variables of C [2].
 		 */
 		//TODO count class cohesion
+		//Referencia: https://www.aivosto.com/project/help/pm-oo-cohesion.html
+		//A ideia aqui eh percorrer todo metodo e guardar todas as instancias utilizadas
+		//Depois disso, par a par, veriicar se ha atributos utilizados por ambos
 		
+		methodDeclarationVisitor.visit(cu,null);
 		
 		//result.setElement(element);
 		
@@ -100,43 +162,7 @@ public class GodDependencyInjectionClass extends AbstractRuleWithMultipleElement
 		return null;
 	}
 
-	@Override
-	protected void visitMethodCallImpl(MethodCallExpr methodCall, Element element) {
-		
-		String nodeName = getNodeName(methodCall);
-    	
-		Boolean itDoesAppear = doesItAppear( nodeName, element );
-		
-		if(itDoesAppear) {
-			
-			Element key = element;
-			
-			processAccessToForeignDataMetric(key);
-			processTightClassCohesionMetric(methodCall,element);
-			
-		}
-		
-	}
 
-	private void processAccessToForeignDataMetric(Element key) {
-		//verifica se existe
-		if (accessToForeignDataMetric.containsKey(key)) {
-		    // Okay, there's a key but the value is null
-			Integer value = accessToForeignDataMetric.get(key);
-			
-			if(value == null){
-				value = 1;
-			} else {
-				value++;	
-			}
-			
-			accessToForeignDataMetric.put(key, value);
-			
-		} else {
-		   // Definitely no such key
-			accessToForeignDataMetric.put(key, 1);
-		}
-	}
 	
 	private void processTightClassCohesionMetric(MethodCallExpr methodCall, Element element) {
 		
