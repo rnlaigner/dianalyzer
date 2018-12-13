@@ -18,13 +18,12 @@ public class BadPracticeOne extends AbstractPractice {
 	
 	private AppearsInEveryMethod rule;
 
-	public BadPracticeOne(CompilationUnit cu) {
-		super(cu);
+	public BadPracticeOne(){
 		rule = new AppearsInEveryMethod();
 	}
 
 	@Override
-	public CompilationUnitResult process() {
+	public CompilationUnitResult process(final CompilationUnit cu) {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 		

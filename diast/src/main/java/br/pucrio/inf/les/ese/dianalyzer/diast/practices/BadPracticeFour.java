@@ -12,13 +12,12 @@ public class BadPracticeFour extends AbstractPractice {
 	
 	private GodDependencyInjectionClass rule;
 
-	public BadPracticeFour(CompilationUnit cu) {
-		super(cu);
+	public BadPracticeFour() {
 		rule = new GodDependencyInjectionClass();
 	}
 
 	@Override
-	public CompilationUnitResult process() {   
+	public CompilationUnitResult process(final CompilationUnit cu) {   
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 		

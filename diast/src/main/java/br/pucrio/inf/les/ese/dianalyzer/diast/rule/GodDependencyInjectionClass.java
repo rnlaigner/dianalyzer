@@ -6,10 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.expr.AssignExpr;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
@@ -19,7 +24,6 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ContainerCallIdenti
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.FieldDeclarationInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AssignmentBusiness;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
@@ -31,49 +35,54 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
 	private static final int ATFD = 5;
 	private static final double TCC = 0.3; 
 	
-	private MethodDeclarationVisitor methodDeclarationVisitor;
+	private MethodCallExprVisitor methodDeclarationVisitor = new MethodCallExprVisitor();
 	
-	private Map<MethodCallExpr,List<InjectedElement>> tightClassCohesionMetric = new HashMap<MethodCallExpr,List<InjectedElement>>();
+	private Map<String,List<String>> tightClassCohesionMetric = 
+			new HashMap<String,List<String>>();
 
 	public GodDependencyInjectionClass() {
 		super();
 	}
 	
-	private class MethodDeclarationVisitor extends VoidVisitorAdapter<InjectedElement> {
+	private class MethodCallExprVisitor extends VoidVisitorAdapter<AbstractElement> {
 		
 		@Override
-	    public void visit(MethodDeclaration methodDeclaration, InjectedElement element)
+	    public void visit(MethodCallExpr methodCallExpr, AbstractElement element)
 	    {
-			Boolean containsProducerAnnotation = 
-					methodDeclaration
-					.getAnnotations()
-					.stream()
-					.anyMatch(
-							 an -> an
-							.getName()
-							.getIdentifier()
-							.matches(ProducerAnnotation.getProducerAnnotationsRegex())
-							);
-			
-			//Pode ser metodo que retorna container call
-			
-			if (containsProducerAnnotation) return;
-			
-			NodeList<Statement> statements = methodDeclaration.getBody().get().getStatements();
-			
-			//search body for reassignment of element
-			List<AssignExpr> list = AssignmentBusiness.getAssignmentsFromStatements(statements);
+			//get method the call belongs to
+			Node node = methodCallExpr.getParentNode().get();
+			Node nodeParent = node.getParentNode().get();
+			if (node instanceof VariableDeclarator){
+				//pega mais um parent
 				
-			for(AssignExpr expr : list){
-				
-				String value = expr.getValue().toString();
-				if (value.contains("this.")){
-					value = value.substring(value.indexOf("this."),value.length());
-				}
-				if(value.equals(element.getName())){
-					//attributeAssignment++;
+				if (nodeParent instanceof FieldDeclaration){
+					//Nao eh chamado dentro de metodo algum
+					return;
 				}
 				
+				//itera ate achar methodDeclaration
+				while( ! ( nodeParent instanceof MethodDeclaration ) ){
+					nodeParent = nodeParent.getParentNode().get();
+				}
+				
+			} /*else if (stmt instanceof IfStmt){
+				
+			} */ else {
+				while( ! ( nodeParent instanceof MethodDeclaration ) ){
+					nodeParent = nodeParent.getParentNode().get();
+				}
+			}
+			
+			MethodDeclaration methodDeclaration = (MethodDeclaration) nodeParent;
+			
+			if (tightClassCohesionMetric.get(methodDeclaration.getNameAsString()) != null){
+				List<String> elements = tightClassCohesionMetric.get(methodDeclaration.getNameAsString());
+				elements.add(methodCallExpr.getScope().toString());
+				tightClassCohesionMetric.put(methodDeclaration.getNameAsString(), elements );
+			} else {
+				List<String> elements = new ArrayList<String>();
+				elements.add(methodCallExpr.getScope().toString());
+				tightClassCohesionMetric.put(methodDeclaration.getNameAsString(), elements );
 			}
 			
 	    }
@@ -88,7 +97,7 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
 	@Override
 	public List<ElementResult> processRule(CompilationUnit cu) {
 		
-		ElementResult result = new ElementResult();
+		List<ElementResult> resultSet = new ArrayList<ElementResult>();
 		
 		//Map<MethodDeclaration,Integer> methodCyclomaticComplexityMap = new HashMap<MethodDeclaration,Integer>();
 		
@@ -156,41 +165,19 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
 		
 		/*
 		 Which methods are related? Methods a and b are related if:
-
-	    they both access the same class-level variable, or
-	    a calls b, or b calls a.
-
+	     they both access the same class-level variable, or a calls b, or b calls a.
 		 */
-		
-		
-		
 		methodDeclarationVisitor.visit(cu,null);
+		
+		//TODO agora basta verificar quais atributos aparecem em ambos metodos no Hash
 		
 		//result.setElement(element);
 		
-		result.setResult(false);
+		ElementResult elementResult = new ElementResult();
 		
-		return null;
-	}
-
-
-	
-	private void processTightClassCohesionMetric(MethodCallExpr methodCall, InjectedElement element) {
+		resultSet.add(elementResult);
 		
-		List<InjectedElement> value;
-		
-		//verifica se existe
-		if (tightClassCohesionMetric.containsKey(methodCall)) {
-		    // Okay, there's a key but the value is null
-			value = tightClassCohesionMetric.get(methodCall);		
-		} else {
-		   // Definitely no such key
-		   value = new ArrayList<InjectedElement>();
-		}
-		
-		value.add(element);
-		tightClassCohesionMetric.put(methodCall, value);
-		
+		return resultSet;
 	}
 
 }

@@ -122,14 +122,14 @@ public class MyAnalysis extends VoidVisitorAdapter
         //BadPracticeSeven bdSeven = new BadPracticeSeven(cu);
         //BadPracticeEight bdEight = new BadPracticeEight(cu);
         //BadPracticeTen bdTen = new BadPracticeTen(cu);
-        BadPracticeEleven bdEleven = new BadPracticeEleven(cu);
+        BadPracticeEleven bdEleven = new BadPracticeEleven();
         
         //bdOne.process();
         //bdTwo.process();
         //bdSeven.process();
         //bdEight.process();
         //bdTen.process();
-        bdEleven.process();
+        bdEleven.process(cu);
 
         // Find all the calculations with two sides:
         cu.findAll(AnnotationExpr.class).forEach(be -> {

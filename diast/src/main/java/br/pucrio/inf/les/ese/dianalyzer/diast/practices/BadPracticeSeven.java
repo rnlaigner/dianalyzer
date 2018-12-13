@@ -15,13 +15,12 @@ public class BadPracticeSeven extends AbstractPractice {
 	
 	private DirectContainerCall rule;
 
-	public BadPracticeSeven(CompilationUnit cu) {
-		super(cu);
+	public BadPracticeSeven() {
 		rule = new DirectContainerCall();
 	}
 
 	@Override
-	public CompilationUnitResult process() {
+	public CompilationUnitResult process(final CompilationUnit cu) {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 		

@@ -1,11 +1,8 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.practices;
 
-import java.util.List;
-
 import com.github.javaparser.ast.CompilationUnit;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 
 public abstract class AbstractPractice {
 
@@ -13,13 +10,13 @@ public abstract class AbstractPractice {
 	
 	private String description;
 	
-	private List<InjectedElement> elements;
+	//private List<InjectedElement> elements;
 	
-	protected CompilationUnit cu;
-	
-	public AbstractPractice(CompilationUnit cu){
-		this.cu = cu;
-	}
+//	protected CompilationUnit cu;
+//	
+//	public AbstractPractice(CompilationUnit cu){
+//		this.cu = cu;
+//	}
 
 	public String getName() {
 		return name;
@@ -37,15 +34,15 @@ public abstract class AbstractPractice {
 		this.description = description;
 	}
 	
-	public List<InjectedElement> getElements() {
-		return elements;
-	}
+//	public List<InjectedElement> getElements() {
+//		return elements;
+//	}
+//
+//	public void setElements(List<InjectedElement> elements) {
+//		this.elements = elements;
+//	}
 
-	public void setElements(List<InjectedElement> elements) {
-		this.elements = elements;
-	}
-
-	public abstract CompilationUnitResult process();
+	public abstract CompilationUnitResult process(final CompilationUnit cu);
 	
 	
 }

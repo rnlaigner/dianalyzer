@@ -20,7 +20,7 @@ public class JavaParserParser implements IParser {
         }
         catch(Exception e)
         {
-        	throw new ParseException();
+        	throw new ParseException(e.getMessage());
         }
 		return cu;
 		

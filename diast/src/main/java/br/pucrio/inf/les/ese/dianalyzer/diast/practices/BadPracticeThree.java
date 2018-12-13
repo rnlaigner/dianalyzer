@@ -16,16 +16,13 @@ public class BadPracticeThree extends AbstractPractice {
 	
 	private ProducerMethodWithBusinessRule rule;
 
-	public BadPracticeThree(CompilationUnit cu) {
-		super(cu);
-		
+	public BadPracticeThree() {		
 		List<String> list = identifyBusinessClasses();
-		
 		rule = new ProducerMethodWithBusinessRule(list);
 	}
 
 	@Override
-	public CompilationUnitResult process() {
+	public CompilationUnitResult process(final CompilationUnit cu) {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 		

@@ -17,13 +17,12 @@ public class BadPracticeNine extends AbstractPractice {
 	
 	private InjectionOpenForExternalAccessOrExternalPassing rule;
 
-	public BadPracticeNine(CompilationUnit cu) {
-		super(cu);
+	public BadPracticeNine() {
 		rule = new InjectionOpenForExternalAccessOrExternalPassing();
 	}
 
 	@Override
-	public CompilationUnitResult process() {
+	public CompilationUnitResult process(final CompilationUnit cu) {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 		

@@ -5,7 +5,6 @@ import java.util.List;
 import com.github.javaparser.ast.CompilationUnit;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
 

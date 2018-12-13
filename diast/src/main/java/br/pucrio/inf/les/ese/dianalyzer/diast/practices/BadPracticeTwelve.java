@@ -17,13 +17,12 @@ public class BadPracticeTwelve extends AbstractPractice {
 	
 	private MultipleFormOfInjection rule;
 
-	public BadPracticeTwelve(CompilationUnit cu) {
-		super(cu);
+	public BadPracticeTwelve() {
 		rule = new MultipleFormOfInjection();
 	}
 
 	@Override
-	public CompilationUnitResult process() {
+	public CompilationUnitResult process(final CompilationUnit cu) {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 

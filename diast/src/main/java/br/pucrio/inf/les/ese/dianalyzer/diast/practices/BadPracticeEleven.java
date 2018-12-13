@@ -21,14 +21,13 @@ public class BadPracticeEleven extends AbstractPractice {
 	
 	private MethodParameterInjectionAssignedToMoreThanOneAttribute secondRule;
 
-	public BadPracticeEleven(CompilationUnit cu) {
-		super(cu);
+	public BadPracticeEleven() {
 		firstRule = new InjectionAssignedToMoreThanOneAttribute();
 		secondRule = new MethodParameterInjectionAssignedToMoreThanOneAttribute();
 	}
 
 	@Override
-	public CompilationUnitResult process() {
+	public CompilationUnitResult process(final CompilationUnit cu) {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 		

@@ -34,6 +34,8 @@ public abstract class AbstractBadPracticeTest {
 	
 	private Environment env = new Environment();
 	
+	public AbstractBadPracticeTest(){}
+	
 	public abstract Class<? extends AbstractPractice> getConcretePractice();
 	
 	@Test
@@ -45,7 +47,7 @@ public abstract class AbstractBadPracticeTest {
 								 InvocationTargetException{
 		
 		Constructor<? extends AbstractPractice> constructor = 
-				getConcretePractice().getConstructor(CompilationUnit.class);
+				getConcretePractice().getConstructor();
 		
 		for(String file : classes){
 			
@@ -53,9 +55,9 @@ public abstract class AbstractBadPracticeTest {
 	        
 	       cu = JavaParser.parse(file);
 	       
-	       AbstractPractice practice = constructor.newInstance(cu);
+	       AbstractPractice practice = constructor.newInstance();
 	       
-	       CompilationUnitResult cuResult = practice.process();
+	       CompilationUnitResult cuResult = practice.process(cu);
 	       
 	       //O ideal eh que esse assert seja uma classe abstrata 
 	       //implementada pela classe concreta

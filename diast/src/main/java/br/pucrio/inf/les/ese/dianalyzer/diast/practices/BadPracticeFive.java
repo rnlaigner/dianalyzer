@@ -18,13 +18,12 @@ public class BadPracticeFive extends AbstractPractice {
 	
 	private IsNonUsedInjection rule;
 
-	public BadPracticeFive(CompilationUnit cu) {
-		super(cu);
+	public BadPracticeFive() {
 		rule = new IsNonUsedInjection();
 	}
 
 	@Override
-	public CompilationUnitResult process() {
+	public CompilationUnitResult process(final CompilationUnit cu) {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 		
