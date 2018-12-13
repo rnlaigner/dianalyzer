@@ -16,12 +16,20 @@ public class FrameworkSpecificAnnotation extends AbstractRule {
 		throw new Exception("Excecao!");
 	}
 	
-	public List<ElementResult> processRule(CompilationUnit cu, List<InjectedElement> elements) {
+	public List<ElementResult> processRule(CompilationUnit cu, List<AbstractElement> elements) {
 				
 		List<ElementResult> results = new ArrayList<ElementResult>();
 		
-		//TODO: busca por anotacoes especificas baseado na anotacao do elemento 
+		// busca por anotacoes especificas baseado na anotacao do elemento 
 		//e os enums injectionAnnotation e producerAnnotation
+		
+		Long count = elements.stream().filter(p -> ((InjectedElement) p).getAnnotation().isSpecific() ).count();
+		
+		if(count > 0){
+			ElementResult result = new ElementResult();
+			result.setResult(true);
+			results.add(result);
+		}
 		
         return results;
 	}
