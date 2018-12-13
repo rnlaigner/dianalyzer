@@ -27,6 +27,9 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeThree;
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeTwelve;
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeTwo;
 import br.pucrio.inf.les.ese.dianalyzer.worker.environment.Environment;
+import br.pucrio.inf.les.ese.dianalyzer.worker.report.IWorkbookCreator;
+import br.pucrio.inf.les.ese.dianalyzer.worker.report.Report;
+import br.pucrio.inf.les.ese.dianalyzer.worker.report.WorkbookCreator;
 
 @BadPracticesApplied(values={BadPracticeOne.class,BadPracticeTwo.class,BadPracticeThree.class,
 		BadPracticeFour.class,BadPracticeFive.class,/*BadPracticeSix.class,*/ BadPracticeSeven.class,
@@ -44,6 +47,12 @@ public class ProjectExecutor implements IProjectExecutor {
 		badPracticesApplied = new HashSet<AbstractPractice>();
 		buildBadPracticesApplied();
 	}
+	
+	//TODO get project name based on path + init headers
+	private Report buildReportInfo(){
+		Report report = new Report();
+		return null;
+	}
 
 	@Override
 	public void execute(String projectPath, String outputPath) throws IOException, ParseException {
@@ -54,31 +63,39 @@ public class ProjectExecutor implements IProjectExecutor {
 		
 		Set<CompilationUnitResult> results = new HashSet<CompilationUnitResult>();
 		
+		Report report = buildReportInfo();
+		
 		for(String file : files){
 			
 			Object parsedObject = parser.parse(file);
 			
 			//for each bad practice, process this file
 			for(AbstractPractice practice : badPracticesApplied){
+				
 				CompilationUnitResult result = practice.process((CompilationUnit) parsedObject);
 				results.add(result);
+				
+				//Mount report line
+				
 			}
 			
 		}
 		
 		//TODO Salvar results em uma planilha
+		IWorkbookCreator workbookCreator = new WorkbookCreator();
+		
+		workbookCreator.create(report, outputPath);
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void buildBadPracticesApplied(){
-		
-		//Set<AbstractPractice> badPracticesApplied = new HashSet<AbstractPractice>();
 
 	    try {
 	    	
 	    	BadPracticesApplied anno = (BadPracticesApplied) getClass().getAnnotation(BadPracticesApplied.class);
 	      	
-	        for(@SuppressWarnings("rawtypes") Class clazz : anno.values()){
+	        for(Class<? extends AbstractPractice> clazz : anno.values()){
 	        	
 	        	Constructor<? extends AbstractPractice> constructor = 
 	        			clazz.getConstructor();

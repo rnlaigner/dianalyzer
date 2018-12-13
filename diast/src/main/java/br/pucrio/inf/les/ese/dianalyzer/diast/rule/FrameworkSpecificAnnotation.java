@@ -23,13 +23,14 @@ public class FrameworkSpecificAnnotation extends AbstractRule {
 		// busca por anotacoes especificas baseado na anotacao do elemento 
 		//e os enums injectionAnnotation e producerAnnotation
 		
-		Long count = elements.stream().filter(p -> ((InjectedElement) p).getAnnotation().isSpecific() ).count();
-		
-		if(count > 0){
-			ElementResult result = new ElementResult();
-			result.setResult(true);
-			results.add(result);
-		}
+		elements.stream()
+						.filter(p -> ((InjectedElement) p).getAnnotation().isSpecific() )
+						.forEach(p -> {
+							ElementResult result = new ElementResult();
+							result.setElement(p);
+							result.setResult(true);
+							results.add(result);
+						});
 		
         return results;
 	}
