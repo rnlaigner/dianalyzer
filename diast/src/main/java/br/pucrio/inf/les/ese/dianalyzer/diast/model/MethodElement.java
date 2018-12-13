@@ -3,40 +3,41 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodElement extends Element {
+public class MethodElement extends AbstractElement {
 	
-	private List<AttributeElement> parameters;
+	private List<String> modifiers;
 	
-	//This was only used for bad practice for producer annotation
-	//Later, I found out this could be good for bad practice 11 
-	private ProducerAnnotation annotation;
+	private List<AbstractElement> parameters;
 	
 	private String returnType;
 	
 	private String body;
+
+	//Added for bad practice 4
+	//private El
 	
 	public MethodElement(){
-		this.parameters = new ArrayList<AttributeElement>();	
+		this.parameters = new ArrayList<AbstractElement>();	
+	}
+	
+	public List<String> getModifiers() {
+		return modifiers;
+	}
+	
+	public void setModifiers(List<String> modifiers) {
+		this.modifiers = modifiers;
 	}
 
-	public List<AttributeElement> getParameters() {
+	public List<AbstractElement> getParameters() {
 		return parameters;
 	}
 	
-	public void addParameter(AttributeElement parameter) {
+	public void addParameter(AbstractElement parameter) {
 		this.parameters.add(parameter);
 	}
 
-	public void setParameters(List<AttributeElement> parameters) {
+	public void setParameters(List<AbstractElement> parameters) {
 		this.parameters = parameters;
-	}
-
-	public ProducerAnnotation getAnnotation() {
-		return annotation;
-	}
-
-	public void setAnnotation(ProducerAnnotation annotation) {
-		this.annotation = annotation;
 	}
 
 	public String getReturnType() {

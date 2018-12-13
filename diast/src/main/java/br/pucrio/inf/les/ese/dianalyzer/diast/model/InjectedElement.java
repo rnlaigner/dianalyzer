@@ -1,30 +1,19 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.model;
 
-import java.util.List;
-
-public class Element {
-	
-	private List<String> modifiers;
+public class InjectedElement extends AbstractElement {
 	
 	private ObjectType classType;
 	
 	private String type;
 	
-	private String name;
-	
 	private InjectionType injectionType;
-
-	public List<String> getModifiers() {
-		return modifiers;
-	}
 	
-	public void setModifiers(List<String> modifiers) {
-		this.modifiers = modifiers;
-	}
+	private InjectionAnnotation annotation;
 	
 	public String getType() {
 		return type;
 	}
+	
 	public void setType(String type) {
 		this.type = type;
 	}
@@ -36,14 +25,6 @@ public class Element {
 	public void setClassType(ObjectType classType) {
 		this.classType = classType;
 	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public InjectionType getInjectionType() {
 		return injectionType;
@@ -51,6 +32,14 @@ public class Element {
 
 	public void setInjectionType(InjectionType injectionType) {
 		this.injectionType = injectionType;
+	}
+	
+	public InjectionAnnotation getAnnotation() {
+		return annotation;
+	}
+	
+	public void setAnnotation(InjectionAnnotation annotation) {
+		this.annotation = annotation;
 	}
 	
 }

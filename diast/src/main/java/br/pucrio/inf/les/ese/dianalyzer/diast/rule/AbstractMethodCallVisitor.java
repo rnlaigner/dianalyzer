@@ -8,7 +8,7 @@ import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 
 public abstract class AbstractMethodCallVisitor extends AbstractRule {
 	
@@ -18,24 +18,24 @@ public abstract class AbstractMethodCallVisitor extends AbstractRule {
 		methodCallVisitor = new MethodCallVisitor();
 	}
 	
-	protected void visit(CompilationUnit cu, Element element) {
+	protected void visit(CompilationUnit cu, AbstractElement element) {
 		methodCallVisitor.visit(cu, element);
 	}
 	
-	protected abstract void visitMethodCallImpl(MethodCallExpr methodCall, Element arg);
+	protected abstract void visitMethodCallImpl(MethodCallExpr methodCall, AbstractElement arg);
 	
-	private class MethodCallVisitor extends VoidVisitorAdapter<Element> {
+	private class MethodCallVisitor extends VoidVisitorAdapter<AbstractElement> {
 		
 		
 		@Override
-	    public void visit(MethodCallExpr methodCall, Element arg)
+	    public void visit(MethodCallExpr methodCall, AbstractElement arg)
 	    {
 	        visitMethodCallImpl(methodCall, arg);
 	    }
 		
 	}
 
-	protected boolean doesItAppear(String nodeName, Element element)
+	protected boolean doesItAppear(String nodeName, AbstractElement element)
     {
     	return element.getName().equals(nodeName);
     }

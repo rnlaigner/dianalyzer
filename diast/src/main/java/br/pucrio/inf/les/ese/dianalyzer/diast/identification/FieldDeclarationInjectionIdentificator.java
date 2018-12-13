@@ -8,8 +8,8 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AttributeElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 
 public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIdentificator {
@@ -19,9 +19,9 @@ public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIde
 	}
 
 	@Override
-	public List<Element> identify(CompilationUnit cu){
+	public List<AbstractElement> identify(CompilationUnit cu){
 		
-		List<Element> elements = new ArrayList<Element>();
+		List<AbstractElement> elements = new ArrayList<AbstractElement>();
 		
 		cu.findAll(FieldDeclaration.class).stream()
 			.filter(f -> { 
@@ -34,7 +34,7 @@ public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIde
 								.matches(getInjectAnnotationsRegex()));
 			} )
 			.forEach(f -> {
-				AttributeElement elem = new AttributeElement();
+				InjectedElement elem = new InjectedElement();
 				
 				List<String> modifiers = new ArrayList<String>();
 				f.getModifiers().stream().forEach( m -> { modifiers.add( m.asString() ); } );

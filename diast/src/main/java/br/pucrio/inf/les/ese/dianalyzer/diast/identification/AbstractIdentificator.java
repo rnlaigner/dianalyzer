@@ -4,7 +4,8 @@ import java.util.List;
 
 import com.github.javaparser.ast.CompilationUnit;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
 
@@ -16,7 +17,7 @@ public abstract class AbstractIdentificator {
 		this.injectionType = injectionType;
 	}
 	
-	public abstract List<Element> identify(CompilationUnit cu);
+	public abstract List<AbstractElement> identify(CompilationUnit cu);
 	
 	protected ObjectType getObjectTypeFromString(String objectType) throws Exception {
 		

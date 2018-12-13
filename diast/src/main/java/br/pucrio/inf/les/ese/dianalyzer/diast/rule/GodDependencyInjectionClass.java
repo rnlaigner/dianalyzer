@@ -18,9 +18,10 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ConstructorInjectio
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ContainerCallIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.FieldDeclarationInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionIdentificator;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AssignmentBusiness;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
 public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
@@ -32,16 +33,16 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
 	
 	private MethodDeclarationVisitor methodDeclarationVisitor;
 	
-	private Map<MethodCallExpr,List<Element>> tightClassCohesionMetric = new HashMap<MethodCallExpr,List<Element>>();
+	private Map<MethodCallExpr,List<InjectedElement>> tightClassCohesionMetric = new HashMap<MethodCallExpr,List<InjectedElement>>();
 
 	public GodDependencyInjectionClass() {
 		super();
 	}
 	
-	private class MethodDeclarationVisitor extends VoidVisitorAdapter<Element> {
+	private class MethodDeclarationVisitor extends VoidVisitorAdapter<InjectedElement> {
 		
 		@Override
-	    public void visit(MethodDeclaration methodDeclaration, Element element)
+	    public void visit(MethodDeclaration methodDeclaration, InjectedElement element)
 	    {
 			Boolean containsProducerAnnotation = 
 					methodDeclaration
@@ -80,7 +81,7 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
 	}
 
 	@Override
-	public ElementResult processRule(CompilationUnit cu, Element element) throws Exception {
+	public ElementResult processRule(CompilationUnit cu, AbstractElement element) throws Exception {
 		throw new Exception("Not implemented");
 	}
 	
@@ -135,7 +136,7 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
         SetMethodInjectionIdentificator setMethodId = new SetMethodInjectionIdentificator();
         ContainerCallIdentificator contId = new ContainerCallIdentificator();
         
-        List<Element> elements = fieldId.identify(cu);
+        List<AbstractElement> elements = fieldId.identify(cu);
         elements.addAll(constructorId.identify(cu));
         elements.addAll(setMethodId.identify(cu));
         elements.addAll(contId.identify(cu));
@@ -153,6 +154,16 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
 		//A ideia aqui eh percorrer todo metodo e guardar todas as instancias utilizadas
 		//Depois disso, par a par, veriicar se ha atributos utilizados por ambos
 		
+		/*
+		 Which methods are related? Methods a and b are related if:
+
+	    they both access the same class-level variable, or
+	    a calls b, or b calls a.
+
+		 */
+		
+		
+		
 		methodDeclarationVisitor.visit(cu,null);
 		
 		//result.setElement(element);
@@ -164,9 +175,9 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
 
 
 	
-	private void processTightClassCohesionMetric(MethodCallExpr methodCall, Element element) {
+	private void processTightClassCohesionMetric(MethodCallExpr methodCall, InjectedElement element) {
 		
-		List<Element> value;
+		List<InjectedElement> value;
 		
 		//verifica se existe
 		if (tightClassCohesionMetric.containsKey(methodCall)) {
@@ -174,7 +185,7 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
 			value = tightClassCohesionMetric.get(methodCall);		
 		} else {
 		   // Definitely no such key
-		   value = new ArrayList<Element>();
+		   value = new ArrayList<InjectedElement>();
 		}
 		
 		value.add(element);

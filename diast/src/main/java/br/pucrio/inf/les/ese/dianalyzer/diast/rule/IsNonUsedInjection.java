@@ -4,7 +4,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 
 public class IsNonUsedInjection extends AbstractMethodCallVisitor {
@@ -12,7 +12,7 @@ public class IsNonUsedInjection extends AbstractMethodCallVisitor {
 	private Integer numberOfAppearances;
 
 	@Override
-	public ElementResult processRule(CompilationUnit cu, Element element) {
+	public ElementResult processRule(CompilationUnit cu, AbstractElement element) {
 		
 		//Start a new search
 		numberOfAppearances = 0;
@@ -33,7 +33,7 @@ public class IsNonUsedInjection extends AbstractMethodCallVisitor {
 	}
 
 	@Override
-	protected void visitMethodCallImpl(MethodCallExpr methodCall, Element element) {
+	protected void visitMethodCallImpl(MethodCallExpr methodCall, AbstractElement element) {
         
 		String nodeName = getNodeName(methodCall);
 		

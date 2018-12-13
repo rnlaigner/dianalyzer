@@ -3,7 +3,7 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 
 public class AppearsInEveryMethod extends AbstractMethodCallVisitor {
@@ -12,7 +12,7 @@ public class AppearsInEveryMethod extends AbstractMethodCallVisitor {
 	private Integer numberOfMethods;
 
 	@Override
-	public ElementResult processRule(CompilationUnit cu, Element element) {
+	public ElementResult processRule(CompilationUnit cu, AbstractElement element) {
 		
 		numberOfAppearances = 0;
 		numberOfMethods = 0;
@@ -31,7 +31,7 @@ public class AppearsInEveryMethod extends AbstractMethodCallVisitor {
 	}
 	
 	@Override
-	protected void visitMethodCallImpl(MethodCallExpr methodCall, Element arg) {
+	protected void visitMethodCallImpl(MethodCallExpr methodCall, AbstractElement arg) {
 		
     	String nodeName = getNodeName(methodCall);
 

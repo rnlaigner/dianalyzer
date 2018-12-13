@@ -1,6 +1,6 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.model;
 
-public class VariableDeclarationElement extends Element {
+public class VariableDeclarationElement extends InjectedElement {
 	
 	private String methodCall;
 	

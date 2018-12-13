@@ -14,8 +14,7 @@ import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.stmt.Statement;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AssignmentBusiness;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AttributeElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 /*
  * It serves Constructor and Method injection identifier
@@ -26,9 +25,9 @@ public abstract class AbstractMethodInjectionIdentificator extends AbstractInjec
 		super(injectionType);
 	}
 
-	protected List<Element> identifyFromParameters( CallableDeclaration<?> f ) throws Exception {
+	protected List<InjectedElement> identifyFromParameters( CallableDeclaration<?> f ) throws Exception {
 		
-		List<Element> elements = new ArrayList<Element>();
+		List<InjectedElement> elements = new ArrayList<InjectedElement>();
 		
 		NodeList<Parameter> parameters = f.getParameters();
 		
@@ -51,7 +50,7 @@ public abstract class AbstractMethodInjectionIdentificator extends AbstractInjec
 			
 			for ( AssignExpr assignment : assignmentsFromCurrentParameter ) {
 				
-				AttributeElement elem = new AttributeElement();
+				InjectedElement elem = new InjectedElement();
 				
 				elem.setType(parameter.getType().asString());
 				
@@ -105,6 +104,7 @@ public abstract class AbstractMethodInjectionIdentificator extends AbstractInjec
 		
 	}
 	
+	//FIXME based on assumption for Java language
 	protected boolean isSetMethod(MethodDeclaration f){
 		return f.getName().getIdentifier().startsWith("set");
 	}

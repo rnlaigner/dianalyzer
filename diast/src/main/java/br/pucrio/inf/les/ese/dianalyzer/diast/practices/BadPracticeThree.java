@@ -6,8 +6,9 @@ import java.util.List;
 import com.github.javaparser.ast.CompilationUnit;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ProducerMethodIdentificator;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.rule.ProducerMethodWithBusinessRule;
 
@@ -31,9 +32,11 @@ public class BadPracticeThree extends AbstractPractice {
 		/* identifica elementos que bad practice pode se aplicar */
 		ProducerMethodIdentificator methods = new ProducerMethodIdentificator();
         
-        List<Element> elements =  methods.identify(cu);
+        List<AbstractElement> elements =  methods.identify(cu);
         
-        for (Element elem : elements) {
+        for (AbstractElement element : elements) {
+        	
+        	InjectedElement elem = (InjectedElement) element;
         	ElementResult result = rule.processRule(cu, elem);
         	
         	cuResult.addElementResult(result);

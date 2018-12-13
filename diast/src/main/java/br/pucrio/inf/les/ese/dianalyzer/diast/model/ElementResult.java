@@ -7,29 +7,29 @@ public class ElementResult {
 	
 	private boolean result;
 	
-	private Element element;
+	private AbstractElement element;
 	
-	private List<Element> children;
+	private List<AbstractElement> children;
 	
 	public ElementResult() {
-		this.children = new ArrayList<Element>();
+		this.children = new ArrayList<AbstractElement>();
 	}
 	
-	public ElementResult(boolean result, Element element){
+	public ElementResult(boolean result, AbstractElement element){
 		this.result = result;
 		this.element = element;
-		this.children = new ArrayList<Element>();
+		this.children = new ArrayList<AbstractElement>();
 	}
 	
-	public void addChildren(Element element){
+	public void addChildren(AbstractElement element){
 		this.children.add(element);
 	}
 
-	public List<Element> getChildren() {
+	public List<AbstractElement> getChildren() {
 		return children;
 	}
 
-	public void setChildren(List<Element> children) {
+	public void setChildren(List<AbstractElement> children) {
 		this.children = children;
 	}
 
@@ -41,11 +41,11 @@ public class ElementResult {
 		this.result = result;
 	}
 
-	public Element getElement() {
+	public AbstractElement getElement() {
 		return element;
 	}
 
-	public void setElement(Element element) {
+	public void setElement(AbstractElement element) {
 		this.element = element;
 	}
 

@@ -8,8 +8,8 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ConstructorInjectio
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.FieldDeclarationInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.MethodInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionIdentificator;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.rule.MultipleFormOfInjection;
 
@@ -32,7 +32,7 @@ public class BadPracticeTwelve extends AbstractPractice {
         MethodInjectionIdentificator methodId = new MethodInjectionIdentificator();
         SetMethodInjectionIdentificator setMethodId = new SetMethodInjectionIdentificator();
         
-        List<Element> elements = fieldId.identify(cu);
+        List<AbstractElement> elements = fieldId.identify(cu);
         elements.addAll(constructorId.identify(cu));
         elements.addAll(methodId.identify(cu));
         elements.addAll(setMethodId.identify(cu));

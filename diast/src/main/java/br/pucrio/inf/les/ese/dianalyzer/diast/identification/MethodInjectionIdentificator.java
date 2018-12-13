@@ -6,7 +6,7 @@ import java.util.List;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 
 public class MethodInjectionIdentificator extends AbstractMethodInjectionIdentificator {
@@ -16,9 +16,9 @@ public class MethodInjectionIdentificator extends AbstractMethodInjectionIdentif
 	}
 
 	@Override
-	public List<Element> identify(CompilationUnit cu){
+	public List<AbstractElement> identify(CompilationUnit cu){
 		
-		List<Element> elements = new ArrayList<Element>();
+		List<AbstractElement> elements = new ArrayList<AbstractElement>();
 		
 		cu.findAll(MethodDeclaration.class).stream()
 			.filter(f -> { 

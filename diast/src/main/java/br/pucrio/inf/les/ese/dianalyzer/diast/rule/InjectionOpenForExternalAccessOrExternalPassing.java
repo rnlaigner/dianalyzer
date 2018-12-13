@@ -7,7 +7,8 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
@@ -24,13 +25,15 @@ public class InjectionOpenForExternalAccessOrExternalPassing extends AbstractMet
 		methodDeclarationVisitor = new MethodDeclarationVisitor();
 	}
 
-	private class MethodDeclarationVisitor extends VoidVisitorAdapter<Element> {
+	private class MethodDeclarationVisitor extends VoidVisitorAdapter<AbstractElement> {
 		
 		@Override
-	    public void visit(MethodDeclaration methodDeclaration, Element element)
+	    public void visit(MethodDeclaration methodDeclaration, AbstractElement element)
 	    {
+			InjectedElement element_ = (InjectedElement) element;
+			
 	        //identify methods that return the instance that was previously injected e.g. getMethods
-			String elementType = element.getType();
+			String elementType = element_.getType();
 			
 			String methodType = methodDeclaration.getTypeAsString();
 			
@@ -59,7 +62,7 @@ public class InjectionOpenForExternalAccessOrExternalPassing extends AbstractMet
 	}
 
 	@Override
-	protected void visitMethodCallImpl(MethodCallExpr methodCall, Element arg) {
+	protected void visitMethodCallImpl(MethodCallExpr methodCall, AbstractElement arg) {
 		
 		//identify a method call that pass the element as parameter
 			
@@ -87,7 +90,7 @@ public class InjectionOpenForExternalAccessOrExternalPassing extends AbstractMet
 	}
 
 	@Override
-	public ElementResult processRule(CompilationUnit cu, Element element) {
+	public ElementResult processRule(CompilationUnit cu, AbstractElement element) {
 		
 		//iterate through method calls
 		visit(cu,element);

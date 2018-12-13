@@ -11,15 +11,16 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ContainerClassType;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.VariableDeclarationElement;
 
 public class DirectContainerCall extends AbstractMethodCallVisitor {
 	
-	List<Element> containerCallElements = new ArrayList<Element>();
+	List<InjectedElement> containerCallElements = new ArrayList<InjectedElement>();
 	
 	private boolean isContainerCall(String methodCall) {
 		return ContainerClassType.SPRING.getContainerCall().equals(methodCall) || 
@@ -27,7 +28,7 @@ public class DirectContainerCall extends AbstractMethodCallVisitor {
 	}
 
 	@Override
-	protected void visitMethodCallImpl(MethodCallExpr methodCall, Element arg) {
+	protected void visitMethodCallImpl(MethodCallExpr methodCall, AbstractElement arg) {
 		
 		VariableDeclarationElement arg_ = (VariableDeclarationElement) arg;
 		
@@ -49,14 +50,14 @@ public class DirectContainerCall extends AbstractMethodCallVisitor {
 		if ( isContainerCall ) {
 			
 			//iterate over parentNode in order to get ExpressionStmt
-			Element element = getElementInjectedByContainerCall(methodCall);
+			InjectedElement element = getElementInjectedByContainerCall(methodCall);
 			
 			containerCallElements.add(element);	
 		}
 		
 	}
 	
-	private Element getElementInjectedByContainerCall(Node node){
+	private InjectedElement getElementInjectedByContainerCall(Node node){
 		
 		Node expr = node.clone();
 		//clone does not set parent node
@@ -70,7 +71,7 @@ public class DirectContainerCall extends AbstractMethodCallVisitor {
 		
 		String targetName = assignExpr.getTarget().toString();
 		
-		Element element = new Element();
+		InjectedElement element = new InjectedElement();
 		//Not possible to get Type at this point
 //		element.setClassType(expr);
 //		element.setType(type);
@@ -81,7 +82,7 @@ public class DirectContainerCall extends AbstractMethodCallVisitor {
 	}
 
 	@Override
-	public ElementResult processRule(CompilationUnit cu, Element element) {
+	public ElementResult processRule(CompilationUnit cu, AbstractElement element) {
 		
 		visit(cu,element);
 		

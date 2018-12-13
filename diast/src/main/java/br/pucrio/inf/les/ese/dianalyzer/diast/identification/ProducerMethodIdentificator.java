@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.MethodElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerMethodElement;
 
 public class ProducerMethodIdentificator extends AbstractIdentificator {
 
@@ -18,9 +18,9 @@ public class ProducerMethodIdentificator extends AbstractIdentificator {
 	}
 
 	@Override
-	public List<Element> identify(CompilationUnit cu) {
+	public List<AbstractElement> identify(CompilationUnit cu) {
 
-		List<Element> elements = new ArrayList<Element>();
+		List<AbstractElement> elements = new ArrayList<AbstractElement>();
 		
 		cu.findAll(MethodDeclaration.class).stream()
 			.filter(f -> { 
@@ -33,13 +33,14 @@ public class ProducerMethodIdentificator extends AbstractIdentificator {
 								.matches(ProducerAnnotation.getProducerAnnotationsRegex()));
 			} )
 			.forEach(f -> {
-				MethodElement elem = new MethodElement();
+				ProducerMethodElement elem = new ProducerMethodElement();
 				
 				List<String> modifiers = new ArrayList<String>();
 				f.getModifiers().stream().forEach( m -> { modifiers.add( m.asString() ); } );
 				 				
 				elem.setModifiers(modifiers);
 				
+				/*
 				elem.setType(f.getType().asString());
 				
 				try {
@@ -48,6 +49,7 @@ public class ProducerMethodIdentificator extends AbstractIdentificator {
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
+				*/
 				
 				String annotation = f.getAnnotations()
 											.stream()

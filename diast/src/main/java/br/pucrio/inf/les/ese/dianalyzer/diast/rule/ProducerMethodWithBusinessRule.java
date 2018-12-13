@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.github.javaparser.ast.CompilationUnit;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.MethodElement;
 
@@ -24,11 +24,9 @@ public class ProducerMethodWithBusinessRule extends AbstractRule {
 
 
 	@Override
-	public ElementResult processRule(CompilationUnit cu, Element element) {
+	public ElementResult processRule(CompilationUnit cu, AbstractElement element) {
 		
 		MethodElement methodElement = (MethodElement) element;
-		
-		
 		
 		return null;
 	}

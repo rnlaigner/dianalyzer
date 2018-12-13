@@ -9,8 +9,8 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ContainerClassType;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.VariableDeclarationElement;
@@ -22,9 +22,9 @@ public class ContainerCallIdentificator extends AbstractIdentificator {
 	}
 
 	@Override
-	public List<Element> identify(CompilationUnit cu){
+	public List<AbstractElement> identify(CompilationUnit cu){
 		
-		List<Element> elements = new ArrayList<Element>();
+		List<AbstractElement> elements = new ArrayList<AbstractElement>();
 		
 		cu.findAll(ClassOrInterfaceType.class).stream()
 			.filter(f -> { 

@@ -5,7 +5,7 @@ import java.util.List;
 import com.github.javaparser.ast.CompilationUnit;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 
 public abstract class AbstractPractice {
 
@@ -13,7 +13,7 @@ public abstract class AbstractPractice {
 	
 	private String description;
 	
-	private List<Element> elements;
+	private List<InjectedElement> elements;
 	
 	protected CompilationUnit cu;
 	
@@ -37,11 +37,11 @@ public abstract class AbstractPractice {
 		this.description = description;
 	}
 	
-	public List<Element> getElements() {
+	public List<InjectedElement> getElements() {
 		return elements;
 	}
 
-	public void setElements(List<Element> elements) {
+	public void setElements(List<InjectedElement> elements) {
 		this.elements = elements;
 	}
 

@@ -8,8 +8,9 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ConstructorInjectio
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.FieldDeclarationInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.MethodInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionIdentificator;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.Element;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.rule.InjectionAssignedToMoreThanOneAttribute;
 import br.pucrio.inf.les.ese.dianalyzer.diast.rule.MethodParameterInjectionAssignedToMoreThanOneAttribute;
@@ -36,14 +37,16 @@ public class BadPracticeEleven extends AbstractPractice {
         MethodInjectionIdentificator methodId = new MethodInjectionIdentificator();
         SetMethodInjectionIdentificator setMethodId = new SetMethodInjectionIdentificator();
         
-        List<Element> elements = fieldId.identify(cu);
+        List<AbstractElement> elements = fieldId.identify(cu);
         elements.addAll(constructorId.identify(cu));
         elements.addAll(methodId.identify(cu));
         elements.addAll(setMethodId.identify(cu));
         
         //uma vez que um elemento eh instanciado via injecao
         //o objetivo da rotina abaixo eh verificar se outro atributo recebe valor deste
-        for (Element elem : elements) {
+        for (AbstractElement element : elements) {
+        	
+        	InjectedElement elem = (InjectedElement) element;
         	ElementResult result = firstRule.processRule(cu, elem);
         	if(result.getResult()){
         		cuResult.addElementResult(result);	
