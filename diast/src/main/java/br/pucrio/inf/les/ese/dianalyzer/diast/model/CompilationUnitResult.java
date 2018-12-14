@@ -5,22 +5,26 @@ import java.util.List;
 
 public class CompilationUnitResult {
 	
-	private List<ElementResult> elementsResult;
+	private List<ElementResult> elementResultList;
 
 	public CompilationUnitResult(){
-		this.elementsResult = new ArrayList<ElementResult>();
+		this.elementResultList = new ArrayList<ElementResult>();
 	}
 	
 	public Boolean badPracticeIsApplied(){
-		return elementsResult.size() > 0;
+		return elementResultList.size() > 0;
 	}
 	
-	public void addElementResult(ElementResult elemResult){
-		elementsResult.add(elemResult);
+	public void addElementResultToList(ElementResult elemResult){
+		elementResultList.add(elemResult);
 	}
 	
-	public void addElementResults(List<ElementResult> elementResults){
-		elementsResult.addAll(elementResults);
+	public void addAllElementResultToList(List<ElementResult> elementResults){
+		elementResultList.addAll(elementResults);
+	}
+	
+	public List<ElementResult> getElementResults(){
+		return elementResultList;
 	}
 
 }

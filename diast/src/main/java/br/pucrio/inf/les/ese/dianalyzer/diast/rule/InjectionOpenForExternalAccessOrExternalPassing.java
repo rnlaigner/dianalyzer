@@ -56,7 +56,9 @@ public class InjectionOpenForExternalAccessOrExternalPassing extends AbstractMet
 			//elemento passado como parametro nesse metodo
 			//entretanto, grande parte dos casos o trecho abaixo vai satisfazer o que buscamos
 			
-			if(elementType.equals(methodType)) methodOpening++;
+			if(elementType.equals(methodType)) {
+				methodOpening++;
+			}
 	    }
 		
 	}
@@ -81,8 +83,10 @@ public class InjectionOpenForExternalAccessOrExternalPassing extends AbstractMet
 							.getIdentifier()
 							.equals(arg.getName())
 							)
-				)
-				methodPassing++;		
+				) 
+			{
+				methodPassing++;
+			}
 		}
 		catch(IllegalStateException e) {
 			System.out.println("some argument is not a nameexpr");

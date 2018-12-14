@@ -27,7 +27,7 @@ public class Environment {
 		
 	}
 	
-	public List<String> readFilesFromFolder(String folder, boolean buildPath) throws IOException{
+	public List<String> readFilesFromFolder(String folder, boolean buildPath) throws IOException, Exception{
 		
 		if(buildPath){
 			folder = buildPath(folder);
@@ -37,7 +37,13 @@ public class Environment {
 		
 		List<String> files = new ArrayList<String>();
 		
-		for (final File fileEntry : fileFolder.listFiles()) {
+		File[] listOfFiles = fileFolder.listFiles();
+		
+		if(listOfFiles == null){
+			throw new Exception("The path is wrong or there is no files in the path provided.");
+		}
+		
+		for (final File fileEntry : listOfFiles) {
 			
 			String content = "";
 			

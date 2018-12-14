@@ -19,6 +19,8 @@ public class BadPracticeEight extends AbstractPractice {
 
 	public BadPracticeEight() {
 		rule = new InjectionOpenForExternalAccessOrExternalPassing();
+		setName("Useless injection by passing through or opened for passing through");
+		setNumber(8);		
 	}
 
 	@Override
@@ -27,8 +29,7 @@ public class BadPracticeEight extends AbstractPractice {
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 		
         /*
-         * TODO should I consider?
-         * ContainerCallIdentificator contId = new ContainerCallIdentificator();
+         * should I consider container call? No
          */
         FieldDeclarationInjectionIdentificator fieldId = new FieldDeclarationInjectionIdentificator();
         ConstructorInjectionIdentificator constructorId = new ConstructorInjectionIdentificator();
@@ -42,9 +43,7 @@ public class BadPracticeEight extends AbstractPractice {
         
         for (AbstractElement elem : elements) {
         	ElementResult result = rule.processRule(cu, elem);
-        	
-        	cuResult.addElementResult(result);
-        	
+        	cuResult.addElementResultToList(result);
         }
         
         return cuResult;

@@ -19,6 +19,9 @@ public class BadPracticeTwelve extends AbstractPractice {
 
 	public BadPracticeTwelve() {
 		rule = new MultipleFormOfInjection();
+		
+		setName("Multiple forms of injection for a given element");
+		setNumber(12);
 	}
 
 	@Override
@@ -38,7 +41,7 @@ public class BadPracticeTwelve extends AbstractPractice {
         
         List<ElementResult> results = rule.processRule(cu, elements);
         
-        results.stream().forEach(p -> cuResult.addElementResult(p));
+        results.stream().forEach(p -> cuResult.addElementResultToList(p));
     
         return cuResult;
 		

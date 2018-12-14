@@ -19,6 +19,8 @@ public class BadPracticeThree extends AbstractPractice {
 	public BadPracticeThree() {		
 		List<String> list = identifyBusinessClasses();
 		rule = new ProducerMethodWithBusinessRule(list);
+		setName("Producer method with business rules (logic)");
+		setNumber(3);
 	}
 
 	@Override
@@ -36,7 +38,7 @@ public class BadPracticeThree extends AbstractPractice {
         	InjectedElement elem = (InjectedElement) element;
         	ElementResult result = rule.processRule(cu, elem);
         	
-        	cuResult.addElementResult(result);
+        	cuResult.addElementResultToList(result);
         	
         }
         

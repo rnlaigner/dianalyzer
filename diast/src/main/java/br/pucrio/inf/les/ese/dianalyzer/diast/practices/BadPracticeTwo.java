@@ -20,6 +20,8 @@ public class BadPracticeTwo extends AbstractPractice {
 
 	public BadPracticeTwo() {
 		rule = new ReferenceOnConcreteClass();
+		setName("Direct reference on implementation class for injection");
+		setNumber(2);
 	}
 
 	@Override
@@ -42,7 +44,7 @@ public class BadPracticeTwo extends AbstractPractice {
         	InjectedElement elem = (InjectedElement) element;
         	ElementResult result = rule.processRule(cu, elem);
         	if(result.getResult()){
-        		cuResult.addElementResult(result);
+        		cuResult.addElementResultToList(result);
         	}
         }
         

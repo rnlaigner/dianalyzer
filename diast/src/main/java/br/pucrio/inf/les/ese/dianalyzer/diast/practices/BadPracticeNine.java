@@ -19,6 +19,8 @@ public class BadPracticeNine extends AbstractPractice {
 
 	public BadPracticeNine() {
 		rule = new FrameworkSpecificAnnotation();
+		setName("Framework specific annotation or configuration");
+		setNumber(9);
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class BadPracticeNine extends AbstractPractice {
         elements.addAll(setMethodId.identify(cu));
         
     	List<ElementResult> result = rule.processRule(cu, elements);
-    	cuResult.addElementResults(result);
+    	cuResult.addAllElementResultToList(result);
         
         return cuResult;
 		

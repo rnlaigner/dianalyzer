@@ -24,6 +24,9 @@ public class BadPracticeEleven extends AbstractPractice {
 	public BadPracticeEleven() {
 		firstRule = new InjectionAssignedToMoreThanOneAttribute();
 		secondRule = new MethodParameterInjectionAssignedToMoreThanOneAttribute();
+		
+		setName("Instance injected for use in more than one attribute");
+		setNumber(11);
 	}
 
 	@Override
@@ -48,14 +51,14 @@ public class BadPracticeEleven extends AbstractPractice {
         	InjectedElement elem = (InjectedElement) element;
         	ElementResult result = firstRule.processRule(cu, elem);
         	if(result.getResult()){
-        		cuResult.addElementResult(result);	
+        		cuResult.addElementResultToList(result);	
         	}
         }
         
         //a rotina abaixo agora verifica se uma injecao via parametro do metodo
         //tem sua instancia assinalada para mais de um atributo dentro do body do metodo
         List<ElementResult> results =  secondRule.processRule(cu);
-        cuResult.addElementResults(results);
+        cuResult.addAllElementResultToList(results);
         
         return cuResult;
 		

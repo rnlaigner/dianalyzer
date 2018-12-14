@@ -20,6 +20,8 @@ public class BadPracticeFive extends AbstractPractice {
 
 	public BadPracticeFive() {
 		rule = new IsNonUsedInjection();
+		setName("Non used injection");
+		setNumber(5);
 	}
 
 	@Override
@@ -46,7 +48,7 @@ public class BadPracticeFive extends AbstractPractice {
         	
         	//is non used injection?
         	if ( result.getResult() ) {
-        		cuResult.addElementResult(result);	
+        		cuResult.addElementResultToList(result);	
         	}
         	
         }

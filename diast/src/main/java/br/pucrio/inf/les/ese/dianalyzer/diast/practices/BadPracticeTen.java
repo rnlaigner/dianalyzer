@@ -19,6 +19,8 @@ public class BadPracticeTen extends AbstractPractice {
 
 	public BadPracticeTen() {
 		rule = new InjectionOpenedForChange();
+		setName("Injected instance enabled to change on a method");
+		setNumber(10);
 	}
 
 	@Override
@@ -47,7 +49,7 @@ public class BadPracticeTen extends AbstractPractice {
         	ElementResult result = rule.processRule(cu, elem);
         	
         	if(result.getResult()){
-        		cuResult.addElementResult(result);
+        		cuResult.addElementResultToList(result);
         	}
         	
         }

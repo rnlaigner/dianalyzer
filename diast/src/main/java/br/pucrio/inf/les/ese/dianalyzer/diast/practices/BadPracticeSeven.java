@@ -17,6 +17,8 @@ public class BadPracticeSeven extends AbstractPractice {
 
 	public BadPracticeSeven() {
 		rule = new DirectContainerCall();
+		setName("Direct container calls to obtain class instance");
+		setNumber(7);
 	}
 
 	@Override
@@ -32,7 +34,7 @@ public class BadPracticeSeven extends AbstractPractice {
         	InjectedElement elem = (InjectedElement) element;
         	ElementResult result = rule.processRule(cu, elem);
         	
-        	cuResult.addElementResult(result);
+        	cuResult.addElementResultToList(result);
         }
         
         return cuResult;

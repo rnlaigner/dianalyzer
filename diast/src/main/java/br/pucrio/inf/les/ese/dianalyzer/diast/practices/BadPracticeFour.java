@@ -14,6 +14,8 @@ public class BadPracticeFour extends AbstractPractice {
 
 	public BadPracticeFour() {
 		rule = new GodDependencyInjectionClass();
+		setName("God (dependency injected) class");
+		setNumber(4);
 	}
 
 	@Override
@@ -23,7 +25,7 @@ public class BadPracticeFour extends AbstractPractice {
 		
 		List<ElementResult> results = rule.processRule(cu);
 		
-		cuResult.addElementResults(results);
+		cuResult.addAllElementResultToList(results);
    
 		return cuResult;
 		

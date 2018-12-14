@@ -10,13 +10,7 @@ public abstract class AbstractPractice {
 	
 	private String description;
 	
-	//private List<InjectedElement> elements;
-	
-//	protected CompilationUnit cu;
-//	
-//	public AbstractPractice(CompilationUnit cu){
-//		this.cu = cu;
-//	}
+	private Integer number;
 
 	public String getName() {
 		return name;
@@ -33,14 +27,14 @@ public abstract class AbstractPractice {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-//	public List<InjectedElement> getElements() {
-//		return elements;
-//	}
-//
-//	public void setElements(List<InjectedElement> elements) {
-//		this.elements = elements;
-//	}
+
+	public Integer getNumber() {
+		return number;
+	}
+
+	public void setNumber(Integer number) {
+		this.number = number;
+	}
 
 	public abstract CompilationUnitResult process(final CompilationUnit cu);
 	

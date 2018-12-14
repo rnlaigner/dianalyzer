@@ -20,6 +20,8 @@ public class BadPracticeOne extends AbstractPractice {
 
 	public BadPracticeOne(){
 		rule = new AppearsInEveryMethod();
+		setName("Injection on elements on which there is no certainty that they will be referenced on runtime");
+		setNumber(1);
 	}
 
 	@Override
@@ -46,7 +48,7 @@ public class BadPracticeOne extends AbstractPractice {
         	
         	//does not appear in every method?
         	if(!result.getResult()){
-        		cuResult.addElementResult(result);
+        		cuResult.addElementResultToList(result);
         	}
         	
         }

@@ -35,7 +35,7 @@ public class WorkbookCreator implements IWorkbookCreator {
 		row.createCell(3).setCellValue(true);
 
 		// Write the output to a file
-		FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+		FileOutputStream fileOut = new FileOutputStream(outputPath+"\\workbook.xls");
 		wb.write(fileOut);
 		fileOut.close();
 		

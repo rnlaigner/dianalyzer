@@ -11,7 +11,9 @@ public class Report {
 	
 	private List<List<String>> lines;
 	
-	public Report(){}
+	public Report(){
+		this.lines = new ArrayList<List<String>>();
+	}
 
 	public Report(String project, List<String> headers) {
 		this.project = project;
