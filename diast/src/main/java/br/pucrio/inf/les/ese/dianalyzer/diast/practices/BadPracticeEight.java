@@ -43,7 +43,9 @@ public class BadPracticeEight extends AbstractPractice {
         
         for (AbstractElement elem : elements) {
         	ElementResult result = rule.processRule(cu, elem);
-        	cuResult.addElementResultToList(result);
+        	if(result.getResult()){
+        		cuResult.addElementResultToList(result);
+        	}
         }
         
         return cuResult;

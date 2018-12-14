@@ -13,7 +13,7 @@ import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.stmt.Statement;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AssignmentBusiness;
+import br.pucrio.inf.les.ese.dianalyzer.diast.logic.AssignmentBusiness;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 /*

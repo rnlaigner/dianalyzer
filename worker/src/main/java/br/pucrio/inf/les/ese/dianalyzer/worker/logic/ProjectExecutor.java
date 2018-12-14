@@ -103,10 +103,15 @@ public class ProjectExecutor implements IProjectExecutor {
 							.map( p -> p.getElement().getName() )
 							.collect(Collectors.toList());
 					
-					//TODO convert to comma separated list
-					
-					//FIX
+					//FIXME
 					String className = parsedObject.getTypes().get(0).getNameAsString();
+					
+					if(parsedObject.getTypes().size() > 1){
+						List<String> list = parsedObject.getTypes().stream().map(p->p.getNameAsString()).collect(Collectors.toList());
+						System.out.println(String.join(",",list));
+					}
+					
+					String elements = String.join(",", elementsInvolved);
 					
 					//Mount report line
 					List<String> line = new ArrayList<String>() { 
@@ -119,7 +124,7 @@ public class ProjectExecutor implements IProjectExecutor {
 			                add( practice.getNumber().toString() );
 			                add( practice.getName() );
 							add( className ); 
-			                add( elementsInvolved.get(0) ); 
+			                add( elements ); 
 			            } 
 			        };
 			        

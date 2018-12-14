@@ -14,15 +14,17 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
 public class InjectionOpenForExternalAccessOrExternalPassing extends AbstractMethodCallVisitor {
 	
-	private Integer methodOpening = 0;
+	private Integer methodOpening;
 	
-	private Integer methodPassing = 0;
+	private Integer methodPassing;
 	
 	private MethodDeclarationVisitor methodDeclarationVisitor;
 	
 	public InjectionOpenForExternalAccessOrExternalPassing() {
 		super();
 		methodDeclarationVisitor = new MethodDeclarationVisitor();
+		methodPassing = 0;
+		methodOpening = 0;
 	}
 
 	private class MethodDeclarationVisitor extends VoidVisitorAdapter<AbstractElement> {
@@ -108,10 +110,19 @@ public class InjectionOpenForExternalAccessOrExternalPassing extends AbstractMet
 		
 		result.setResult(false);
 		
-		if(methodPassing > 0 || methodOpening > 0) result.setResult(true);
+		if(methodPassing > 0 || methodOpening > 0){
+			result.setResult(true);
+		}
+		
+		shutdown();
 		
         return result;
 		
+	}
+	
+	private void shutdown(){
+		methodPassing = 0;
+		methodOpening = 0;
 	}
 
 }

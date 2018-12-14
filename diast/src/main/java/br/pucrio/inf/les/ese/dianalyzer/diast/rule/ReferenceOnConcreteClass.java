@@ -22,17 +22,17 @@ public class ReferenceOnConcreteClass extends AbstractRule {
 		
 		InjectedElement element_ = (InjectedElement) element;
 		
-		/* Precisaria ter todos os compilation Unit em memoria para definir isso
+		/* 
 		if (! element_.getClassType().equals(ObjectType.INTERFACE)){
 			elementResult.setResult(true);
 		}
 		*/
 		
-		//this is bad! 
-		//the best test would check for the given class		
+		//FIXME the best test would check for the given class
+		//Precisaria ter todos os compilation Unit em memoria para definir isso
 		if( !element_.getType().startsWith("I") &&
 				/* not contain business */ 
-				 !element_.getName().contains("business")) {
+				 !element_.getName().toLowerCase().contains("business")) {
 			elementResult.setResult(true);
 		}
 		

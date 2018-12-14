@@ -1,4 +1,4 @@
-package br.pucrio.inf.les.ese.dianalyzer.diast.model;
+package br.pucrio.inf.les.ese.dianalyzer.diast.logic;
 
 import java.util.List;
 import java.util.stream.Collectors;

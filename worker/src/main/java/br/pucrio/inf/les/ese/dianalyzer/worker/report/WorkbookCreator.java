@@ -3,6 +3,7 @@ package br.pucrio.inf.les.ese.dianalyzer.worker.report;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -40,11 +41,14 @@ public class WorkbookCreator implements IWorkbookCreator {
 				String cellValue = report.getLines().get(i).get(column);
 				row.createCell(column).setCellValue(cellValue);
 			}
-			
 		}
+		
+		Date date = new Date();
+		
+		String dateForFilename = date.getYear()+"-"+date.getMonth()+"-"+date.getDay()+"-"+date.getHours()+"-"+date.getMinutes()+"-"+date.getSeconds();
 
 		// Write the output to a file
-		FileOutputStream fileOut = new FileOutputStream(outputPath+"\\workbook.xls");
+		FileOutputStream fileOut = new FileOutputStream(outputPath+"\\workbook"+dateForFilename+".xls");
 		wb.write(fileOut);
 		fileOut.close();
 		

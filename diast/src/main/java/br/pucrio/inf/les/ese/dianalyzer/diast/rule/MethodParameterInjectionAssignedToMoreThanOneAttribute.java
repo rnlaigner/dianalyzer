@@ -12,8 +12,8 @@ import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.logic.AssignmentBusiness;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AssignmentBusiness;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
