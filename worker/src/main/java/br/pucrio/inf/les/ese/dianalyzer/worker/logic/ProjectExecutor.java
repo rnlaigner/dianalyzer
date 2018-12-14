@@ -50,7 +50,7 @@ public class ProjectExecutor implements IProjectExecutor {
 	private Report buildReportInfo(String projectPath){
 		Report report = new Report();
 		
-		String projectName = projectPath.substring(projectPath.lastIndexOf("\\"));
+		String projectName = projectPath.substring(projectPath.lastIndexOf("\\")+1);
 		
 		List<String> headers = new ArrayList<String>() { 
             /**

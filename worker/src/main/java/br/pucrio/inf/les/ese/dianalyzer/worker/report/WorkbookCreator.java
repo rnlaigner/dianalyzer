@@ -13,26 +13,35 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 public class WorkbookCreator implements IWorkbookCreator {
 
-	//TODO remove throwing exceptions
+	//TODO remove generic exceptions. Create exceptions specific for problem. Handle it here
 	@Override
 	public void create(Report report, String outputPath) throws IOException, FileNotFoundException {
 		
 		Workbook wb = new HSSFWorkbook();
 		//Workbook wb = new XSSFWorkbook();
 		CreationHelper createHelper = wb.getCreationHelper();
-		Sheet sheet = wb.createSheet("new sheet");
+		Sheet sheet = wb.createSheet(report.getProject());
 
-		// Create a row and put some cells in it. Rows are 0 based.
-		Row row = sheet.createRow((short)0);
-		// Create a cell and put a value in it.
-		Cell cell = row.createCell(0);
-		cell.setCellValue(1);
+		// Create the header
+		Row headerRow = sheet.createRow((short)0);
+		// Put values
+		for(int i=0;i<report.getHeaders().size();i++){
+			Cell cell = headerRow.createCell(i);
+			cell.setCellValue(report.getHeaders().get(i));
+		}
 
-		// Or do it on one line.
-		row.createCell(1).setCellValue(1.2);
-		row.createCell(2).setCellValue(
-		createHelper.createRichTextString("This is a string"));
-		row.createCell(3).setCellValue(true);
+		// Put results now
+		for(int i=0;i<report.getLines().size();i++){
+			int index = i + 1;
+			
+			Row row = sheet.createRow((short)index);
+			
+			for(int column=0;column<report.getLines().get(i).size();column++){				
+				String cellValue = report.getLines().get(i).get(column);
+				row.createCell(column).setCellValue(cellValue);
+			}
+			
+		}
 
 		// Write the output to a file
 		FileOutputStream fileOut = new FileOutputStream(outputPath+"\\workbook.xls");
