@@ -2,6 +2,7 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.CompilationUnit;
@@ -9,6 +10,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.AssignExpr;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
@@ -18,6 +20,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.MethodElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
 public class MethodParameterInjectionAssignedToMoreThanOneAttribute extends AbstractRuleWithNoElement {
@@ -67,7 +70,16 @@ public class MethodParameterInjectionAssignedToMoreThanOneAttribute extends Abst
 			
 			NodeList<Parameter> parameters = methodDeclaration.getParameters();
 			
-			NodeList<Statement> statements = methodDeclaration.getBody().get().getStatements();
+			NodeList<Statement> statements = null;
+			
+			try{
+				statements = methodDeclaration.getBody().get().getStatements();
+			}
+			catch(NoSuchElementException e){
+				log.info(e.getMessage());
+				log.info("Interface being processed. This rule does not apply to it.");
+				return;
+			}
 			
 			//search body for reassignment of element
 			List<AssignExpr> assignments = AssignmentBusiness.getAssignmentsFromStatements(statements);
@@ -84,7 +96,7 @@ public class MethodParameterInjectionAssignedToMoreThanOneAttribute extends Abst
 													)
 											.collect(Collectors.toList());
 				
-				if (assignmentsFromCurrentParameter.size() > 0) {
+				if (assignmentsFromCurrentParameter.size() > 1) {
 					
 					MethodElement methodElement = new MethodElement();
 					
@@ -93,14 +105,44 @@ public class MethodParameterInjectionAssignedToMoreThanOneAttribute extends Abst
 					//TODO aqui poderia ser set_method tambem
 					methodParameter.setInjectionType(InjectionType.METHOD);
 					
-					//methodParameter.set
+					//TODO verificar se eh interface precisa do hashmap de todos os compilation unit
+					methodParameter.setObjectType(ObjectType.CLASS);
+					
+					//TODO methodParameter recebe annotation caso methoddeclaration tenha
+					
+					methodParameter.setType(parameter.getTypeAsString());
+					
+					methodParameter.setModifiers(parameter.getModifiers().stream().map(p->p.asString()).collect(Collectors.toList()));
+					
 					methodParameter.setType( parameter.getTypeAsString() );
 					
 					methodParameter.setName( parameter.getNameAsString() );
 					
 					methodElement.addParameter( methodParameter );
 					
-					methodElement.setBody(methodDeclaration.getBody().toString());
+					methodElement.setModifiers(methodDeclaration.getModifiers().stream().map(p->p.asString()).collect(Collectors.toList()));
+					
+					methodElement.setBody(methodDeclaration.getBody().get().toString());
+					
+					//aqui eh uma string montada: exemplo -> tal parametro injetado eh atribuido a dois outros elementos
+					StringBuilder sb = new StringBuilder("Attributes ");
+					
+					sb.append( String.join(",", assignmentsFromCurrentParameter
+							.stream()
+							.filter(p -> p.getTarget() instanceof FieldAccessExpr)
+							.map(p-> ((FieldAccessExpr)p.getTarget()).getNameAsString())
+							.collect(Collectors.toList()))
+							);
+					
+					//assignmentsFromCurrentParameter.stream().forEach(p -> sb.append(p.toString()));
+					
+					sb.append(" on method "+ methodDeclaration.getNameAsString());
+					
+					methodElement.setName(sb.toString());
+					
+					//methodElement.setName( methodDeclaration.getNameAsString() );
+					
+					methodElement.setModifiers( methodDeclaration.getModifiers().stream().map(p->p.asString()).collect(Collectors.toList()) );
 					
 					methodParameterAssignedToMoreThanOneAttributeList.add( methodElement );
 					

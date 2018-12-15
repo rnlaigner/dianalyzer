@@ -19,6 +19,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.environment.ParseException;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.AbstractPractice;
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeEight;
+import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeEleven;
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeFive;
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeNine;
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeOne;
@@ -33,7 +34,7 @@ import br.pucrio.inf.les.ese.dianalyzer.worker.report.WorkbookCreator;
 
 @BadPracticesApplied(values={BadPracticeOne.class,BadPracticeTwo.class,/*BadPracticeThree.class,*/
 		/*BadPracticeFour.class,*/BadPracticeFive.class,/*BadPracticeSix.class,*/ BadPracticeSeven.class,
-		BadPracticeEight.class,BadPracticeNine.class,BadPracticeTen.class,BadPracticeTwelve.class})
+		BadPracticeEight.class,BadPracticeNine.class,BadPracticeTen.class,BadPracticeEleven.class,BadPracticeTwelve.class})
 public class ProjectExecutor implements IProjectExecutor {
 	
 	private final Log log = LogFactory.getLog(ProjectExecutor.class);

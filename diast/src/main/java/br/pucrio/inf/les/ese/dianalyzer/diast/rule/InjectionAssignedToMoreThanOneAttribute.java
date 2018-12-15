@@ -1,6 +1,7 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
@@ -60,7 +61,16 @@ public class InjectionAssignedToMoreThanOneAttribute extends AbstractRule {
 			
 			if (containsProducerAnnotation) return;
 			
-			NodeList<Statement> statements = methodDeclaration.getBody().get().getStatements();
+			NodeList<Statement> statements = null;
+			
+			try{
+				statements = methodDeclaration.getBody().get().getStatements();
+			}
+			catch(NoSuchElementException e){
+				log.info(e.getMessage());
+				log.info("Interface being processed. This rule does not apply to it.");
+				return;
+			}
 			
 			//search body for reassignment of element
 			List<AssignExpr> list = AssignmentBusiness.getAssignmentsFromStatements(statements);

@@ -24,7 +24,6 @@ public class BadPracticeEleven extends AbstractPractice {
 	public BadPracticeEleven() {
 		firstRule = new InjectionAssignedToMoreThanOneAttribute();
 		secondRule = new MethodParameterInjectionAssignedToMoreThanOneAttribute();
-		
 		setName("Instance injected for use in more than one attribute");
 		setNumber(11);
 	}

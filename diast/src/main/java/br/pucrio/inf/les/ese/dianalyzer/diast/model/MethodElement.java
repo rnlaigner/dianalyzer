@@ -5,27 +5,14 @@ import java.util.List;
 
 public class MethodElement extends AbstractElement {
 	
-	private List<String> modifiers;
-	
 	private List<AbstractElement> parameters;
 	
 	private String returnType;
 	
 	private String body;
-
-	//Added for bad practice 4
-	//private El
 	
 	public MethodElement(){
 		this.parameters = new ArrayList<AbstractElement>();	
-	}
-	
-	public List<String> getModifiers() {
-		return modifiers;
-	}
-	
-	public void setModifiers(List<String> modifiers) {
-		this.modifiers = modifiers;
 	}
 
 	public List<AbstractElement> getParameters() {
