@@ -6,8 +6,13 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 //TODO colocar isso em um projeto common
 public class Environment {
+	
+	private final Log log = LogFactory.getLog(Environment.class);
 	
 	public String buildPath(String value){
 		
@@ -43,17 +48,36 @@ public class Environment {
 			throw new Exception("The path is wrong or there is no files in the path provided.");
 		}
 		
-		for (final File fileEntry : listOfFiles) {
-			
-			String content = "";
-			
-			content = new String ( Files.readAllBytes( fileEntry.toPath() ) );
-
-            files.add(content);
-
-	    }
+		processFolderFiles(files, listOfFiles);
 
 		return files;
+		
+	}
+
+	private void processFolderFiles(List<String> files, File[] listOfFiles) throws Exception {
+		
+		for (final File fileEntry : listOfFiles) {
+			
+			//checa se fileEntry eh um folder. se for, chamada recursiva
+			if( fileEntry.isDirectory() ){
+				processFolderFiles(files,fileEntry.listFiles());
+			}
+			else {
+				String content = "";
+				
+				try {
+					content = new String ( Files.readAllBytes( fileEntry.toPath() ) );
+				}
+				catch(Exception e){
+					log.error(e.getMessage());
+					log.error(e.getStackTrace());
+					//throw new Exception("There is a folder opened in the provided project path. Close it and run again the program.");
+				}
+				
+	            files.add(content);
+			}
+
+	    }
 		
 	}
 	

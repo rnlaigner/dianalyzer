@@ -1,9 +1,11 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.Statement;
@@ -46,7 +48,26 @@ public class AppearsInEveryMethod extends AbstractRule {
 			
 //			NodeList<Parameter> parameters = methodDeclaration.getParameters();
 			
-			NodeList<Statement> statements = methodDeclaration.getBody().get().getStatements();
+			ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) methodDeclaration.getParentNode().get();
+			
+			if(classOrInterfaceDeclaration.isInterface()){
+				return;
+			}
+			
+			NodeList<Statement> statements = null;
+			
+			try{
+				statements = methodDeclaration.getBody().get().getStatements();
+			}
+			catch(NoSuchElementException e){
+				log.error(e.getMessage());
+				log.error(e.getStackTrace());
+			}
+			
+			//check if it is an abstract method
+			if(statements == null){
+				return;
+			}
 			
 			//se methodDeclaration is methodinjection, return
 			Boolean containsInjectionAnnotation = methodDeclaration.getAnnotations().stream().anyMatch(

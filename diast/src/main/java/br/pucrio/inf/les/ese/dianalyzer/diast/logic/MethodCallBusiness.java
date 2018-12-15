@@ -3,7 +3,6 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;

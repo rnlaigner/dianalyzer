@@ -37,6 +37,8 @@ public class IsNonUsedInjection extends AbstractMethodCallVisitor {
         
 		String nodeName = getNodeName(methodCall);
 		
+		//TODO test not working, should not catch MenuBusinessImpl	transferObjectBusiness
+		
 		//recursive call if parameter is a methodcallexpr
 		for(Expression expr : methodCall.getArguments()){
 			if(expr instanceof MethodCallExpr){

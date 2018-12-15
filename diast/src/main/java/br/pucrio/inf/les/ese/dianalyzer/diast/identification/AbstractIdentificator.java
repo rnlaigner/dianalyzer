@@ -2,6 +2,9 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.identification;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.github.javaparser.ast.CompilationUnit;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
@@ -9,6 +12,8 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
 
 public abstract class AbstractIdentificator {
+	
+	protected final Log log = LogFactory.getLog(getClass());
 	
 	private InjectionType injectionType;
 	

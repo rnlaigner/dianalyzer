@@ -8,6 +8,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.utils.Log;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ContainerClassType;
@@ -41,11 +42,20 @@ public class ContainerCallIdentificator extends AbstractIdentificator {
 				
 				Optional<Node> declaration = f.getParentNode();
 				
-				VariableDeclarator declarator = (VariableDeclarator) declaration.get();
+				VariableDeclarator declarator = null;
+				
+				try{
+					declarator = (VariableDeclarator) declaration.get();
+				}
+				catch(ClassCastException e){
+					log.error(e.getMessage());
+					//case where the method return an application context
+					return;
+				}
 				
 				variableDeclarationElement.setType(f.getName().asString());
 				
-				variableDeclarationElement.setClassType(ObjectType.CLASS);
+				variableDeclarationElement.setObjectType(ObjectType.CLASS);
 				
 				variableDeclarationElement.setMethodCall(declarator.getInitializer().toString());
 				

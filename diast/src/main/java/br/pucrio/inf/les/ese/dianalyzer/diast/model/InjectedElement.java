@@ -2,7 +2,7 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.model;
 
 public class InjectedElement extends AbstractElement {
 	
-	private ObjectType classType;
+	private ObjectType objectType;
 	
 	private String type;
 	
@@ -18,12 +18,12 @@ public class InjectedElement extends AbstractElement {
 		this.type = type;
 	}
 	
-	public ObjectType getClassType() {
-		return classType;
+	public ObjectType getObjectType() {
+		return objectType;
 	}
 	
-	public void setClassType(ObjectType classType) {
-		this.classType = classType;
+	public void setObjectType(ObjectType objectType) {
+		this.objectType = objectType;
 	}
 
 	public InjectionType getInjectionType() {

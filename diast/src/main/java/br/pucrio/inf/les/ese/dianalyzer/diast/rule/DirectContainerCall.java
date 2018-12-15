@@ -6,9 +6,11 @@ import java.util.NoSuchElementException;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
@@ -16,6 +18,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.ContainerClassType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.VariableDeclarationElement;
 
 public class DirectContainerCall extends AbstractMethodCallVisitor {
@@ -67,14 +70,36 @@ public class DirectContainerCall extends AbstractMethodCallVisitor {
 			expr = expr.getParentNode().get();
 		} while( !( expr instanceof ExpressionStmt ) );
 		
-		AssignExpr assignExpr = (AssignExpr) ((ExpressionStmt) expr).getExpression();
-		
-		String targetName = assignExpr.getTarget().toString();
-		
+		String targetName = null;
 		InjectedElement element = new InjectedElement();
-		//Not possible to get Type at this point
-//		element.setClassType(expr);
-//		element.setType(type);
+		
+		AssignExpr assignExpr = null;
+		
+		try{
+			assignExpr = (AssignExpr) ((ExpressionStmt) expr).getExpression();
+			targetName = assignExpr.getTarget().toString();
+		}
+		catch(ClassCastException e){
+			log.error(e.getMessage());
+		}
+		
+		VariableDeclarationExpr varDeclExpr;
+		
+		try{
+			varDeclExpr = (VariableDeclarationExpr) ((ExpressionStmt) expr).getExpression();
+
+			VariableDeclarator varDecl = (VariableDeclarator) varDeclExpr.getVariable(0);
+			
+			element.setType(varDecl.getType().asString());
+			
+			element.setObjectType(ObjectType.CLASS);
+			
+			targetName = varDecl.getNameAsString();
+		}
+		catch(ClassCastException e){
+			log.error(e.getMessage());
+		}
+		
 		element.setInjectionType(InjectionType.CONTAINER);
 		element.setName(targetName);
 		return element;

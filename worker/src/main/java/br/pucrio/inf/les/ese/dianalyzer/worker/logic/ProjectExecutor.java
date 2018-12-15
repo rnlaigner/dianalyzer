@@ -36,7 +36,7 @@ import br.pucrio.inf.les.ese.dianalyzer.worker.report.WorkbookCreator;
 		BadPracticeEight.class,BadPracticeNine.class,BadPracticeTen.class,BadPracticeTwelve.class})
 public class ProjectExecutor implements IProjectExecutor {
 	
-	protected final Log log = LogFactory.getLog(ProjectExecutor.class);
+	private final Log log = LogFactory.getLog(ProjectExecutor.class);
 	
 	private Environment env;
 	
@@ -103,12 +103,12 @@ public class ProjectExecutor implements IProjectExecutor {
 							.map( p -> p.getElement().getName() )
 							.collect(Collectors.toList());
 					
-					//FIXME
+					//README assumo aqui que todo compilationunit representa uma classe
 					String className = parsedObject.getTypes().get(0).getNameAsString();
 					
 					if(parsedObject.getTypes().size() > 1){
 						List<String> list = parsedObject.getTypes().stream().map(p->p.getNameAsString()).collect(Collectors.toList());
-						System.out.println(String.join(",",list));
+						log.info(String.join(",",list));
 					}
 					
 					String elements = String.join(",", elementsInvolved);
@@ -136,7 +136,6 @@ public class ProjectExecutor implements IProjectExecutor {
 			
 		}
 		
-		//TODO Salvar results em uma planilha
 		IWorkbookCreator workbookCreator = new WorkbookCreator();
 		
 		workbookCreator.create(report, outputPath);

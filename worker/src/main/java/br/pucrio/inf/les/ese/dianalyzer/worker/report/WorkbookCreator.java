@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Cell;
@@ -12,7 +14,11 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import br.pucrio.inf.les.ese.dianalyzer.worker.logic.ProjectExecutor;
+
 public class WorkbookCreator implements IWorkbookCreator {
+	
+	private final Log log = LogFactory.getLog(WorkbookCreator.class);
 
 	//TODO remove generic exceptions. Create exceptions specific for problem. Handle it here
 	@Override

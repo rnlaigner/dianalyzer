@@ -55,7 +55,7 @@ public abstract class AbstractMethodInjectionIdentificator extends AbstractInjec
 				elem.setType(parameter.getType().asString());
 				
 				try {
-					elem.setClassType( getObjectTypeFromString
+					elem.setObjectType( getObjectTypeFromString
 										(parameter.getChildNodes().
 												get(0).
 												getClass().
