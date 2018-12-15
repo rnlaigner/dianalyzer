@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
@@ -33,25 +35,21 @@ public class AppearsInEveryMethod extends AbstractRule {
 		@Override
 	    public void visit(MethodDeclaration methodDeclaration, AbstractElement element)
 	    {
-//			Boolean containsProducerAnnotation = 
-//					methodDeclaration
-//					.getAnnotations()
-//					.stream()
-//					.anyMatch(
-//							 an -> an
-//							.getName()
-//							.getIdentifier()
-//							.matches(ProducerAnnotation.getProducerAnnotationsRegex())
-//							);
-//			
-//			if (containsProducerAnnotation) return;
+			Node node = methodDeclaration.getParentNode().get();
 			
-//			NodeList<Parameter> parameters = methodDeclaration.getParameters();
-			
-			ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) methodDeclaration.getParentNode().get();
-			
-			if(classOrInterfaceDeclaration.isInterface()){
-				return;
+			if(node instanceof ClassOrInterfaceDeclaration){
+				ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) methodDeclaration.getParentNode().get();
+				
+				if(classOrInterfaceDeclaration.isInterface()){
+					return;
+				}
+			}
+			else if (node instanceof ObjectCreationExpr) {
+				ObjectCreationExpr objectCreationExpr = (ObjectCreationExpr) methodDeclaration.getParentNode().get();
+				
+				if(objectCreationExpr.getType().isClassOrInterfaceType()){
+					return;
+				}
 			}
 			
 			NodeList<Statement> statements = null;

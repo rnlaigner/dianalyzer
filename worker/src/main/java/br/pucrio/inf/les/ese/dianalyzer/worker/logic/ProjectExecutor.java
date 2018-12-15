@@ -85,9 +85,21 @@ public class ProjectExecutor implements IProjectExecutor {
 		
 		Report report = buildReportInfo(projectPath);
 		
+		int index = 0;
+		int size = files.size();
+		
 		for(String file : files){
 			
-			CompilationUnit parsedObject = (CompilationUnit) parser.parse(file);
+			index = index+1;
+			log.info("File "+index+" of "+size+" processed");
+			
+			CompilationUnit parsedObject = null;
+			try{
+				parsedObject = (CompilationUnit) parser.parse(file);
+			}
+			catch(ParseException e){
+				continue;
+			}
 			
 			//for each bad practice, process this file
 			for(AbstractPractice practice : badPracticesApplied){
@@ -104,30 +116,23 @@ public class ProjectExecutor implements IProjectExecutor {
 							.map( p -> p.getElement().getName() )
 							.collect(Collectors.toList());
 					
-					//README assumo aqui que todo compilationunit representa uma classe
-					String className = parsedObject.getTypes().get(0).getNameAsString();
-					
+					String className = null;
 					if(parsedObject.getTypes().size() > 1){
 						List<String> list = parsedObject.getTypes().stream().map(p->p.getNameAsString()).collect(Collectors.toList());
-						log.info(String.join(",",list));
+						className = String.join(",",list);
+					}else{
+						className = parsedObject.getTypes().get(0).getNameAsString();
 					}
 					
 					String elements = String.join(",", elementsInvolved);
 					
 					//Mount report line
-					List<String> line = new ArrayList<String>() { 
-			            /**
-						 * 
-						 */
-						private static final long serialVersionUID = -8971953175798272054L;
-	
-						{ 
-			                add( practice.getNumber().toString() );
-			                add( practice.getName() );
-							add( className ); 
-			                add( elements ); 
-			            } 
-			        };
+					List<String> line = new ArrayList<String>();
+					
+					line.add( practice.getNumber().toString() );
+					line.add( practice.getName() );
+			        line.add( className ); 
+	                line.add( elements ); 
 			        
 			        report.addLine(line);
 		        

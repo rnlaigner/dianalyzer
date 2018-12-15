@@ -15,11 +15,14 @@ public abstract class AbstractInjectionIdentificator extends AbstractIdentificat
 	
 	protected InjectionAnnotation getInjectionAnnotationFromString(String annotation) throws Exception {
 		
-		if(annotation.equals( InjectionAnnotation.AUTOWIRED.getValue().toString() ) )
+		if(annotation.equals( InjectionAnnotation.AUTOWIRED.getValue().toString() ) ){
 				return InjectionAnnotation.AUTOWIRED;
-		if(annotation.equals( InjectionAnnotation.INJECT.getValue().toString() ) )
+		}
+		if(annotation.equals( InjectionAnnotation.INJECT.getValue().toString() ) ){
 				return InjectionAnnotation.INJECT;
-		throw new Exception("Errado!");
+		}
+		
+		throw new Exception("Annotation '"+ annotation +"' is not recognized");
 	
 	}
 

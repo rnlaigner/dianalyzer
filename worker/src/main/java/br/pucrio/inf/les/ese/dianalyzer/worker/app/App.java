@@ -7,8 +7,11 @@ public class App {
 
 	public static void main(String[] args) {
 		
-		String projectPath = "C:\\Users\\Henrique\\workspace\\agilefant\\webapp\\src\\main\\java\\fi\\hut\\soberit\\agilefant";
+		String projectPath;
+		//projectPath = "C:\\Users\\Henrique\\workspace\\agilefant\\webapp\\src\\main\\java\\fi\\hut\\soberit\\agilefant";
 		//projectPath = projectPath + "\\business\\impl";
+		
+		projectPath = "C:\\Users\\Henrique\\workspace\\libreplan";
 		
 		String outputPath = "C:\\Users\\Henrique";
 		

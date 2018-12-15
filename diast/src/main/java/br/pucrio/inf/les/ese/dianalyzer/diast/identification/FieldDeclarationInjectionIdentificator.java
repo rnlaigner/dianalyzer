@@ -10,6 +10,7 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionAnnotation;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 
 public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIdentificator {
@@ -56,17 +57,31 @@ public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIde
 					e2.printStackTrace();
 				}
 				
-				String annotation = f.getAnnotations()
+				List<String> annotations = f.getAnnotations()
 											.stream()
 											.distinct()
 											.map(e -> e.getName().asString())
-											.collect( Collectors.toList() )
-											.get(0);							
+											.collect( Collectors.toList() );							
 				
 				elem.setName(variable.getName().toString());
 				
+				InjectionAnnotation injectionAnnotation = null;
+				for(String annotation : annotations){
+					try{
+						injectionAnnotation = getInjectionAnnotationFromString(annotation);
+					}
+					catch(Exception e){
+						continue;
+					}
+				}
+				
+//				TODO Nao quero ter de adicionar ao metodo. Pensar em algo				
+//				if(injectionAnnotation == null){
+//					throw new Exception("No annotations were identified.");
+//				}
+				
 				try {
-					elem.setAnnotation(getInjectionAnnotationFromString(annotation));
+					elem.setAnnotation(injectionAnnotation);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}

@@ -114,7 +114,14 @@ public class InjectionOpenedForChange extends AbstractRule {
 		
 		result.setResult(false);
 		
-		Boolean isPublic = element.getModifiers().stream().anyMatch(m -> m.equals("public"));
+		Boolean isPublic = false;
+		
+		try{
+			isPublic = element.getModifiers().stream().anyMatch(m -> m.equals("public"));
+		}
+		catch(Exception e){
+			log.error(e.getMessage());
+		}
 		
 		if(methodLikeSetter > 0 || isPublic) result.setResult(true);
 		

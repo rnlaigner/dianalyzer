@@ -3,18 +3,16 @@ package br.pucrio.inf.les.ese.dianalyzer.worker.report;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-
-import br.pucrio.inf.les.ese.dianalyzer.worker.logic.ProjectExecutor;
 
 public class WorkbookCreator implements IWorkbookCreator {
 	
@@ -25,8 +23,6 @@ public class WorkbookCreator implements IWorkbookCreator {
 	public void create(Report report, String outputPath) throws IOException, FileNotFoundException {
 		
 		Workbook wb = new HSSFWorkbook();
-		//Workbook wb = new XSSFWorkbook();
-		CreationHelper createHelper = wb.getCreationHelper();
 		Sheet sheet = wb.createSheet(report.getProject());
 
 		// Create the header
@@ -36,6 +32,8 @@ public class WorkbookCreator implements IWorkbookCreator {
 			Cell cell = headerRow.createCell(i);
 			cell.setCellValue(report.getHeaders().get(i));
 		}
+		
+		log.info("Header created.");
 
 		// Put results now
 		for(int i=0;i<report.getLines().size();i++){
@@ -49,12 +47,12 @@ public class WorkbookCreator implements IWorkbookCreator {
 			}
 		}
 		
-		Date date = new Date();
+		log.info("Lines processed.");
 		
-		String dateForFilename = date.getYear()+"-"+date.getMonth()+"-"+date.getDay()+"-"+date.getHours()+"-"+date.getMinutes()+"-"+date.getSeconds();
+		String filename = buildFilename(outputPath,report.getProject());
 
 		// Write the output to a file
-		FileOutputStream fileOut = new FileOutputStream(outputPath+"\\workbook"+dateForFilename+".xls");
+		FileOutputStream fileOut = new FileOutputStream(filename);
 		wb.write(fileOut);
 		fileOut.close();
 		
@@ -62,6 +60,21 @@ public class WorkbookCreator implements IWorkbookCreator {
 		
 	}
 	
-	
+	private String buildFilename(String outputPath, String basefilename){
+		
+		LocalDateTime now = LocalDateTime.now();
+		int year = now.getYear();
+		int month = now.getMonthValue();
+		int day = now.getDayOfMonth();
+		int hour = now.getHour();
+		int minute = now.getMinute();
+		int second = now.getSecond();
+		int millis = now.get(ChronoField.MILLI_OF_SECOND); 
+		
+		String dateForFilename = year+"_"+month+"_"+day+"_"+hour+"_"+minute+"_"+second+"_"+millis;
+		
+		return outputPath+"\\"+basefilename+"_"+dateForFilename+".xls";
+		
+	}
 
 }
