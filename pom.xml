@@ -53,6 +53,7 @@
     <module>diast</module>
     <module>repextractor</module>
     <module>worker</module>
+    <module>layer</module>
   </modules>
   
 </project>

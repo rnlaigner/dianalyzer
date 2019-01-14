@@ -11,8 +11,6 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
-  
-  
   <artifactId>diast</artifactId>
   <name>diast</name>
   <url>http://maven.apache.org</url>
