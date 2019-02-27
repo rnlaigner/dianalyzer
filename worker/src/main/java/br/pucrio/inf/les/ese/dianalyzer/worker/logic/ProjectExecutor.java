@@ -1,6 +1,5 @@
 package br.pucrio.inf.les.ese.dianalyzer.worker.logic;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -8,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
+import br.pucrio.inf.les.ese.dianalyzer.repository.model.IDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -75,7 +76,7 @@ public class ProjectExecutor implements IProjectExecutor {
 	}
 
 	@Override
-	public void execute(String projectPath, String outputPath) throws IOException, ParseException, Exception {
+	public void execute(String projectPath, String outputPath) throws Exception {
 		
 		IParser parser = new JavaParserParser();
 		
@@ -87,17 +88,23 @@ public class ProjectExecutor implements IProjectExecutor {
 		
 		int index = 0;
 		int size = files.size();
+
+		// TODO laigner this should be global in order to a rule access all parsed files
+		IDataSource dataSource = (IDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
 		
 		for(String file : files){
 			
-			index = index+1;
+			index = index++;
 			log.info("File "+index+" of "+size+" processed");
 			
 			CompilationUnit parsedObject = null;
 			try{
 				parsedObject = (CompilationUnit) parser.parse(file);
+				dataSource.insert( parsedObject.getPrimaryTypeName().get(), parsedObject);
 			}
 			catch(ParseException e){
+				log.error(e.getMessage());
+				log.error(e.getStackTrace());
 				continue;
 			}
 			

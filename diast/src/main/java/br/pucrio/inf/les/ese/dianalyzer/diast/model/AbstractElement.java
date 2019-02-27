@@ -2,6 +2,7 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.model;
 
 import java.util.List;
 
+// TODO laigner transform in abstract class...
 public class AbstractElement {
 	
 	private List<String> modifiers;

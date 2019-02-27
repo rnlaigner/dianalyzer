@@ -11,8 +11,6 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
-  
-  
   <artifactId>diast</artifactId>
   <name>diast</name>
   <url>http://maven.apache.org</url>
@@ -28,7 +26,12 @@
         <artifactId>javaparser-symbol-solver-core</artifactId>
         <version>3.6.12</version>
     </dependency>
-    <!-- JavaParser itself is not a dependency here. It gets included indirectly through java-symbol-solver-core -->
+      <dependency>
+          <groupId>br.pucrio.inf.les.ese</groupId>
+          <artifactId>repository</artifactId>
+          <version>${parent.version}</version>
+      </dependency>
+      <!-- JavaParser itself is not a dependency here. It gets included indirectly through java-symbol-solver-core -->
   </dependencies>
   
 </project>
