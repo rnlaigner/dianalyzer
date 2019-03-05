@@ -21,7 +21,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionI
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 
-public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
+public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultipleResults {
 	
 	/* Metric for God Class */
 	private static final int WMC = 46;

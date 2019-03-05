@@ -23,7 +23,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.MethodElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
-public class MethodParameterInjectionAssignedToMoreThanOneAttribute extends AbstractRuleWithNoElement {
+public class MethodParameterInjectionAssignedToMoreThanOneAttribute extends AbstractRuleWithNoElementMultipleResults {
 	
 	/*
 	 class ExampleBusiness extends GenericBusinessImpl {
@@ -122,7 +122,7 @@ public class MethodParameterInjectionAssignedToMoreThanOneAttribute extends Abst
 					
 					methodElement.setModifiers(methodDeclaration.getModifiers().stream().map(p->p.asString()).collect(Collectors.toList()));
 					
-					methodElement.setBody(methodDeclaration.getBody().get().toString());
+					methodElement.setBody(methodDeclaration.getBody().get());
 					
 					//aqui eh uma string montada: exemplo -> tal parametro injetado eh atribuido a dois outros elementos
 					StringBuilder sb = new StringBuilder("Attributes ");

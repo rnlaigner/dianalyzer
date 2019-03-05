@@ -11,14 +11,14 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionI
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.rule.MultipleFormOfInjection;
+import br.pucrio.inf.les.ese.dianalyzer.diast.rule.MultipleFormsOfInjection;
 
 public class BadPracticeTwelve extends AbstractPractice {
 	
-	private MultipleFormOfInjection rule;
+	private MultipleFormsOfInjection rule;
 
 	public BadPracticeTwelve() {
-		rule = new MultipleFormOfInjection();
+		rule = new MultipleFormsOfInjection();
 		
 		setName("Multiple forms of injection for a given element");
 		setNumber(12);

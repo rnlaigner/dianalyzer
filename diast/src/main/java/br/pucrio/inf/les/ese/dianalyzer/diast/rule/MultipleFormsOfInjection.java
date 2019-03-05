@@ -8,17 +8,12 @@ import java.util.Map;
 import com.github.javaparser.ast.CompilationUnit;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 
-public class MultipleFormOfInjection extends AbstractRuleWithElement {
+public class MultipleFormsOfInjection extends AbstractRuleWithElements {
 
 	@Override
-	public ElementResult processRule(CompilationUnit cu, AbstractElement element) throws Exception {
-		throw new Exception("Excecao!");
-	}
-	
-	public List<ElementResult> processRule(CompilationUnit cu, List<AbstractElement> elements) {
+	public List<ElementResult> processRule(CompilationUnit cu, List<InjectedElement> elements) {
 				
 		List<ElementResult> results = new ArrayList<ElementResult>();
 		
@@ -26,9 +21,7 @@ public class MultipleFormOfInjection extends AbstractRuleWithElement {
 		
 		Map<String,Integer> elementCountMap = new HashMap<String,Integer>();
 		
-		for(AbstractElement element_ : elements){
-			
-			InjectedElement element = (InjectedElement) element_;
+		for(InjectedElement element : elements){
 			
 			String key = element.getName();
 			

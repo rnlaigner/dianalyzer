@@ -8,7 +8,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 
-public class FrameworkSpecificAnnotation extends AbstractRuleWithElementWithMultipleElements {
+public class FrameworkSpecificAnnotation extends AbstractRuleWithElements {
 
 	@Override
 	protected List<ElementResult> processRule(CompilationUnit cu, List<InjectedElement> elements) throws Exception {
