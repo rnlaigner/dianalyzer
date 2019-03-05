@@ -43,8 +43,8 @@ public class BadPracticeEleven extends AbstractPractice {
         elements.addAll(methodId.identify(cu));
         elements.addAll(setMethodId.identify(cu));
         
-        //uma vez que um elemento eh instanciado via injecao
-        //o objetivo da rotina abaixo eh verificar se outro atributo recebe valor deste
+        // uma vez que um elemento eh instanciado via injecao
+        // o objetivo da rotina abaixo eh verificar se outro atributo recebe valor deste
         for (AbstractElement element : elements) {
         	
         	InjectedElement elem = (InjectedElement) element;
@@ -54,8 +54,8 @@ public class BadPracticeEleven extends AbstractPractice {
         	}
         }
         
-        //a rotina abaixo agora verifica se uma injecao via parametro do metodo
-        //tem sua instancia assinalada para mais de um atributo dentro do body do metodo
+        // a rotina abaixo agora verifica se uma injecao via parametro do metodo
+        // tem sua instancia assinalada para mais de um atributo dentro do body do metodo
         List<ElementResult> results =  secondRule.processRule(cu);
         cuResult.addAllElementResultToList(results);
         

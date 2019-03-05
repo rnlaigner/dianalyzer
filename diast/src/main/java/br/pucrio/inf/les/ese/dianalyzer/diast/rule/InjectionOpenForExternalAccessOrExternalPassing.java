@@ -12,7 +12,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
-public class InjectionOpenForExternalAccessOrExternalPassing extends AbstractMethodCallVisitor {
+public class InjectionOpenForExternalAccessOrExternalPassing extends AbstractMethodCallVisitorWithElement {
 	
 	private Integer methodOpening;
 	

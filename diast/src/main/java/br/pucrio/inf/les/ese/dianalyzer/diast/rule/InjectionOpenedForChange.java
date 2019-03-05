@@ -15,7 +15,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionAnnotation;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
-public class InjectionOpenedForChange extends AbstractRule {
+public class InjectionOpenedForChange extends AbstractRuleWithElement {
 	
 	Integer methodLikeSetter;
 	

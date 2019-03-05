@@ -6,7 +6,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 
-public class ReferenceOnConcreteClass extends AbstractRule {
+public class ReferenceOnConcreteClass extends AbstractRuleWithElement {
 
 	public ReferenceOnConcreteClass() {
 		super();

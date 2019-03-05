@@ -21,7 +21,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.VariableDeclarationElement;
 
-public class DirectContainerCall extends AbstractMethodCallVisitor {
+public class DirectContainerCall extends AbstractMethodCallVisitorWithElement {
 	
 	List<InjectedElement> containerCallElements = new ArrayList<InjectedElement>();
 	

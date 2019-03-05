@@ -11,6 +11,11 @@ public class HashMapDataSource implements IDataSource<String, Object> {
     }
 
     @Override
+    public Collection<Map.Entry> findAll(){
+        return hashMap.entrySet();
+    }
+
+    @Override
     public Collection<Object> find(String key) {
         List list = new ArrayList<Object>();
         list.add( this.hashMap.get(key));

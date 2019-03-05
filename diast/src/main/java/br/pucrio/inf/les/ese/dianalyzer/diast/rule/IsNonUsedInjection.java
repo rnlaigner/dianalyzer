@@ -7,7 +7,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 
-public class IsNonUsedInjection extends AbstractMethodCallVisitor {
+public class IsNonUsedInjection extends AbstractMethodCallVisitorWithElement {
 	
 	private Integer numberOfAppearances;
 

@@ -1,30 +1,37 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.practices;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.rule.MultipleFormOfInjection;
-import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
-import br.pucrio.inf.les.ese.dianalyzer.repository.model.IDataSource;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
+import br.pucrio.inf.les.ese.dianalyzer.diast.rule.IsPrototypeScopeBean;
 import com.github.javaparser.ast.CompilationUnit;
 
 public class BadPracticeThirteen extends AbstractPractice {
 
-	private MultipleFormOfInjection rule;
+	private IsPrototypeScopeBean rule;
 
 	public BadPracticeThirteen() {
-		// rule = new MultipleFormOfInjection();
+		rule = new IsPrototypeScopeBean();
 		
-		setName("Multiple forms of injection for a given element");
+		// setName("Classes injected in multiple places must be singleton (in order to avoid multiple instances)");
+		setName("Prototype bean as singleton");
+
+		// caso onde um bean prototype eh injetado em um bean singleton, sendo assim tratado como singleton tambem
+		// nessa dependencia
+
 		setNumber(13);
 	}
 
 	@Override
 	public CompilationUnitResult process(final CompilationUnit cu) {
 
-        IDataSource dataSource = (IDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
+		CompilationUnitResult cuResult = new CompilationUnitResult();
 
+		ElementResult result =  rule.processRule(cu);
+		if(result.getResult()){
+			cuResult.addElementResultToList(result);
+		}
 
-
-		return null;
+		return cuResult;
 		
 	}
 

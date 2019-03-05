@@ -4,6 +4,8 @@ import java.util.Collection;
 
 public interface IDataSource<S, T> {
 
+    Collection<?> findAll();
+
     Collection<T> find( S key );
 
     T insert( S key, T element );

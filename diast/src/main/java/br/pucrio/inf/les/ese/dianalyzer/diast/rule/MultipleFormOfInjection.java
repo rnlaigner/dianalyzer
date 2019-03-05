@@ -11,7 +11,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 
-public class MultipleFormOfInjection extends AbstractRule {
+public class MultipleFormOfInjection extends AbstractRuleWithElement {
 
 	@Override
 	public ElementResult processRule(CompilationUnit cu, AbstractElement element) throws Exception {

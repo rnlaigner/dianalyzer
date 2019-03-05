@@ -10,11 +10,11 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 
-public abstract class AbstractMethodCallVisitor extends AbstractRule {
+public abstract class AbstractMethodCallVisitorWithElement extends AbstractRuleWithElement {
 	
 	protected MethodCallVisitor methodCallVisitor;
 	
-	public AbstractMethodCallVisitor(){
+	public AbstractMethodCallVisitorWithElement(){
 		methodCallVisitor = new MethodCallVisitor();
 	}
 	

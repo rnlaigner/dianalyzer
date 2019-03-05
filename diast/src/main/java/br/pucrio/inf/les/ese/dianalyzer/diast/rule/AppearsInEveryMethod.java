@@ -18,7 +18,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionAnnotation;
 
-public class AppearsInEveryMethod extends AbstractRule {
+public class AppearsInEveryMethod extends AbstractRuleWithElement {
 
 	private Integer numberOfAppearances;
 	private Integer numberOfMethods;

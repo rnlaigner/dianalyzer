@@ -23,8 +23,8 @@ public class ProducerMethodIdentificator extends AbstractIdentificator {
 		List<AbstractElement> elements = new ArrayList<AbstractElement>();
 		
 		cu.findAll(MethodDeclaration.class).stream()
-			.filter(f -> { 
-				return 
+			.filter(f -> {
+				return
 						f.getAnnotations()
 						.stream()
 						.anyMatch(a -> a
@@ -39,6 +39,9 @@ public class ProducerMethodIdentificator extends AbstractIdentificator {
 				f.getModifiers().stream().forEach( m -> { modifiers.add( m.asString() ); } );
 				 				
 				elem.setModifiers(modifiers);
+
+//				List<String> parameters = new ArrayList<String>();
+//				f.getParameters().stream().forEach( param -> { parameters.add( param. )  } );
 				
 				/*
 				elem.setType(f.getType().asString());
@@ -59,6 +62,10 @@ public class ProducerMethodIdentificator extends AbstractIdentificator {
 											.get(0);							
 				
 				elem.setName(f.getName().toString());
+
+				elem.setBody( f.getBody().get() );
+
+				elem.setReturnType( f.getTypeAsString() );
 				
 				try {
 					elem.setAnnotation(getProducerAnnotationFromString(annotation));
@@ -84,7 +91,5 @@ public class ProducerMethodIdentificator extends AbstractIdentificator {
 		throw new Exception("Errado!");
 	
 	}
-	
-	
 	
 }

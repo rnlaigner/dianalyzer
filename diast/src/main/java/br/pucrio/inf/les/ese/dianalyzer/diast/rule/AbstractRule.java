@@ -1,12 +1,7 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
-
+;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.github.javaparser.ast.CompilationUnit;
-
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 
 public abstract class AbstractRule {
 	
@@ -31,7 +26,5 @@ public abstract class AbstractRule {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	protected abstract ElementResult processRule(CompilationUnit cu, AbstractElement element) throws Exception;
 	
 }

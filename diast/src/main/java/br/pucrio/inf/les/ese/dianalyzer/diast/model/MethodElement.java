@@ -1,5 +1,7 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.model;
 
+import com.github.javaparser.ast.stmt.BlockStmt;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +11,7 @@ public class MethodElement extends AbstractElement {
 	
 	private String returnType;
 	
-	private String body;
+	private BlockStmt body;
 	
 	public MethodElement(){
 		this.parameters = new ArrayList<AbstractElement>();	
@@ -35,11 +37,11 @@ public class MethodElement extends AbstractElement {
 		this.returnType = returnType;
 	}
 
-	public String getBody() {
+	public BlockStmt getBody() {
 		return body;
 	}
 
-	public void setBody(String body) {
+	public void setBody(BlockStmt body) {
 		this.body = body;
 	}
 	

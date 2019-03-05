@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.practices.*;
 import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
 import br.pucrio.inf.les.ese.dianalyzer.repository.model.IDataSource;
 import org.apache.commons.logging.Log;
@@ -18,24 +19,26 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.environment.IParser;
 import br.pucrio.inf.les.ese.dianalyzer.diast.environment.JavaParserParser;
 import br.pucrio.inf.les.ese.dianalyzer.diast.environment.ParseException;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.practices.AbstractPractice;
-import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeEight;
-import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeEleven;
-import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeFive;
-import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeNine;
-import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeOne;
-import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeSeven;
-import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeTen;
-import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeTwelve;
-import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeTwo;
 import br.pucrio.inf.les.ese.dianalyzer.worker.environment.Environment;
 import br.pucrio.inf.les.ese.dianalyzer.worker.report.IWorkbookCreator;
 import br.pucrio.inf.les.ese.dianalyzer.worker.report.Report;
 import br.pucrio.inf.les.ese.dianalyzer.worker.report.WorkbookCreator;
 
-@BadPracticesApplied(values={BadPracticeOne.class,BadPracticeTwo.class,/*BadPracticeThree.class,*/
-		/*BadPracticeFour.class,*/BadPracticeFive.class,/*BadPracticeSix.class,*/ BadPracticeSeven.class,
-		BadPracticeEight.class,BadPracticeNine.class,BadPracticeTen.class,BadPracticeEleven.class,BadPracticeTwelve.class})
+@BadPracticesApplied(values={
+		BadPracticeOne.class,
+		BadPracticeTwo.class,
+		/*BadPracticeThree.class,*/
+		/*BadPracticeFour.class,*/
+		BadPracticeFive.class,
+		/*BadPracticeSix.class,*/
+		BadPracticeSeven.class,
+		BadPracticeEight.class,
+		BadPracticeNine.class,
+		BadPracticeTen.class,
+		BadPracticeEleven.class,
+		BadPracticeTwelve.class,
+		BadPracticeThirteen.class
+})
 public class ProjectExecutor implements IProjectExecutor {
 	
 	private final Log log = LogFactory.getLog(ProjectExecutor.class);
@@ -107,7 +110,9 @@ public class ProjectExecutor implements IProjectExecutor {
 				log.error(e.getStackTrace());
 				continue;
 			}
-			
+
+			// TODO for each parsedObject and for each bad practice, process ...
+
 			//for each bad practice, process this file
 			for(AbstractPractice practice : badPracticesApplied){
 				

@@ -15,7 +15,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
-public class InjectionAssignedToMoreThanOneAttribute extends AbstractRule {
+public class InjectionAssignedToMoreThanOneAttribute extends AbstractRuleWithElement {
 	
 	/*
 	 class ExampleBusiness extends GenericBusinessImpl {

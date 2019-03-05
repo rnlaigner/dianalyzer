@@ -7,16 +7,11 @@ import java.util.Map;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.expr.VariableDeclarationExpr;
-import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.IfStmt;
-import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ConstructorInjectionIdentificator;
@@ -25,8 +20,6 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.identification.FieldDeclarationInj
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
 public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
 	
@@ -87,11 +80,6 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
 			
 	    }
 		
-	}
-
-	@Override
-	public ElementResult processRule(CompilationUnit cu, AbstractElement element) throws Exception {
-		throw new Exception("Not implemented");
 	}
 	
 	@Override

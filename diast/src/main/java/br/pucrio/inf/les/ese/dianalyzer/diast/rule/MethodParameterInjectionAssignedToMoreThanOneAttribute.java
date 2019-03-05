@@ -155,11 +155,6 @@ public class MethodParameterInjectionAssignedToMoreThanOneAttribute extends Abst
 	}
 
 	@Override
-	public ElementResult processRule(CompilationUnit cu, AbstractElement element) throws Exception {
-		throw new Exception("Not implemented");
-	}
-
-	@Override
 	public List<ElementResult> processRule(CompilationUnit cu) {
 		
 		methodParameterAssignedToMoreThanOneAttributeList = new ArrayList<MethodElement>();

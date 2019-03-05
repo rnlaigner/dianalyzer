@@ -1,6 +1,5 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.practices;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.github.javaparser.ast.CompilationUnit;
@@ -10,15 +9,28 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.rule.ProducerMethodWithBusinessRule;
+import br.pucrio.inf.les.ese.dianalyzer.diast.rule.ProducerMethodWithHighComplexity;
 
 public class BadPracticeThree extends AbstractPractice {
-	
-	private ProducerMethodWithBusinessRule rule;
 
-	public BadPracticeThree() {		
-		List<String> list = identifyBusinessClasses();
-		rule = new ProducerMethodWithBusinessRule(list);
+
+	// TODO: fazer a identificacao das classes de negocio de maneira generica
+	// nao eh possivel discernir se o conjunto de linhas de codigo dentro de um
+	// metodo bean/produces se refere a logica
+	// isso tem de ser feito manualmente
+
+	private ProducerMethodWithHighComplexity rule;
+
+	/**
+	 * A implementacao hoje busca classes anotadas com @Service.
+	 * Uma classe service usada dentro de @Produces/@Bean nao tem problema.
+	 * Entretanto, mais que uma, a sugestao eh que seja refatorada paa outra classe.
+	 *
+	 * Ou melhor, complexidade ciclomatica maior que um threshold
+	 * entao tal conjunto de linhas deve ser refatorada para uma classe
+	 */
+	public BadPracticeThree() {
+		rule = new ProducerMethodWithHighComplexity();
 		setName("Producer method with business rules (logic)");
 		setNumber(3);
 	}
@@ -43,14 +55,7 @@ public class BadPracticeThree extends AbstractPractice {
         }
         
         return cuResult;
-        
-        
-		
-	}
-	
-	//TODO: encontrar todas as classes de negocio do projeto
-	private List<String> identifyBusinessClasses(){
-		return new ArrayList<String>();
+
 	}
 
 }
