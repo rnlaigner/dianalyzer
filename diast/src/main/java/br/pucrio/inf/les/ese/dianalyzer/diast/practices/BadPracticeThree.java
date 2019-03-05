@@ -13,12 +13,6 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.rule.ProducerMethodWithHighComplex
 
 public class BadPracticeThree extends AbstractPractice {
 
-
-	// TODO: fazer a identificacao das classes de negocio de maneira generica
-	// nao eh possivel discernir se o conjunto de linhas de codigo dentro de um
-	// metodo bean/produces se refere a logica
-	// isso tem de ser feito manualmente
-
 	private ProducerMethodWithHighComplexity rule;
 
 	/**
@@ -31,7 +25,7 @@ public class BadPracticeThree extends AbstractPractice {
 	 */
 	public BadPracticeThree() {
 		rule = new ProducerMethodWithHighComplexity();
-		setName("Producer method with business rules (logic)");
+		setName("Producer method with high cyclomatic complexity.");
 		setNumber(3);
 	}
 
