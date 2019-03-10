@@ -2,13 +2,10 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.practices;
 
 import java.util.List;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.*;
 import com.github.javaparser.ast.CompilationUnit;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ProducerMethodIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.rule.ProducerMethodWithHighComplexity;
 
 public class BadPracticeThree extends AbstractPractice {
@@ -18,7 +15,7 @@ public class BadPracticeThree extends AbstractPractice {
 	/**
 	 * A implementacao hoje busca classes anotadas com @Service.
 	 * Uma classe service usada dentro de @Produces/@Bean nao tem problema.
-	 * Entretanto, mais que uma, a sugestao eh que seja refatorada paa outra classe.
+	 * Entretanto, mais que uma, a sugestao eh que seja refatorada para outra classe.
 	 *
 	 * Ou melhor, complexidade ciclomatica maior que um threshold
 	 * entao tal conjunto de linhas deve ser refatorada para uma classe
@@ -40,8 +37,8 @@ public class BadPracticeThree extends AbstractPractice {
         List<AbstractElement> elements =  methods.identify(cu);
         
         for (AbstractElement element : elements) {
-        	
-        	InjectedElement elem = (InjectedElement) element;
+
+			ProducerMethodElement elem = (ProducerMethodElement) element;
         	ElementResult result = rule.processRule(cu, elem);
         	
         	cuResult.addElementResultToList(result);
