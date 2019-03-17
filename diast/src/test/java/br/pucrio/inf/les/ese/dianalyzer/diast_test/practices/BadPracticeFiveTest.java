@@ -1,15 +1,15 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast_test.practices;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.practices.AbstractPractice;
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeFive;
-import br.pucrio.inf.les.ese.dianalyzer.diast_test.annotation.ResourceFolder;
+import br.pucrio.inf.les.ese.dianalyzer.diast_test.annotation.BadPracticeApplied;
 
-@ResourceFolder(value="src//test//resources//BadPracticeFive")
+import java.util.List;
+
+@BadPracticeApplied(BadPracticeFive.class)
 public class BadPracticeFiveTest extends AbstractBadPracticeTest {
-	
-	@Override
-	public Class<? extends AbstractPractice> getConcretePractice() {
-		return BadPracticeFive.class;
-	}
 
+	@Override
+	public List<String> setUp() {
+		return null;
+	}
 }

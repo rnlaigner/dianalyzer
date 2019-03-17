@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Environment {
 	
-	public String buildPath(String value){
+	public static String buildPath(String value){
 		
 		String pathConnector;
 		if(System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
@@ -26,7 +26,7 @@ public class Environment {
 		
 	}
 	
-	public List<String> readFilesFromFolder(String folder, boolean buildPath) throws IOException{
+	public static List<String> readFilesFromFolder(String folder, boolean buildPath) throws IOException{
 		
 		if(buildPath){
 			folder = buildPath(folder);
