@@ -8,8 +8,8 @@ import java.util.List;
 @BadPracticeApplied(BadPracticeFive.class)
 public class BadPracticeFiveTest extends AbstractBadPracticeTest {
 
-	@Override
-	public List<String> setUp() {
-		return null;
-	}
+    @Override
+    public List<String> setUp() {
+        return super.getClassesToParse();
+    }
 }

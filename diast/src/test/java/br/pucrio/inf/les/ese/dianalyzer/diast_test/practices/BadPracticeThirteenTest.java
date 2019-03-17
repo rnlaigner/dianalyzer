@@ -2,13 +2,11 @@ package br.pucrio.inf.les.ese.dianalyzer.diast_test.practices;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeThirteen;
 import br.pucrio.inf.les.ese.dianalyzer.diast_test.annotation.BadPracticeApplied;
-import br.pucrio.inf.les.ese.dianalyzer.diast_test.env.Environment;
 import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
 import br.pucrio.inf.les.ese.dianalyzer.repository.model.IDataSource;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +25,13 @@ public class BadPracticeThirteenTest extends AbstractBadPracticeTest {
 		for(String class_ : classes){
 			CompilationUnit cu = JavaParser.parse(class_);
 
-			dataSource.insert( "Teste", cu );
+			String typeName = cu.getType(0).getNameAsString();
+
+			dataSource.insert( typeName, cu );
 		}
+
+		// only first should be analyzed. others are part of the 'database'
+		classes.remove(1);
 
 		return classes;
 	}

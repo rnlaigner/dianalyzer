@@ -9,7 +9,9 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
 import br.pucrio.inf.les.ese.dianalyzer.repository.model.IDataSource;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.AnnotationDeclaration;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
+import com.github.javaparser.ast.expr.StringLiteralExpr;
 
 import java.util.Collection;
 import java.util.List;
@@ -30,10 +32,10 @@ public class IsPrototypeScopeBeanAsSingleton extends AbstractRuleWithNoElement {
 
 		// default is singleton on spring
 
-		AnnotationDeclaration annotation;
+		AnnotationExpr annotation;
 
 		try {
-			annotation = cu.getAnnotationDeclarationByName("Scope").get();
+			annotation = cu.getType(0).getAnnotationByName("Scope").get();
 		}
 		catch(NoSuchElementException e){
 			ElementResult result = new ElementResult();
@@ -42,18 +44,25 @@ public class IsPrototypeScopeBeanAsSingleton extends AbstractRuleWithNoElement {
 			return result;
 		}
 
+		String annotationAsString = ((StringLiteralExpr) ((SingleMemberAnnotationExpr) annotation).getMemberValue()).asString();
+
 		// if it is not prototype, return
-		if(annotation != null && !annotation.getName().getIdentifier().equalsIgnoreCase("prototype")){
+		if(annotation != null && !annotationAsString.equalsIgnoreCase("prototype")){
 			ElementResult result = new ElementResult();
 			result.setElement(null);
 			result.setResult(false);
 			return result;
 		}
 
-		// TODO now I need to find at least one singleton bean that requires cu as injection
-
-
+		// now I need to find at least one singleton bean that requires cu as injection
 		for(Map.Entry entry : entries){
+
+			CompilationUnit currentCu = (CompilationUnit) entry.getValue();
+
+			// se por acaso forem os mesmos, nao ha motivo para analisar
+			if( currentCu.getType(0).getNameAsString().equals(cu.getType(0).getNameAsString()) ){
+				continue;
+			}
 
 			// need to find all injected elements
 			FieldDeclarationInjectionIdentificator fieldId = new FieldDeclarationInjectionIdentificator();
@@ -61,14 +70,14 @@ public class IsPrototypeScopeBeanAsSingleton extends AbstractRuleWithNoElement {
 			MethodInjectionIdentificator methodId = new MethodInjectionIdentificator();
 			SetMethodInjectionIdentificator setMethodId = new SetMethodInjectionIdentificator();
 
-			List<AbstractElement> elements = fieldId.identify(( CompilationUnit ) entry.getValue() );
-			elements.addAll(constructorId.identify(( CompilationUnit ) entry.getValue()));
-			elements.addAll(methodId.identify(( CompilationUnit ) entry.getValue()));
-			elements.addAll(setMethodId.identify(( CompilationUnit ) entry.getValue()));
-
-			 String cuType = cu.getPrimaryTypeName().get();
+			List<AbstractElement> elements = fieldId.identify( currentCu );
+			elements.addAll(constructorId.identify( currentCu ) );
+			elements.addAll(methodId.identify( currentCu ) );
+			elements.addAll(setMethodId.identify( currentCu ) );
 
 			AbstractElement element;
+
+			String cuType = cu.getType(0).getNameAsString();
 
 			 try {
 				 element = elements.stream().filter(elem -> elem.getName().equalsIgnoreCase(cuType)).findFirst().get();
@@ -78,9 +87,11 @@ public class IsPrototypeScopeBeanAsSingleton extends AbstractRuleWithNoElement {
 
 			 try{
 
-				 AnnotationDeclaration annotation_ = (( CompilationUnit ) entry.getValue()).getAnnotationDeclarationByName("Scope").get();
+				 AnnotationExpr annotation_ = currentCu.getType(0).getAnnotationByName("Scope").get();
 
-				 if(annotation_ != null && !annotation_.getName().getIdentifier().equalsIgnoreCase("prototype")){
+				 String annotation_AsString = ((StringLiteralExpr) ((SingleMemberAnnotationExpr) annotation_).getMemberValue()).asString();
+
+				 if(annotation_ != null && !annotation_AsString.equalsIgnoreCase("prototype")){
 					 ElementResult result = new ElementResult();
 					 result.setElement(element);
 					 result.setResult(true);

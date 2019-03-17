@@ -30,7 +30,7 @@ public abstract class AbstractBadPracticeTest {
 	protected final Log log = LogFactory.getLog(getClass());
 
 	public AbstractBadPracticeTest(){
-	    log.info("entrou");
+	    log.info("Initiating abstract test behavior");
     }
 	
 	public abstract List<String> setUp();

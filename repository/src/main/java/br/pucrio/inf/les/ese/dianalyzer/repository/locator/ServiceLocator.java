@@ -13,11 +13,13 @@ public class ServiceLocator {
 
     private static Map<String,Class<?>> context;
 
+    private static Map<String,Object> instances;
+
     private ServiceLocator(){
         this.context = new HashMap<>();
-
         this.context.put("IDataSource", HashMapDataSource.class);
 
+        this.instances = new HashMap<>();
     }
 
     public static synchronized ServiceLocator getInstance(){
@@ -32,6 +34,13 @@ public class ServiceLocator {
     }
 
     public static Object getBeanInstance(String beanName){
+
+
+        Object instance = instances.get(beanName);
+
+        if(instance != null){
+            return instance;
+        }
 
         Constructor<?> constructor = null;
         try {
@@ -49,6 +58,8 @@ public class ServiceLocator {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+
+        instances.put(beanName,object);
 
         return object;
 
