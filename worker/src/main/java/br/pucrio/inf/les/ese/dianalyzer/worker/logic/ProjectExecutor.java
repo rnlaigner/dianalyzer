@@ -1,10 +1,6 @@
 package br.pucrio.inf.les.ese.dianalyzer.worker.logic;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.*;
@@ -27,7 +23,7 @@ import br.pucrio.inf.les.ese.dianalyzer.worker.report.WorkbookCreator;
 @BadPracticesApplied(values={
 		BadPracticeOne.class,
 		BadPracticeTwo.class,
-		/*BadPracticeThree.class,*/
+		BadPracticeThree.class,
 		/*BadPracticeFour.class,*/
 		BadPracticeFive.class,
 		/*BadPracticeSix.class,*/
@@ -37,9 +33,9 @@ import br.pucrio.inf.les.ese.dianalyzer.worker.report.WorkbookCreator;
 		BadPracticeTen.class,
 		BadPracticeEleven.class,
 		BadPracticeTwelve.class,
-		BadPracticeThirteen.class
+		// BadPracticeThirteen.class
 })
-public class ProjectExecutor implements IProjectExecutor {
+public class ProjectExecutor extends AbstractProjectExecutor {
 	
 	private final Log log = LogFactory.getLog(ProjectExecutor.class);
 	
@@ -48,35 +44,22 @@ public class ProjectExecutor implements IProjectExecutor {
 	private Set<AbstractPractice> badPracticesApplied;
 	
 	public ProjectExecutor(){
+		super();
 		env = new Environment();
-		buildBadPracticesApplied();
 	}
 	
-	private Report buildReportInfo(String projectPath){
-		Report report = new Report();
-		
-		String projectName = projectPath.substring(projectPath.lastIndexOf("\\")+1);
-		
-		List<String> headers = new ArrayList<String>() { 
-            /**
-			 * 
-			 */
-			private static final long serialVersionUID = -899730739044720212L;
+	/*
+	   FIXME
 
-			{ 
-                add("Bad Practice ID");
-                add("Bad Practice Name");
-                add("Class"); 
-                add("Source"); 
-            } 
-        }; 
-		
-		report.setProject(projectName);
-		
-		report.setHeaders(headers);
-		
-		return report;
-	}
+	   Exception in thread "main" java.lang.OutOfMemoryError: GC overhead limit exceeded
+
+	   TODO
+
+	   Guardar scope dos beans e suas respectivas dependencias em uma tabela
+
+	   Assim, um bean a ser analizado, realiza uma query ao banco
+
+	  */
 
 	@Override
 	public void execute(String projectPath, String outputPath) throws Exception {
@@ -89,45 +72,71 @@ public class ProjectExecutor implements IProjectExecutor {
 		
 		Report report = buildReportInfo(projectPath);
 		
-		int index = 0;
+		Integer index = 0;
 		int size = files.size();
 
-		// TODO laigner this should be global in order to a rule access all parsed files
 		IDataSource dataSource = (IDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
-		
+
 		for(String file : files){
 			
-			index = index++;
-			log.info("File "+index+" of "+size+" processed");
+			index = index + 1;
+			log.info("File "+index+" of "+size+" parsed");
 			
 			CompilationUnit parsedObject = null;
 			try{
 				parsedObject = (CompilationUnit) parser.parse(file);
-				dataSource.insert( parsedObject.getPrimaryTypeName().get(), parsedObject);
+
+				String key = null;
+                try {
+                    key = parsedObject.getPrimaryTypeName().get();
+                }catch(Exception e){
+                    log.info("Parsed object has no primary type");
+                }
+
+                if(key == null){
+                    try{
+                        key = parsedObject.getType(0).getNameAsString();
+                    }catch(Exception e){
+                        log.info("Parsed object has no name");
+                        key = index.toString();
+                    }
+                }
+
+				dataSource.insert( key, parsedObject );
 			}
 			catch(ParseException e){
 				log.error(e.getMessage());
 				log.error(e.getStackTrace());
 				continue;
 			}
+			
+		}
 
-			// TODO for each parsedObject and for each bad practice, process ...
+		Integer i = 0;
+
+		Collection<Map.Entry> entries = dataSource.findAll();
+
+		log.info("Starting processing...");
+
+		for(Map.Entry entry : entries){
 
 			//for each bad practice, process this file
 			for(AbstractPractice practice : badPracticesApplied){
-				
-				CompilationUnitResult result = practice.process( parsedObject);
-				
+
+				CompilationUnit parsedObject = (CompilationUnit) entry.getValue();
+
+				CompilationUnitResult result = practice.process( parsedObject );
+
 				if(result.badPracticeIsApplied()) {
-				
+
 					results.add(result);
-					
+
 					List<String> elementsInvolved = result
 							.getElementResults()
 							.stream()
 							.map( p -> p.getElement().getName() )
 							.collect(Collectors.toList());
-					
+
 					String className = null;
 					if(parsedObject.getTypes().size() > 1){
 						List<String> list = parsedObject.getTypes().stream().map(p->p.getNameAsString()).collect(Collectors.toList());
@@ -135,55 +144,32 @@ public class ProjectExecutor implements IProjectExecutor {
 					}else{
 						className = parsedObject.getTypes().get(0).getNameAsString();
 					}
-					
+
 					String elements = String.join(",", elementsInvolved);
-					
+
 					//Mount report line
 					List<String> line = new ArrayList<String>();
-					
+
 					line.add( practice.getNumber().toString() );
 					line.add( practice.getName() );
-			        line.add( className ); 
-	                line.add( elements ); 
-			        
-			        report.addLine(line);
-		        
+					line.add( className );
+					line.add( elements );
+
+					report.addLine(line);
+
 				}
-		        
+
 			}
-			
+
+			log.info("File "+i+" of "+size+" processed");
+
+			i++;
+
 		}
 		
 		IWorkbookCreator workbookCreator = new WorkbookCreator();
 		
 		workbookCreator.create(report, outputPath);
-		
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void buildBadPracticesApplied(){
-
-	    try {
-	    	
-	    	BadPracticesApplied anno = (BadPracticesApplied) getClass().getAnnotation(BadPracticesApplied.class);
-	      	
-	    	badPracticesApplied = new HashSet<AbstractPractice>();
-	    	
-	        for(Class<? extends AbstractPractice> clazz : anno.values()){
-	        	
-	        	Constructor<? extends AbstractPractice> constructor = 
-	        			clazz.getConstructor();
-	        	
-	        	AbstractPractice practice = constructor.newInstance();
-	        	
-	        	badPracticesApplied.add(practice);
-	        	
-	        }
-	      
-	    }
-	    catch(Exception e){
-	    	log.error(e.getStackTrace());
-	    }
 		
 	}
 
