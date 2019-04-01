@@ -14,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @BadPracticesApplied(values={
 		BadPracticeOne.class,
@@ -37,14 +36,10 @@ public class SimpleProjectExecutor extends AbstractProjectExecutor {
 
 	private Environment env;
 
-	private Set<AbstractPractice> badPracticesApplied;
-
 	public SimpleProjectExecutor(){
-		super();
 		env = new Environment();
+		buildBadPracticesApplied();
 	}
-
-
 
 	@Override
 	public void execute(String projectPath, String outputPath) throws Exception {
@@ -72,39 +67,11 @@ public class SimpleProjectExecutor extends AbstractProjectExecutor {
 
 				for(AbstractPractice practice : badPracticesApplied){
 
+					log.info("Bad practice being searched: "+ practice.getName());
+
 					CompilationUnitResult result = practice.process( parsedObject );
 
-					if(result.badPracticeIsApplied()) {
-
-						results.add(result);
-
-						List<String> elementsInvolved = result
-								.getElementResults()
-								.stream()
-								.map( p -> p.getElement().getName() )
-								.collect(Collectors.toList());
-
-						String className = null;
-						if(parsedObject.getTypes().size() > 1){
-							List<String> list = parsedObject.getTypes().stream().map(p->p.getNameAsString()).collect(Collectors.toList());
-							className = String.join(",",list);
-						}else{
-							className = parsedObject.getTypes().get(0).getNameAsString();
-						}
-
-						String elements = String.join(",", elementsInvolved);
-
-						//Mount report line
-						List<String> line = new ArrayList<String>();
-
-						line.add( practice.getNumber().toString() );
-						line.add( practice.getName() );
-						line.add( className );
-						line.add( elements );
-
-						report.addLine(line);
-
-					}
+					addToReportIfBadPracticeIsApplied(results, report, parsedObject, practice, result);
 
 				}
 
@@ -122,5 +89,7 @@ public class SimpleProjectExecutor extends AbstractProjectExecutor {
 		workbookCreator.create(report, outputPath);
 		
 	}
+
+
 
 }

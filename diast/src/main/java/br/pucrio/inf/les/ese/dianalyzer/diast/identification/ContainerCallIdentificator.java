@@ -2,11 +2,13 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.identification;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.utils.Log;
 
@@ -37,7 +39,9 @@ public class ContainerCallIdentificator extends AbstractIdentificator {
 									.matches(getContainerClassTypeRegex()));
 			} )
 			.forEach(f -> {
-				
+
+				// TODO refactor
+
 				VariableDeclarationElement variableDeclarationElement = new VariableDeclarationElement();
 				
 				Optional<Node> declaration = f.getParentNode();
@@ -56,17 +60,114 @@ public class ContainerCallIdentificator extends AbstractIdentificator {
 				variableDeclarationElement.setType(f.getName().asString());
 				
 				variableDeclarationElement.setObjectType(ObjectType.CLASS);
-				
-				variableDeclarationElement.setMethodCall(declarator.getInitializer().toString());
+
+				try {
+					variableDeclarationElement.setMethodCall(declarator.getInitializer().get().toString());
+				}
+				catch (NoSuchElementException e){
+					log.info("Element has no initializer");
+				}
 				
 				variableDeclarationElement.setVariableName(declarator.getName().getIdentifier());
+
+				String variable = variableDeclarationElement.getType() + " " + variableDeclarationElement.getVariableName();
+
+				variableDeclarationElement.setName( variable );
 	
 				elements.add(variableDeclarationElement);
+
+				// TODO chamar aqui identifyElementsObtainedByContainerCall
+				elements.addAll(identifyElementsObtainedByContainerCall(cu,f));
 				
 			} );
 		
 		return elements;
 		
+	}
+
+	private List<AbstractElement> identifyElementsObtainedByContainerCall(CompilationUnit cu, ClassOrInterfaceType parent){
+
+		// Aqui eu encontro os elementos que se obtem uma instancia via container call
+		List<AbstractElement> elements = new ArrayList<AbstractElement>();
+
+        // retorna applicationContext
+        VariableDeclarator containerDeclarator = (VariableDeclarator) parent.getParentNode().get();
+
+		cu.findAll(VariableDeclarator.class).stream()
+				.filter(f -> {
+
+//                    MethodCallExpr methodCallExpr = null;
+//
+//                    try {
+//                        // tenho que pegar o methodCall para ver se nao eh applicationContext tambem
+//                        methodCallExpr = (MethodCallExpr) f.getInitializer().get();
+//                    }
+//                    catch( ClassCastException e ){
+//
+//                        log.info("It is not a method call expr scope");
+//
+//                    }
+//
+//                    String methodCallAttribute = "";
+//
+//                    try {
+//
+//                        // callerAttribute = ((SimpleName) f.getInitializer().get().asMethodCallExpr().getScope().get());
+//                        methodCallAttribute = methodCallExpr.getScope().get().getTokenRange().get().toString();
+//
+//                    } catch(Exception e){
+//
+//                        log.info("It is not a method call expr scope");
+//
+//                    }
+
+                    // se for igual, retorno
+					if( f.getNameAsString().equals(containerDeclarator.getNameAsString()) ){
+						return false;
+					}
+
+					return true;
+				}).forEach(f -> {
+
+					try{
+
+						MethodCallExpr methodCallExpr = null;
+
+						try {
+							CastExpr castExpr = (CastExpr) f.getInitializer().get();
+							methodCallExpr = (MethodCallExpr) castExpr.getExpression();
+						}
+						catch( Exception e ){
+							log.info("It is not a method call expression");
+							return;
+						}
+
+						if ( methodCallExpr.getNameAsString().equals( ContainerClassType.SPRING.getContainerCall() ) ) {
+
+							VariableDeclarationElement variableDeclarationElement = new VariableDeclarationElement();
+
+							variableDeclarationElement.setVariableName(f.getNameAsString());
+
+							variableDeclarationElement.setType( f.getTypeAsString() );
+
+							variableDeclarationElement.setType( f.getNameAsString() );
+
+							String variable = variableDeclarationElement.getType() + " " + variableDeclarationElement.getVariableName();
+
+							variableDeclarationElement.setName( variable );
+
+							elements.add(variableDeclarationElement);
+
+						}
+
+					}
+					catch(ClassCastException | NoSuchElementException e){
+						log.error(e.getMessage());
+					}
+
+				});
+
+		return elements;
 	}
 	
 	private String getContainerClassTypeRegex(){
