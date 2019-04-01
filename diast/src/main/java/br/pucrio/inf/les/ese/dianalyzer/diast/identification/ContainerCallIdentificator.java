@@ -76,7 +76,6 @@ public class ContainerCallIdentificator extends AbstractIdentificator {
 	
 				elements.add(variableDeclarationElement);
 
-				// TODO chamar aqui identifyElementsObtainedByContainerCall
 				elements.addAll(identifyElementsObtainedByContainerCall(cu,f));
 				
 			} );
@@ -95,31 +94,6 @@ public class ContainerCallIdentificator extends AbstractIdentificator {
 
 		cu.findAll(VariableDeclarator.class).stream()
 				.filter(f -> {
-
-//                    MethodCallExpr methodCallExpr = null;
-//
-//                    try {
-//                        // tenho que pegar o methodCall para ver se nao eh applicationContext tambem
-//                        methodCallExpr = (MethodCallExpr) f.getInitializer().get();
-//                    }
-//                    catch( ClassCastException e ){
-//
-//                        log.info("It is not a method call expr scope");
-//
-//                    }
-//
-//                    String methodCallAttribute = "";
-//
-//                    try {
-//
-//                        // callerAttribute = ((SimpleName) f.getInitializer().get().asMethodCallExpr().getScope().get());
-//                        methodCallAttribute = methodCallExpr.getScope().get().getTokenRange().get().toString();
-//
-//                    } catch(Exception e){
-//
-//                        log.info("It is not a method call expr scope");
-//
-//                    }
 
                     // se for igual, retorno
 					if( f.getNameAsString().equals(containerDeclarator.getNameAsString()) ){
@@ -146,11 +120,9 @@ public class ContainerCallIdentificator extends AbstractIdentificator {
 
 							VariableDeclarationElement variableDeclarationElement = new VariableDeclarationElement();
 
-							variableDeclarationElement.setVariableName(f.getNameAsString());
+							variableDeclarationElement.setVariableName( f.getNameAsString() );
 
 							variableDeclarationElement.setType( f.getTypeAsString() );
-
-							variableDeclarationElement.setType( f.getNameAsString() );
 
 							String variable = variableDeclarationElement.getType() + " " + variableDeclarationElement.getVariableName();
 
