@@ -59,6 +59,9 @@ public class ProjectExecutor extends AbstractProjectExecutor {
 
 	   Assim, um bean a ser analizado, realiza uma query ao banco
 
+	   https://www.baeldung.com/java-in-memory-databases
+
+	   H2 eh um in memory database que pode ser util
 	  */
 
 	@Override

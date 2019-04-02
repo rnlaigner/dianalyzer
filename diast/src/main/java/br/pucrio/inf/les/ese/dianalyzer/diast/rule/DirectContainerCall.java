@@ -54,8 +54,10 @@ public class DirectContainerCall extends AbstractMethodCallVisitorWithElement {
 			
 			//iterate over parentNode in order to get ExpressionStmt
 			InjectedElement element = getElementInjectedByContainerCall(methodCall);
-			
-			containerCallElements.add(element);	
+
+			if(element != null) {
+				containerCallElements.add(element);
+			}
 		}
 		
 	}
@@ -67,8 +69,12 @@ public class DirectContainerCall extends AbstractMethodCallVisitorWithElement {
 		expr.setParentNode(node.getParentNode().get());
 		
 		do {
-			expr = expr.getParentNode().get();
-		} while( !( expr instanceof ExpressionStmt ) );
+			expr = expr.getParentNode().isPresent() ? expr.getParentNode().get() : null;
+		} while( !( expr instanceof ExpressionStmt ) && expr != null );
+
+		if(expr == null){
+			return null;
+		}
 		
 		String targetName = null;
 		InjectedElement element = new InjectedElement();
@@ -81,6 +87,7 @@ public class DirectContainerCall extends AbstractMethodCallVisitorWithElement {
 		}
 		catch(ClassCastException e){
 			log.error(e.getMessage());
+			return null;
 		}
 		
 		VariableDeclarationExpr varDeclExpr;
@@ -98,6 +105,7 @@ public class DirectContainerCall extends AbstractMethodCallVisitorWithElement {
 		}
 		catch(ClassCastException e){
 			log.error(e.getMessage());
+			return null;
 		}
 		
 		element.setInjectionType(InjectionType.CONTAINER);

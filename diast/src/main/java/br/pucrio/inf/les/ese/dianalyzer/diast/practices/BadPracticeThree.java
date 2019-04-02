@@ -40,9 +40,10 @@ public class BadPracticeThree extends AbstractPractice {
 
 			ProducerMethodElement elem = (ProducerMethodElement) element;
         	ElementResult result = rule.processRule(cu, elem);
-        	
-        	cuResult.addElementResultToList(result);
-        	
+
+        	if (result.getResult()) {
+				cuResult.addElementResultToList(result);
+			}
         }
         
         return cuResult;
