@@ -20,6 +20,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.VariableDeclarationElement;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 public class DirectContainerCall extends AbstractMethodCallVisitorWithElement {
 	
@@ -65,12 +66,12 @@ public class DirectContainerCall extends AbstractMethodCallVisitorWithElement {
 	private InjectedElement getElementInjectedByContainerCall(Node node){
 		
 		Node expr = node.clone();
-		//clone does not set parent node
+		// clone does not set parent node
 		expr.setParentNode(node.getParentNode().get());
 		
 		do {
-			expr = expr.getParentNode().isPresent() ? expr.getParentNode().get() : null;
-		} while( !( expr instanceof ExpressionStmt ) && expr != null );
+			expr = expr.getParentNode().get();
+		} while( !( expr instanceof ExpressionStmt ) & expr.getParentNode().isPresent() );
 
 		if(expr == null){
 			return null;
@@ -87,27 +88,26 @@ public class DirectContainerCall extends AbstractMethodCallVisitorWithElement {
 		}
 		catch(ClassCastException e){
 			log.error(e.getMessage());
-			return null;
 		}
 		
-		VariableDeclarationExpr varDeclExpr;
+		VariableDeclarationExpr varDeclExpr = null;
 		
 		try{
 			varDeclExpr = (VariableDeclarationExpr) ((ExpressionStmt) expr).getExpression();
 
 			VariableDeclarator varDecl = (VariableDeclarator) varDeclExpr.getVariable(0);
-			
-			element.setType(varDecl.getType().asString());
-			
-			element.setObjectType(ObjectType.CLASS);
+
+			element.setType(varDecl.getTypeAsString());
 			
 			targetName = varDecl.getNameAsString();
 		}
 		catch(ClassCastException e){
 			log.error(e.getMessage());
-			return null;
 		}
-		
+
+		// FIXME need to figure out if it is an interface or class
+		element.setObjectType(ObjectType.CLASS);
+
 		element.setInjectionType(InjectionType.CONTAINER);
 		element.setName(targetName);
 		return element;
