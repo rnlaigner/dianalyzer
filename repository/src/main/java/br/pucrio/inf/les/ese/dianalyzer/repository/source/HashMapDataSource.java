@@ -1,4 +1,4 @@
-package br.pucrio.inf.les.ese.dianalyzer.repository.model;
+package br.pucrio.inf.les.ese.dianalyzer.repository.source;
 
 import java.util.*;
 

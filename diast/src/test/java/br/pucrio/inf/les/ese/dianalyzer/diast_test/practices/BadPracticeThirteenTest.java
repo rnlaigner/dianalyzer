@@ -3,7 +3,7 @@ package br.pucrio.inf.les.ese.dianalyzer.diast_test.practices;
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.BadPracticeThirteen;
 import br.pucrio.inf.les.ese.dianalyzer.diast_test.annotation.BadPracticeApplied;
 import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
-import br.pucrio.inf.les.ese.dianalyzer.repository.model.IDataSource;
+import br.pucrio.inf.les.ese.dianalyzer.repository.source.IDataSource;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 

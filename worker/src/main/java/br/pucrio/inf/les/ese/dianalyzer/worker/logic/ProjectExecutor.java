@@ -1,11 +1,10 @@
 package br.pucrio.inf.les.ese.dianalyzer.worker.logic;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.*;
 import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
-import br.pucrio.inf.les.ese.dianalyzer.repository.model.IDataSource;
+import br.pucrio.inf.les.ese.dianalyzer.repository.source.IDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

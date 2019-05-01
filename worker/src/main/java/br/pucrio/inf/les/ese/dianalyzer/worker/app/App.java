@@ -14,7 +14,7 @@ public class App {
 
 		//TODO read from args
 
-		projectPath = "C:\\Users\\Henrique\\workspace\\libreplan";
+		projectPath = "C:\\Users\\Henrique\\workspace\\BroadleafCommerce";
 		
 		String outputPath = "C:\\Users\\Henrique";
 		

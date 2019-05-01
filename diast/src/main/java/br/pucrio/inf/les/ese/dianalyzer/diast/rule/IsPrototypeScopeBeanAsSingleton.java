@@ -7,7 +7,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionI
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
-import br.pucrio.inf.les.ese.dianalyzer.repository.model.IDataSource;
+import br.pucrio.inf.les.ese.dianalyzer.repository.source.IDataSource;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;

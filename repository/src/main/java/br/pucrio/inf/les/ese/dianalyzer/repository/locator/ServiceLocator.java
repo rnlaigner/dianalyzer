@@ -1,6 +1,6 @@
 package br.pucrio.inf.les.ese.dianalyzer.repository.locator;
 
-import br.pucrio.inf.les.ese.dianalyzer.repository.model.HashMapDataSource;
+import br.pucrio.inf.les.ese.dianalyzer.repository.source.HashMapDataSource;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
