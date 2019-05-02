@@ -1,7 +1,8 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.model;
 
 public enum InjectionAnnotation {
-	
+
+	RESOURCE("Resource",false),
 	AUTOWIRED("Autowired",true),
 	INJECT("Inject",false);
 	
@@ -22,7 +23,26 @@ public enum InjectionAnnotation {
 	}
 	
 	public static String getInjectionAnnotationsRegex(){
-		return InjectionAnnotation.AUTOWIRED.getValue().toString() + "|" + InjectionAnnotation.INJECT.getValue().toString();
+		return InjectionAnnotation.RESOURCE.getValue() + "|" +
+				InjectionAnnotation.AUTOWIRED.getValue() + "|" +
+				InjectionAnnotation.INJECT.getValue();
+	}
+
+	public static InjectionAnnotation getFromString(String annotation){
+
+		if(annotation.equals( InjectionAnnotation.AUTOWIRED.getValue() ) ){
+			return InjectionAnnotation.AUTOWIRED;
+		}
+		if(annotation.equals( InjectionAnnotation.INJECT.getValue() ) ){
+			return InjectionAnnotation.INJECT;
+		}
+
+		if(annotation.equals( InjectionAnnotation.RESOURCE.getValue() ) ){
+			return InjectionAnnotation.RESOURCE;
+		}
+
+		return null;
+
 	}
 	
 }

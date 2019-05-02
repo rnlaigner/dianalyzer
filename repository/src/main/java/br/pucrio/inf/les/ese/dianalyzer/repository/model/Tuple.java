@@ -1,30 +1,46 @@
 package br.pucrio.inf.les.ese.dianalyzer.repository.model;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "TUPLE")
-public class Tuple {
+@Table(name = "Tuple")
+public class Tuple extends AbstractPersistent {
 
-    @Id
-    @Column(name = "ID", nullable = false, length = 40)
-    private Long id;
+    @Column
+    private String scope;
 
-    public Tuple() {
+    @Column
+    private String type;
+
+    @Column
+    private Boolean isInterface;
+
+    public Tuple() { }
+
+    public String getScope() {
+        return scope;
     }
 
-    public Tuple(Long id) {
-        this.id = id;
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
-    public Long getId() {
-        return id;
+    public String getType() {
+        return type;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Boolean isInterface() {
+        return isInterface;
+    }
+
+    public void setInterface(Boolean isInterface) {
+        this.isInterface = isInterface;
     }
 }

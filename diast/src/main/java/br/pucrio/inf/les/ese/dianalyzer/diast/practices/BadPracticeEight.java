@@ -2,6 +2,7 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.practices;
 
 import java.util.List;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.logic.InjectionBusiness;
 import com.github.javaparser.ast.CompilationUnit;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ConstructorInjectionIdentificator;
@@ -27,19 +28,8 @@ public class BadPracticeEight extends AbstractPractice {
 	public CompilationUnitResult process(final CompilationUnit cu) {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
-		
-        /*
-         * should I consider container call? No
-         */
-        FieldDeclarationInjectionIdentificator fieldId = new FieldDeclarationInjectionIdentificator();
-        ConstructorInjectionIdentificator constructorId = new ConstructorInjectionIdentificator();
-        MethodInjectionIdentificator methodId = new MethodInjectionIdentificator();
-        SetMethodInjectionIdentificator setMethodId = new SetMethodInjectionIdentificator();
-        
-        List<AbstractElement> elements = fieldId.identify(cu);
-        elements.addAll(constructorId.identify(cu));
-        elements.addAll(methodId.identify(cu));
-        elements.addAll(setMethodId.identify(cu));
+
+		List<AbstractElement> elements = InjectionBusiness.getInjectedElementsFromClass(cu);
         
         for (AbstractElement elem : elements) {
         	ElementResult result = rule.processRule(cu, elem);

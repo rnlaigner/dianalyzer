@@ -10,20 +10,19 @@ public abstract class AbstractInjectionIdentificator extends AbstractIdentificat
 	}
 
 	protected String getInjectAnnotationsRegex(){
-		return InjectionAnnotation.AUTOWIRED.getValue().toString() + "|" + InjectionAnnotation.INJECT.getValue().toString();
+		return InjectionAnnotation.getInjectionAnnotationsRegex();
 	}
 	
 	protected InjectionAnnotation getInjectionAnnotationFromString(String annotation) throws Exception {
 		
-		if(annotation.equals( InjectionAnnotation.AUTOWIRED.getValue().toString() ) ){
-				return InjectionAnnotation.AUTOWIRED;
+		InjectionAnnotation annotationFromString = InjectionAnnotation.getFromString(annotation);
+
+		if(annotationFromString == null)
+		{
+			throw new Exception("Annotation '"+ annotation +"' is not recognized");
 		}
-		if(annotation.equals( InjectionAnnotation.INJECT.getValue().toString() ) ){
-				return InjectionAnnotation.INJECT;
-		}
-		
-		throw new Exception("Annotation '"+ annotation +"' is not recognized");
-	
+
+		return annotationFromString;
 	}
 
 }

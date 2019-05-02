@@ -1,15 +1,15 @@
 package br.pucrio.inf.les.ese.dianalyzer.repository.source;
 
-import java.util.Collection;
+import java.util.Iterator;
 
 public interface IDataSource<S, T> {
 
-    Collection<?> findAll();
+    Iterator<?> findAll();
 
-    Collection<T> find( S key );
+    T find( S key );
 
-    T insert( S key, T element );
+    T insert( T element );
 
-    T delete( S key );
+    void delete( S key );
 
 }

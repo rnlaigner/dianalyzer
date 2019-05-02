@@ -1,12 +1,36 @@
 package br.pucrio.inf.les.ese.dianalyzer.worker.app;
 
-import br.pucrio.inf.les.ese.dianalyzer.worker.logic.IProjectExecutor;
-import br.pucrio.inf.les.ese.dianalyzer.worker.logic.ProjectExecutor;
-import br.pucrio.inf.les.ese.dianalyzer.worker.logic.SimpleProjectExecutor;
 
+import br.pucrio.inf.les.ese.dianalyzer.repository.configuration.ContextWrapper;
+import br.pucrio.inf.les.ese.dianalyzer.repository.configuration.DataSourceConfig;
+import br.pucrio.inf.les.ese.dianalyzer.repository.configuration.JpaConfig;
+import br.pucrio.inf.les.ese.dianalyzer.repository.repository.AssociatedTupleRepository;
+import br.pucrio.inf.les.ese.dianalyzer.repository.repository.TupleRepository;
+import br.pucrio.inf.les.ese.dianalyzer.worker.config.AppConfig;
+import br.pucrio.inf.les.ese.dianalyzer.worker.logic.IProjectExecutor;
+import br.pucrio.inf.les.ese.dianalyzer.worker.logic.InMemoryProjectExecutor;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+// @PropertySource("classpath:hibernate.properties")
 public class App {
 
+	public void run() {
+		System.out.println( "running from bean" );
+	}
+
 	public static void main(String[] args) {
+
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+		ctx.register(AppConfig.class);
+		ctx.register(ContextWrapper.class);
+		ctx.register(DataSourceConfig.class);
+		ctx.register(JpaConfig.class);
+		ctx.register(TupleRepository.class);
+		ctx.register(AssociatedTupleRepository.class);
+		ctx.refresh();
+
+		App runner = (App) ctx.getBean("mainRunner");
+		runner.run();
 		
 		String projectPath;
 		//projectPath = "C:\\Users\\Henrique\\workspace\\agilefant\\webapp\\src\\main\\java\\fi\\hut\\soberit\\agilefant";
@@ -20,8 +44,8 @@ public class App {
 		
 		IProjectExecutor projectExecutor = null;
 
-		projectExecutor = new SimpleProjectExecutor();
-		//new ProjectExecutor();
+		// projectExecutor = new SimpleProjectExecutor();
+		projectExecutor =  new InMemoryProjectExecutor();
 		
 		try {
 			projectExecutor.execute(projectPath,outputPath);

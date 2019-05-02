@@ -6,7 +6,7 @@ public enum InjectionType {
 	METHOD("method"),
 	SET_METHOD("set_method"),
 	CONTAINER("container"),
-	FIELD("attribute");
+	FIELD("field");
 	
 	private String value;
 	

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.logic.InjectionBusiness;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -128,15 +129,7 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
            via accessor-methods.
 		 */		
 
-        FieldDeclarationInjectionIdentificator fieldId = new FieldDeclarationInjectionIdentificator();
-        ConstructorInjectionIdentificator constructorId = new ConstructorInjectionIdentificator();
-        SetMethodInjectionIdentificator setMethodId = new SetMethodInjectionIdentificator();
-        ContainerCallIdentificator contId = new ContainerCallIdentificator();
-        
-        List<AbstractElement> elements = fieldId.identify(cu);
-        elements.addAll(constructorId.identify(cu));
-        elements.addAll(setMethodId.identify(cu));
-        elements.addAll(contId.identify(cu));
+		List<AbstractElement> elements = InjectionBusiness.getInjectedElementsFromClass(cu);
 		
 		boolean ATFDisApplied = elements.size() > ATFD ? true : false;
 		

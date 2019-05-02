@@ -1,64 +1,52 @@
 package br.pucrio.inf.les.ese.dianalyzer.repository.source;
 
-import java.util.*;
+import br.pucrio.inf.les.ese.dianalyzer.repository.model.AbstractPersistent;
+import br.pucrio.inf.les.ese.dianalyzer.repository.model.AssociatedTuple;
+import br.pucrio.inf.les.ese.dianalyzer.repository.model.Tuple;
+import br.pucrio.inf.les.ese.dianalyzer.repository.repository.AssociatedTupleRepository;
+import br.pucrio.inf.les.ese.dianalyzer.repository.repository.TupleRepository;
 
-// TODO https://git.tecgraf.puc-rio.br/pec/georisco/tree/georisco-ccpd-init/georisco-ccpd/src/main
+import java.util.Collection;
+import java.util.Iterator;
 
-public class HsqldbDataSource extends ConfigurableDataSource<String, Object> {
+public class HsqldbDataSource implements
+        IDataSource<Long, AbstractPersistent>,
+        IAssociatedDataSource<String,AssociatedTuple> {
 
-    private final HashMap hashMap;
+    private final TupleRepository tupleRepository;
 
-    public HsqldbDataSource(){
-        this.hashMap = new HashMap<String,Object>();
+    private final AssociatedTupleRepository associatedTupleRepository;
+
+    public HsqldbDataSource(TupleRepository tupleRepository, AssociatedTupleRepository associatedTupleRepository){
+        this.tupleRepository = tupleRepository;
+        this.associatedTupleRepository = associatedTupleRepository;
     }
 
     @Override
-    public Collection<Map.Entry> findAll(){
-        return hashMap.entrySet();
+    public Iterator findAll() {
+        return tupleRepository.findAll().iterator();
     }
 
     @Override
-    public Collection<Object> find(String key) {
-        List list = new ArrayList<Object>();
-        list.add( this.hashMap.get(key));
-        return list;
+    public AbstractPersistent find(Long key) {
+        return tupleRepository.findById(key).get();
     }
 
     @Override
-    public Object insert(String key, Object element) {
-        this.hashMap.put(key,element);
-        return element;
+    public AbstractPersistent insert( AbstractPersistent element) {
+        if (element instanceof Tuple){
+            return tupleRepository.save((Tuple) element);
+        }
+        return associatedTupleRepository.save((AssociatedTuple) element);
     }
 
     @Override
-    public Object delete(String key) {
-        Object object = this.find(key);
-        this.hashMap.remove(key);
-        return object;
+    public void delete(Long key) {
+        tupleRepository.deleteById(key);
     }
 
     @Override
-    protected void start() {
-//        String url = "jdbc:h2:mem:";
-//
-//        try (Connection con = DriverManager.getConnection(url);
-//             Statement st = con.createStatement();
-//             ResultSet rs = st.executeQuery("SELECT 1+1")) {
-//
-//            if (rs.next()) {
-//
-//                System.out.println(rs.getInt(1));
-//            }
-//
-//        } catch (SQLException ex) {
-//
-//            Logger lgr = Logger.getLogger(HsqldbDataSource.class.getName());
-//            lgr.log(Level.SEVERE, ex.getMessage(), ex);
-//        }
-    }
-
-    @Override
-    protected void finish() {
-
+    public Collection<AssociatedTuple> findAssociated(String key) {
+        return associatedTupleRepository.findAssociated(key);
     }
 }

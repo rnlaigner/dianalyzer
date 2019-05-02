@@ -20,6 +20,7 @@
 
   <dependencies>
 
+      <!-- Enable test with params -->
     <dependency>
         <groupId>pl.pragmatists</groupId>
         <artifactId>JUnitParams</artifactId>

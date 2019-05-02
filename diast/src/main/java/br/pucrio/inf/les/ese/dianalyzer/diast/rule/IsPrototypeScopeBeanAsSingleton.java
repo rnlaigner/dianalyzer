@@ -4,27 +4,25 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ConstructorInjectio
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.FieldDeclarationInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.MethodInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionIdentificator;
+import br.pucrio.inf.les.ese.dianalyzer.diast.logic.InjectionBusiness;
+import br.pucrio.inf.les.ese.dianalyzer.diast.logic.ScopeBusiness;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
 import br.pucrio.inf.les.ese.dianalyzer.repository.source.IDataSource;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.expr.AnnotationExpr;
-import com.github.javaparser.ast.expr.FieldAccessExpr;
-import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
-import com.github.javaparser.ast.expr.StringLiteralExpr;
 
-import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class IsPrototypeScopeBeanAsSingleton extends AbstractRuleWithNoElement {
 
-	private Collection<Map.Entry> entries;
+	private Iterator entries;
 
 	public IsPrototypeScopeBeanAsSingleton(){
 		IDataSource dataSource = (IDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
+		// TODO nao precisa fazer mais isso. so dar find em associated data
 		entries = dataSource.findAll();
 	}
 
@@ -33,29 +31,10 @@ public class IsPrototypeScopeBeanAsSingleton extends AbstractRuleWithNoElement {
 
 		// default is singleton on spring
 
-		AnnotationExpr annotation = null;
-
-		try {
-			annotation = cu.getType(0).getAnnotationByName("Scope").get();
-		}
-		catch(NoSuchElementException | IndexOutOfBoundsException e){
-			ElementResult result = new ElementResult();
-			result.setElement(null);
-			result.setResult(false);
-			return result;
-		}
-
-		String annotationAsString = extractAnnotationAsString( (SingleMemberAnnotationExpr) annotation );
-
-		if(annotationAsString == null) {
-            ElementResult result = new ElementResult();
-            result.setElement(null);
-            result.setResult(false);
-            return result;
-        }
+		String annotationAsString = ScopeBusiness.extractScopeAnnotationValueAsString(cu);
 
 		// if it is not prototype, return
-		if(annotation != null && !annotationAsString.equalsIgnoreCase("prototype")){
+		if(annotationAsString != null && !annotationAsString.equalsIgnoreCase("prototype")){
 			ElementResult result = new ElementResult();
 			result.setElement(null);
 			result.setResult(false);
@@ -63,9 +42,10 @@ public class IsPrototypeScopeBeanAsSingleton extends AbstractRuleWithNoElement {
 		}
 
 		// now I need to find at least one singleton bean that requires cu as injection
-		for(Map.Entry entry : entries){
+		while(entries.hasNext()){
 
-			CompilationUnit currentCu = (CompilationUnit) entry.getValue();
+			// TODO change to tuple
+			CompilationUnit currentCu = (CompilationUnit) entries.next();
 
 			String currentCuNameAsString = null;
 			try{
@@ -79,18 +59,11 @@ public class IsPrototypeScopeBeanAsSingleton extends AbstractRuleWithNoElement {
 				continue;
 			}
 
-			// need to find all injected elements
-			FieldDeclarationInjectionIdentificator fieldId = new FieldDeclarationInjectionIdentificator();
-			ConstructorInjectionIdentificator constructorId = new ConstructorInjectionIdentificator();
-			MethodInjectionIdentificator methodId = new MethodInjectionIdentificator();
-			SetMethodInjectionIdentificator setMethodId = new SetMethodInjectionIdentificator();
+			List<AbstractElement> elements = InjectionBusiness.
+					getInjectedElementsFromClass( cu );
 
-			List<AbstractElement> elements = fieldId.identify( currentCu );
-			elements.addAll(constructorId.identify( currentCu ) );
-			elements.addAll(methodId.identify( currentCu ) );
-			elements.addAll(setMethodId.identify( currentCu ) );
 
-			AbstractElement element;
+			AbstractElement element = null;
 
 			String cuType = cu.getType(0).getNameAsString();
 
@@ -100,29 +73,9 @@ public class IsPrototypeScopeBeanAsSingleton extends AbstractRuleWithNoElement {
 			 	continue;
 			 }
 
-			 try{
+			 String annotation_AsString = ScopeBusiness.extractScopeAnnotationValueAsString(cu);
 
-				 AnnotationExpr annotation_ = currentCu.getType(0).getAnnotationByName("Scope").get();
-
-				 // String annotation_AsString = ((StringLiteralExpr) ((SingleMemberAnnotationExpr) annotation_).getMemberValue()).asString();
-
-                 String annotation_AsString = extractAnnotationAsString( (SingleMemberAnnotationExpr) annotation_ );
-
-                 if(annotation_AsString == null) {
-                     ElementResult result = new ElementResult();
-                     result.setElement(null);
-                     result.setResult(false);
-                     return result;
-                 }
-
-				 if(annotation_ != null && !annotation_AsString.equalsIgnoreCase("prototype")){
-					 ElementResult result = new ElementResult();
-					 result.setElement(element);
-					 result.setResult(true);
-					 return result;
-				 }
-
-			 }catch(NoSuchElementException e){
+			 if(annotation_AsString != null && !annotation_AsString.equalsIgnoreCase("prototype")){
 				 ElementResult result = new ElementResult();
 				 result.setElement(element);
 				 result.setResult(true);
@@ -138,28 +91,5 @@ public class IsPrototypeScopeBeanAsSingleton extends AbstractRuleWithNoElement {
 
 	}
 
-    private String extractAnnotationAsString(SingleMemberAnnotationExpr annotation) {
 
-	    String annotationAsString = null;
-        try {
-            annotationAsString = ((StringLiteralExpr) annotation.getMemberValue()).asString();
-        } catch (ClassCastException e) {
-            log.info("It is not a string literal");
-        }
-
-        if (annotationAsString == null) {
-            try {
-                annotationAsString = ((FieldAccessExpr) annotation.getMemberValue()).getNameAsString();
-            } catch (Exception e) {
-                log.info("It is not a field access expr");
-                return null;
-            }
-        }
-
-        if(annotationAsString.equals("SCOPE_PROTOTYPE")){
-            annotationAsString = "prototype";
-        }
-
-        return annotationAsString;
-    }
 }
