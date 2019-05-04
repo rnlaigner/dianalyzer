@@ -1,10 +1,6 @@
 package br.pucrio.inf.les.ese.dianalyzer.worker.logic;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.environment.ParseException;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ConstructorInjectionIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.FieldDeclarationInjectionIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.MethodInjectionIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.logic.InjectionBusiness;
 import br.pucrio.inf.les.ese.dianalyzer.diast.logic.ScopeBusiness;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
@@ -100,9 +96,17 @@ public class InMemoryProjectExecutor extends AbstractProjectExecutor {
 
 				tuple.setScope(scope);
 
-				ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) parsedObject.getType(0);
+				Boolean isInterface = false;
 
-				Boolean isInterface = classOrInterfaceDeclaration.isInterface();
+				try {
+                    if (parsedObject.getType(0) instanceof ClassOrInterfaceDeclaration) {
+                        ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) parsedObject.getType(0);
+                        isInterface = classOrInterfaceDeclaration.isInterface();
+                    }
+                }
+				catch(Exception e){
+				    log.error(e.getMessage());
+                }
 
 				tuple.setInterface(isInterface);
 

@@ -29,7 +29,7 @@ public class ReferenceOnConcreteClass extends AbstractRuleWithElement {
 		*/
 		
 		//FIXME the best test would check for the given class
-		// TODO adicionar busca do tipo a associated data...
+		// TODO adicionar busca do tipo a associated data ...
 		//Precisaria ter todos os compilation Unit em memoria para definir isso
 		if( !element_.getType().startsWith("I") &&
 				/* not contain business */ 

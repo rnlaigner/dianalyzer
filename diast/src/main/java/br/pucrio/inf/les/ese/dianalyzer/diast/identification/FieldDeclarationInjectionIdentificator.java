@@ -1,22 +1,26 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.identification;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.*;
+import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
+import br.pucrio.inf.les.ese.dianalyzer.repository.model.AssociatedTuple;
+import br.pucrio.inf.les.ese.dianalyzer.repository.model.Tuple;
+import br.pucrio.inf.les.ese.dianalyzer.repository.source.IAssociatedBeanDataSource;
+import br.pucrio.inf.les.ese.dianalyzer.repository.source.IBeanDataSource;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionAnnotation;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIdentificator {
-	
+
+	private final IBeanDataSource dataSource;
+
 	public FieldDeclarationInjectionIdentificator() {
 		super(InjectionType.FIELD);
+		this.dataSource = (IBeanDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
 	}
 
 	@Override
@@ -47,12 +51,26 @@ public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIde
 				elem.setType(variable.getType().asString());
 				
 				elem.setInjectionType(InjectionType.FIELD);
+
+				elem.setName(variable.getName().toString());
 				
 				try {
-					elem.setObjectType( getObjectTypeFromString
-										(variable.getType().
-												getClass().
-												getSimpleName() ) );
+
+					// primeiro busco em memoria, se nao encontrar, me baseio na informacao do javaparser
+					Tuple tuple = (Tuple) dataSource.findByName(elem.getName());
+
+					if(tuple != null){
+						log.info("Associated tuple found");
+					} else {
+						if(variable.getType().getClass().isInterface()){
+							elem.setObjectType(ObjectType.INTERFACE);
+						} else {
+							elem.setObjectType(ObjectType.CLASS);
+						}
+					}
+
+
+
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
@@ -61,9 +79,7 @@ public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIde
 											.stream()
 											.distinct()
 											.map(e -> e.getName().asString())
-											.collect( Collectors.toList() );							
-				
-				elem.setName(variable.getName().toString());
+											.collect( Collectors.toList() );
 				
 				InjectionAnnotation injectionAnnotation = null;
 				for(String annotation : annotations){

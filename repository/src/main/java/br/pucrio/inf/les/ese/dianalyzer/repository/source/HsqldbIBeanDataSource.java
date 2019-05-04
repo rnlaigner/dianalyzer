@@ -9,15 +9,15 @@ import br.pucrio.inf.les.ese.dianalyzer.repository.repository.TupleRepository;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class HsqldbDataSource implements
-        IDataSource<Long, AbstractPersistent>,
-        IAssociatedDataSource<String,AssociatedTuple> {
+public class HsqldbIBeanDataSource implements
+        IBeanDataSource<Long, AbstractPersistent>,
+        IAssociatedBeanDataSource<String,AssociatedTuple> {
 
     private final TupleRepository tupleRepository;
 
     private final AssociatedTupleRepository associatedTupleRepository;
 
-    public HsqldbDataSource(TupleRepository tupleRepository, AssociatedTupleRepository associatedTupleRepository){
+    public HsqldbIBeanDataSource(TupleRepository tupleRepository, AssociatedTupleRepository associatedTupleRepository){
         this.tupleRepository = tupleRepository;
         this.associatedTupleRepository = associatedTupleRepository;
     }
@@ -46,7 +46,12 @@ public class HsqldbDataSource implements
     }
 
     @Override
-    public Collection<AssociatedTuple> findAssociated(String key) {
-        return associatedTupleRepository.findAssociated(key);
+    public Collection<AssociatedTuple> findAssociated(String father) {
+        return associatedTupleRepository.findAssociated(father);
+    }
+
+    @Override
+    public AbstractPersistent findByName(String name) {
+        return tupleRepository.findByName( name );
     }
 }

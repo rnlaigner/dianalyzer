@@ -3,16 +3,14 @@ package br.pucrio.inf.les.ese.dianalyzer.repository.locator;
 import br.pucrio.inf.les.ese.dianalyzer.repository.configuration.ContextWrapper;
 import br.pucrio.inf.les.ese.dianalyzer.repository.repository.AssociatedTupleRepository;
 import br.pucrio.inf.les.ese.dianalyzer.repository.repository.TupleRepository;
-import br.pucrio.inf.les.ese.dianalyzer.repository.source.HsqldbDataSource;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
-import org.springframework.context.ApplicationContext;
+import br.pucrio.inf.les.ese.dianalyzer.repository.source.HsqldbIBeanDataSource;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+// irony
 public class ServiceLocator {
 
     private static ServiceLocator INSTANCE = null;
@@ -23,8 +21,6 @@ public class ServiceLocator {
 
     private ServiceLocator(){
         this.context = new HashMap<>();
-        // this.context.put("IDataSource", HsqldbDataSource.class);
-
         this.instances = new HashMap<>();
     }
 
@@ -55,7 +51,7 @@ public class ServiceLocator {
 
             if (tupleRepository != null) {
 
-                HsqldbDataSource dataSource = new HsqldbDataSource(tupleRepository, associatedTupleRepository);
+                HsqldbIBeanDataSource dataSource = new HsqldbIBeanDataSource(tupleRepository, associatedTupleRepository);
 
                 instances.put(beanName, dataSource);
 
