@@ -1,15 +1,20 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
-import com.github.javaparser.ast.CompilationUnit;
-
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
+import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
+import br.pucrio.inf.les.ese.dianalyzer.repository.model.Tuple;
+import br.pucrio.inf.les.ese.dianalyzer.repository.source.IBeanDataSource;
+import com.github.javaparser.ast.CompilationUnit;
 
 public class ReferenceOnConcreteClass extends AbstractRuleWithElement {
 
+	private final IBeanDataSource dataSource;
+
 	public ReferenceOnConcreteClass() {
 		super();
+		this.dataSource = (IBeanDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
 	}
 
 	@Override
@@ -19,22 +24,23 @@ public class ReferenceOnConcreteClass extends AbstractRuleWithElement {
 		
 		elementResult.setElement(element);
 		elementResult.setResult(false);
-		
-		InjectedElement element_ = (InjectedElement) element;
-		
-		/* 
-		if (! element_.getClassType().equals(ObjectType.INTERFACE)){
-			elementResult.setResult(true);
-		}
-		*/
-		
-		//FIXME the best test would check for the given class
-		// TODO adicionar busca do tipo a associated data...
-		//Precisaria ter todos os compilation Unit em memoria para definir isso
-		if( !element_.getType().startsWith("I") &&
-				/* not contain business */ 
-				 !element_.getName().toLowerCase().contains("business")) {
-			elementResult.setResult(true);
+
+		InjectedElement injectedElement = null;
+
+		try {
+			injectedElement = (InjectedElement) element;
+
+			Tuple tuple = (Tuple) dataSource.getBeanByName(injectedElement.getType());
+
+			if(tuple != null){
+				log.info("Associated tuple found");
+				if(!tuple.isInterface){
+					elementResult.setResult(true);
+				}
+			}
+
+		} catch(Exception e){
+			log.info("Noooo");
 		}
 		
 		return elementResult;
