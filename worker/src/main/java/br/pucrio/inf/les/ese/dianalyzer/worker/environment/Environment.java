@@ -5,24 +5,25 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.TreeSet;
 
 // TODO colocar isso em um projeto common
 public class Environment {
 	
 	private final Log log = LogFactory.getLog(Environment.class);
 
-	private final Map<String,String> pathsToIgnore = new HashMap<String,String>();
+	private final TreeSet<String> pathsToIgnore = new TreeSet<String>();
+
+	private final TreeSet<String> filesToIgnore = new TreeSet<String>();
 
 	public Environment(){
 
-		this.pathsToIgnore.put(".mvn","");
-
+		this.pathsToIgnore.add(".mvn");
+		this.filesToIgnore.add("package-info.java");
 	}
 	
 	public String buildPath(String value){
@@ -43,7 +44,7 @@ public class Environment {
 		
 	}
 	
-	public List<String> readFilesFromFolder(String folder, boolean buildPath) throws IOException, Exception{
+	public List<String> readFilesFromFolder(String folder, boolean buildPath) throws Exception{
 		
 		if(buildPath){
 			folder = buildPath(folder);
@@ -65,21 +66,48 @@ public class Environment {
 		
 	}
 
-	private boolean isPathToIgnore(String path){
+	private boolean isFileToIgnore(String fileName){
+		Iterator<String> iterator =  filesToIgnore.descendingIterator();
 
-		for(Map.Entry<String,String> entry : pathsToIgnore.entrySet()){
+		while ( iterator.hasNext() ){
 
-			if( path.contains( entry.getKey() ) ){
+			String current = iterator.next();
+
+			if( fileName.contentEquals( current ) ){
 				return true;
 			}
 
 		}
+
+		return false;
+	}
+
+	private boolean isPathToIgnore(String path){
+
+		Iterator<String> iterator =  pathsToIgnore.descendingIterator();
+
+		while ( iterator.hasNext() ){
+
+			String current = iterator.next();
+
+			if( path.contains( current ) ){
+				return true;
+			}
+
+		}
+
 		return false;
 	}
 
 	private void processFolderFiles(List<String> files, File[] listOfFiles) throws Exception {
-		
+
+		Integer index = 0;
+		final Integer size = listOfFiles.length;
+
 		for (final File fileEntry : listOfFiles) {
+
+			index = index + 1;
+			log.info("Processing file " +index+ " of "+size);
 			
 			//checa se fileEntry eh um folder. se for, chamada recursiva
 			if( fileEntry.isDirectory() ){
@@ -91,21 +119,17 @@ public class Environment {
 
 				String extension = FilenameUtils.getExtension( path );
 
-				if(extension.equals("java") && !isPathToIgnore(path) ) {
+				String fileName = FilenameUtils.getName( path );
 
+				if(extension.equals("java") && !isPathToIgnore(path) && !isFileToIgnore(fileName) ) {
 
 					try {
-
-//					String fileName = fileEntry.getName();
-//					String extension = fileName.substring(fileName.lastIndexOf("."));
-
 						String content = new String(Files.readAllBytes(fileEntry.toPath()));
 						files.add(content);
 
 					} catch (Exception e) {
 						log.error(e.getMessage());
 						log.error(e.getStackTrace());
-						//throw new Exception("There is a folder opened in the provided project path. Close it and run again the program.");
 					}
 
 				}

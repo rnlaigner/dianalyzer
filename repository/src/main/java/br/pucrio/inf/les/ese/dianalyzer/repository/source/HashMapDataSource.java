@@ -1,37 +1,85 @@
-//package br.pucrio.inf.les.ese.dianalyzer.repository.source;
-//
-//import java.util.*;
-//
-//public class HashMapDataSource implements IDataSource<String, Object> {
-//
-//    private final HashMap hashMap;
-//
-//    public HashMapDataSource(){
-//        this.hashMap = new HashMap<String,Object>();
-//    }
-//
-//    @Override
-//    public Iterator<Map.Entry> findAll(){
-//        return hashMap.entrySet().iterator();
-//    }
-//
-//    @Override
-//    public Collection<Object> find(String key) {
-//        List list = new ArrayList<Object>();
-//        list.add( this.hashMap.get(key));
-//        return list;
-//    }
-//
-//    @Override
-//    public Object insert(String key, Object element) {
-//        this.hashMap.put(key,element);
-//        return element;
-//    }
-//
-//    @Override
-//    public Object delete(String key) {
-//        Object object = this.find(key);
-//        this.hashMap.remove(key);
-//        return object;
-//    }
-//}
+package br.pucrio.inf.les.ese.dianalyzer.repository.source;
+
+import br.pucrio.inf.les.ese.dianalyzer.repository.model.AbstractTuple;
+import br.pucrio.inf.les.ese.dianalyzer.repository.model.AssociatedTuple;
+import br.pucrio.inf.les.ese.dianalyzer.repository.model.Tuple;
+
+import java.util.*;
+
+public class HashMapDataSource implements IBeanDataSource<String, Tuple, AssociatedTuple> {
+
+    private final Map<String, TreeSet<AssociatedTuple>> associatedBeanHashMap;
+
+    private final Map<String, Tuple> beanHashMap;
+
+    public HashMapDataSource(){
+        this.associatedBeanHashMap = new HashMap<String, TreeSet<AssociatedTuple>>();
+        this.beanHashMap = new HashMap<String, Tuple>();
+    }
+
+    @Override
+    public Iterator findAll(){
+        return beanHashMap.entrySet().iterator();
+    }
+
+    @Override
+    public Tuple find(String name) {
+        return this.beanHashMap.get(name);
+    }
+
+    @Override
+    public Tuple insert(Tuple tuple) {
+        return beanHashMap.put(tuple.type, tuple);
+    }
+
+    @Override
+    public void delete(String name) {
+        this.beanHashMap.remove(name);
+    }
+
+    @Override
+    public Collection<AssociatedTuple> findAssociatedBeans(String beanName) {
+        return associatedBeanHashMap.get(beanName);
+    }
+
+    @Override
+    public Tuple getBeanByName(String name) {
+        return this.beanHashMap.get(name);
+    }
+
+    @Override
+    public boolean isAssociatedBean(String beanName, String associatedBeanName) {
+
+        TreeSet<AssociatedTuple> treeSet = associatedBeanHashMap.get(beanName);
+
+        Iterator<AssociatedTuple> it = treeSet.iterator();
+
+        while(it.hasNext() ){
+
+            AssociatedTuple associatedTuple = it.next();
+
+            if(associatedTuple.type.contentEquals(associatedBeanName)){
+                return true;
+            }
+
+
+        }
+
+        return false;
+
+    }
+
+    @Override
+    public boolean insertAssociatedBean(AssociatedTuple associatedTuple) {
+        TreeSet<AssociatedTuple> treeSet = associatedBeanHashMap.get( associatedTuple.father );
+
+        if(treeSet == null){
+
+            treeSet = new TreeSet<AssociatedTuple>();
+            associatedBeanHashMap.put(associatedTuple.father,treeSet);
+
+        }
+
+        return treeSet.add( associatedTuple );
+    }
+}

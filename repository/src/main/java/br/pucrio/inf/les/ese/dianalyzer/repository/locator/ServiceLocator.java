@@ -1,12 +1,6 @@
 package br.pucrio.inf.les.ese.dianalyzer.repository.locator;
 
-import br.pucrio.inf.les.ese.dianalyzer.repository.configuration.ContextWrapper;
-import br.pucrio.inf.les.ese.dianalyzer.repository.repository.AssociatedTupleRepository;
-import br.pucrio.inf.les.ese.dianalyzer.repository.repository.TupleRepository;
-import br.pucrio.inf.les.ese.dianalyzer.repository.source.HsqldbDataSource;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
-import org.springframework.context.ApplicationContext;
+import br.pucrio.inf.les.ese.dianalyzer.repository.source.HashMapDataSource;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -23,9 +17,10 @@ public class ServiceLocator {
 
     private ServiceLocator(){
         this.context = new HashMap<>();
-        // this.context.put("IDataSource", HsqldbDataSource.class);
-
         this.instances = new HashMap<>();
+
+        // Configuration
+        this.context.put("IDataSource", HashMapDataSource.class);
     }
 
     public static synchronized ServiceLocator getInstance(){
@@ -45,22 +40,6 @@ public class ServiceLocator {
 
         if(instance != null){
             return instance;
-        }
-
-        // try spring first
-        if(beanName.contentEquals("IDataSource")) {
-
-            TupleRepository tupleRepository = ContextWrapper.getContext().getBean("tupleRepository", TupleRepository.class);
-            AssociatedTupleRepository associatedTupleRepository = ContextWrapper.getContext().getBean("associatedTupleRepository", AssociatedTupleRepository.class);
-
-            if (tupleRepository != null) {
-
-                HsqldbDataSource dataSource = new HsqldbDataSource(tupleRepository, associatedTupleRepository);
-
-                instances.put(beanName, dataSource);
-
-                return dataSource;
-            }
         }
 
         Constructor<?> constructor = null;

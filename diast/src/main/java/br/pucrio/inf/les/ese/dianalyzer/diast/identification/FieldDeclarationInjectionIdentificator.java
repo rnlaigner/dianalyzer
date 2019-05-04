@@ -4,19 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.*;
+import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
+import br.pucrio.inf.les.ese.dianalyzer.repository.model.Tuple;
+import br.pucrio.inf.les.ese.dianalyzer.repository.source.IBeanDataSource;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionAnnotation;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
-
 public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIdentificator {
-	
+
+	private final IBeanDataSource dataSource;
+
 	public FieldDeclarationInjectionIdentificator() {
 		super(InjectionType.FIELD);
+		this.dataSource = (IBeanDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
 	}
 
 	@Override
@@ -47,20 +49,29 @@ public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIde
 				elem.setType(variable.getType().asString());
 				
 				elem.setInjectionType(InjectionType.FIELD);
-				
-				try {
-					elem.setObjectType( getObjectTypeFromString
-										(variable.getType().
-												getClass().
-												getSimpleName() ) );
-				} catch (Exception e2) {
-					e2.printStackTrace();
+
+				// primeiro busco em memoria, se nao encontrar, me baseio na informacao do javaparser
+				Tuple tuple = (Tuple) dataSource.getBeanByName(elem.getType());
+
+				if(tuple != null){
+					log.info("Associated tuple found");
+					if(tuple.isInterface){
+						elem.setObjectType(ObjectType.INTERFACE);
+					} else{
+						elem.setObjectType(ObjectType.CLASS);
+					}
+				} else {
+					if(variable.getType().getClass().isInterface()){
+						elem.setObjectType(ObjectType.INTERFACE);
+					} else {
+						elem.setObjectType(ObjectType.CLASS);
+					}
 				}
 				
 				List<String> annotations = f.getAnnotations()
 											.stream()
 											.distinct()
-											.map(e -> e.getName().asString())
+											.map(e -> e.getName().asString().replace( "javax.annotation.","" )  )
 											.collect( Collectors.toList() );							
 				
 				elem.setName(variable.getName().toString());
@@ -74,11 +85,6 @@ public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIde
 						continue;
 					}
 				}
-				
-//				TODO Nao quero ter de adicionar ao metodo. Pensar em algo				
-//				if(injectionAnnotation == null){
-//					throw new Exception("No annotations were identified.");
-//				}
 				
 				try {
 					elem.setAnnotation(injectionAnnotation);

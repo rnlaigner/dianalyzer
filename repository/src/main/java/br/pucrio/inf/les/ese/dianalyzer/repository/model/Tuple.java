@@ -1,46 +1,32 @@
 package br.pucrio.inf.les.ese.dianalyzer.repository.model;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import java.util.Objects;
 
-@Entity
-@Table(name = "Tuple")
-public class Tuple extends AbstractPersistent {
+public class Tuple extends AbstractTuple {
 
-    @Column
-    private String scope;
+    public String scope;
 
-    @Column
-    private String type;
+    public Boolean isInterface;
 
-    @Column
-    private Boolean isInterface;
+    public int hashId;
 
-    public Tuple() { }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
+    public Tuple(String scope, Boolean isInterface, String type) {
         this.scope = scope;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Boolean isInterface() {
-        return isInterface;
-    }
-
-    public void setInterface(Boolean isInterface) {
         this.isInterface = isInterface;
+        this.type = type;
+        this.hashId = Objects.hash(this.type);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Tuple tuple = (Tuple) o;
+        boolean result = tuple.type.contentEquals( this.type ) ? true : false;
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return hashId;
     }
 }

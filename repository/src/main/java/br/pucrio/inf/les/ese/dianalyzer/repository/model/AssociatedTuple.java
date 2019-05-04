@@ -1,45 +1,39 @@
 package br.pucrio.inf.les.ese.dianalyzer.repository.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
-@Entity
-@Table(name = "AssociatedTuple")
-public class AssociatedTuple extends AbstractPersistent {
+import java.util.Objects;
 
-    @Column
-    private String father;
+public class AssociatedTuple extends AbstractTuple implements Comparable<AssociatedTuple> {
 
-    @Column
-    private String type;
+    public String father;
 
-    @Column
-    private String name;
+    public String name;
 
-    public AssociatedTuple() { }
+    public int hashId;
 
-    public String getFather() {
-        return father;
-    }
-
-    public void setFather(String father) {
+    public AssociatedTuple(String father, String name, String type) {
         this.father = father;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
+        this.type = type;
+        this.hashId = Objects.hash(this.name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        AssociatedTuple tuple = (AssociatedTuple) o;
+        boolean result = tuple.name.contentEquals( this.name ) ? true : false;
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return hashId;
+    }
+
+    @Override
+    public int compareTo(AssociatedTuple o) {
+        if ( this.hashId > hashId ) return 1;
+        if ( this.hashId < hashId ) return -1;
+        return 0;
     }
 }

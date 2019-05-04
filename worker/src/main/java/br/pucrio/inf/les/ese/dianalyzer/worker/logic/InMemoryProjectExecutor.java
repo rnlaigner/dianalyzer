@@ -13,6 +13,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.practices.*;
 import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
 import br.pucrio.inf.les.ese.dianalyzer.repository.model.AssociatedTuple;
 import br.pucrio.inf.les.ese.dianalyzer.repository.model.Tuple;
+import br.pucrio.inf.les.ese.dianalyzer.repository.source.IBeanDataSource;
 import br.pucrio.inf.les.ese.dianalyzer.repository.source.IDataSource;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -36,24 +37,18 @@ import java.util.List;
 })
 public class InMemoryProjectExecutor extends AbstractProjectExecutor {
 
-	private final IDataSource dataSource;
+	private final IBeanDataSource dataSource;
 
 	public InMemoryProjectExecutor(){
 		super();
 		buildBadPracticesApplied();
-		this.dataSource = (IDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
+		this.dataSource = (IBeanDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
 	}
 	
 	/*
 	   FIXME
 
 	   Exception in thread "main" java.lang.OutOfMemoryError: GC overhead limit exceeded
-
-	   TODO
-
-	   Guardar scope dos beans e suas respectivas dependencias em uma tabela
-
-	   Assim, um bean a ser analizado, realiza uma query ao banco
 
 	  */
 
@@ -74,14 +69,15 @@ public class InMemoryProjectExecutor extends AbstractProjectExecutor {
 
 				String type = null;
 				try {
-					type = parsedObject.getPrimaryTypeName().get();
+					type = parsedObject.getType(0).getNameAsString();
 				}catch(Exception e){
 					log.info("Parsed object has no primary type");
 				} finally {
 
 					if (type == null) {
+
 						try {
-							type = parsedObject.getType(0).getNameAsString();
+							type = parsedObject.getPrimaryTypeName().get();
 						} catch (Exception e) {
 							log.info("Parsed object has no name");
 							type = index.toString();
@@ -90,21 +86,20 @@ public class InMemoryProjectExecutor extends AbstractProjectExecutor {
 
 				}
 
-				Tuple tuple = new Tuple();
-
-				tuple.setType(type);
-
-				// TODO
-				// get scope
 				String scope = ScopeBusiness.extractScopeAnnotationValueAsString(parsedObject);
 
-				tuple.setScope(scope);
+				Boolean isInterface = false;
+				try {
+					if (parsedObject.getType(0) instanceof ClassOrInterfaceDeclaration) {
+						ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) parsedObject.getType(0);
+						isInterface = classOrInterfaceDeclaration.isInterface();
+					}
+				}
+				catch(Exception e){
+					log.error(e.getMessage());
+				}
 
-				ClassOrInterfaceDeclaration classOrInterfaceDeclaration = (ClassOrInterfaceDeclaration) parsedObject.getType(0);
-
-				Boolean isInterface = classOrInterfaceDeclaration.isInterface();
-
-				tuple.setInterface(isInterface);
+				Tuple tuple = new Tuple(scope, isInterface, type);
 
 				dataSource.insert( tuple );
 
@@ -128,15 +123,15 @@ public class InMemoryProjectExecutor extends AbstractProjectExecutor {
 
 		for(AbstractElement elem : elements){
 
-			AssociatedTuple associatedTuple = new AssociatedTuple();
+			String type = ( (InjectedElement) elem).getType();
 
-			associatedTuple.setFather(father);
+			if(type == null){
+				log.info("element name: "+elem.getName()+" has no type");
+			}
 
-			associatedTuple.setName(elem.getName());
+			AssociatedTuple associatedTuple = new AssociatedTuple(father,elem.getName(),type);
 
-			associatedTuple.setType( ( (InjectedElement) elem).getType() );
-
-			dataSource.insert(associatedTuple);
+			dataSource.insertAssociatedBean(associatedTuple);
 
 		}
 

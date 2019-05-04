@@ -23,7 +23,7 @@ public enum ProducerAnnotation {
 	}
 	
 	public static String getProducerAnnotationsRegex(){
-		return ProducerAnnotation.BEAN.getValue().toString() + "|" + ProducerAnnotation.PRODUCES.getValue().toString();
+		return BEAN.getValue() + "|" + PRODUCES.getValue() + "|" + PROVIDES.getValue();
 	}
 	
 }
