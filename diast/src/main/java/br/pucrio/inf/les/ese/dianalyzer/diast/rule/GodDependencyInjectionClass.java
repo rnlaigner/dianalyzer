@@ -1,26 +1,22 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import br.pucrio.inf.les.ese.dianalyzer.diast.logic.InjectionBusiness;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ConstructorInjectionIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ContainerCallIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.FieldDeclarationInjectionIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultipleResults {
 	
@@ -30,18 +26,19 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
 	private static final double TCC = 0.3; 
 	
 	private MethodCallExprVisitor methodDeclarationVisitor = new MethodCallExprVisitor();
-	
-	private Map<String,List<String>> tightClassCohesionMetric = 
-			new HashMap<String,List<String>>();
+
+	// nome do metodo eh a key, list eh a lista de atributos usados pelo metodo
+	private Map<String,TreeSet<String>> tightClassCohesionMetric =
+			new HashMap<String, TreeSet<String>>();
 
 	public GodDependencyInjectionClass() {
 		super();
 	}
 	
-	private class MethodCallExprVisitor extends VoidVisitorAdapter<AbstractElement> {
+	private class MethodCallExprVisitor extends VoidVisitorAdapter<List<AbstractElement>> {
 		
 		@Override
-	    public void visit(MethodCallExpr methodCallExpr, AbstractElement element)
+	    public void visit(MethodCallExpr methodCallExpr, List<AbstractElement> injectedElements)
 	    {
 			//get method the call belongs to
 			Node node = methodCallExpr.getParentNode().get();
@@ -59,26 +56,101 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
 					nodeParent = nodeParent.getParentNode().get();
 				}
 				
-			} /*else if (stmt instanceof IfStmt){
-				
-			} */ else {
+			} else {
 				while( ! ( nodeParent instanceof MethodDeclaration ) ){
 					nodeParent = nodeParent.getParentNode().get();
 				}
 			}
 			
 			MethodDeclaration methodDeclaration = (MethodDeclaration) nodeParent;
-			
-			if (tightClassCohesionMetric.get(methodDeclaration.getNameAsString()) != null){
-				List<String> elements = tightClassCohesionMetric.get(methodDeclaration.getNameAsString());
-				elements.add(methodCallExpr.getScope().toString());
-				tightClassCohesionMetric.put(methodDeclaration.getNameAsString(), elements );
-			} else {
-				List<String> elements = new ArrayList<String>();
-				elements.add(methodCallExpr.getScope().toString());
-				tightClassCohesionMetric.put(methodDeclaration.getNameAsString(), elements );
-			}
-			
+
+            TreeSet<String> elements = null;
+
+			// ideal eh, antes de inserir no map, verificar se sao injected elements ou metodos da classe
+
+			if (tightClassCohesionMetric.get(methodDeclaration.getNameAsString()) != null) {
+                elements = tightClassCohesionMetric.get(methodDeclaration.getNameAsString());
+            } else {
+			    elements = new TreeSet<String>();
+            }
+
+
+            // se eh variabledeclaration
+            boolean isVariableDeclaration = false;
+            try{
+                isVariableDeclaration = methodCallExpr
+                        .getParentNode()
+                        .get()
+                        .getParentNode()
+                        .get() instanceof VariableDeclarationExpr ? true : false;
+            } catch( Exception e){
+
+            }
+
+            // se esta nos parametros
+            String variable = null;
+
+            try {
+
+                if (methodCallExpr.getScope().isPresent() && methodCallExpr.getScope().get().isMethodCallExpr()){
+
+                    // preciso pegar o name do objeto
+                    variable = methodCallExpr
+                            .getScope()
+                            .get()
+                            .asMethodCallExpr()
+                            .getScope()
+                            .get()
+                            .asNameExpr()
+                            .getNameAsString();
+
+                } else {
+                    if(methodCallExpr.getScope().get().isFieldAccessExpr()){
+                        variable = methodCallExpr.getScope().get().asFieldAccessExpr().getScope().asNameExpr().getNameAsString().replace("this.", "");
+                    } else{
+                        variable = methodCallExpr.getScope().get().toString().replace("this.", "");
+                    }
+
+                }
+            }
+            catch(Exception e){
+
+            }
+
+            if( methodDeclaration.getParameterByName( variable ).isPresent() ){
+                // esta nos parametros
+            } else if ( ! methodDeclaration.getNameAsString().contentEquals( methodCallExpr.getNameAsString() )
+                    && injectedElements.contains(variable) ) {
+                // nao eh chamada recursiva
+                //e pertence a variaveis da classe, adiciono
+
+                elements.add(variable);
+                tightClassCohesionMetric.put(methodDeclaration.getNameAsString(), elements );
+
+            } else {
+
+                // ver childen para ver se parametros sao chamadas de metodos das variaveis da classe
+                log.info("Diferente de tudo..");
+                for(  Node argument : methodCallExpr.getArguments()  ){
+
+                    if(argument instanceof MethodCallExpr){
+
+                        MethodCallExpr mce = ((MethodCallExpr) argument).asMethodCallExpr();
+
+                        variable = mce.getScope().get().asFieldAccessExpr().getNameAsString().replace("this.", "");;
+
+                        final String var = variable;
+
+                        if(injectedElements.stream().filter(p->p.getName().contentEquals(var)).count() > 0){
+                            elements.add(variable);
+                            tightClassCohesionMetric.put(methodDeclaration.getNameAsString(), elements );
+                        }
+
+                    }
+
+                }
+            }
+
 	    }
 		
 	}
@@ -98,23 +170,14 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
 		int complexity = 0;
 		
 		for ( MethodDeclaration mtdDecl : cu.getChildNodesByType(MethodDeclaration.class) ) {
-			
 			for ( IfStmt ifStmt : mtdDecl.getChildNodesByType(IfStmt.class) ) {
-				
-				// We found an "if" - cool, add one.
 	            complexity++;
 	            if (ifStmt.getElseStmt().isPresent()) {
-	                // This "if" has an "else"
-	                if (ifStmt.getElseStmt().get() instanceof IfStmt) {
-	                    // it's an "else-if". We already count that by counting the "if" above.
-	                } else {
-	                    // it's an "else-something". Add it.
+	                if (!(ifStmt.getElseStmt().get() instanceof IfStmt)) {
 	                    complexity++;
 	                }
 	            }
-				
 			}
-			
 		}
 		
 		boolean WMCisApplied = complexity > WMC ? true : false;
@@ -129,9 +192,9 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
            via accessor-methods.
 		 */		
 
-		List<AbstractElement> elements = InjectionBusiness.getInjectedElementsFromClass(cu);
+		List<AbstractElement> injectedElements = InjectionBusiness.getInjectedElementsFromClass(cu);
 		
-		boolean ATFDisApplied = elements.size() > ATFD ? true : false;
+		boolean ATFDisApplied = injectedElements.size() > ATFD ? true : false;
 		
 		/*
 			Tight Class Cohesion (TCC(C)) is the relative number
@@ -139,26 +202,102 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
 			directly connected if they access the same instance
 			variables of C [2].
 		 */
-		//TODO count class cohesion
-		//Referencia: https://www.aivosto.com/project/help/pm-oo-cohesion.html
-		//A ideia aqui eh percorrer todo metodo e guardar todas as instancias utilizadas
-		//Depois disso, par a par, veriicar se ha atributos utilizados por ambos
-		
 		/*
 		 Which methods are related? Methods a and b are related if:
 	     they both access the same class-level variable, or a calls b, or b calls a.
 		 */
-		methodDeclarationVisitor.visit(cu,null);
+		methodDeclarationVisitor.visit(cu,injectedElements);
 		
 		//TODO agora basta verificar quais atributos aparecem em ambos metodos no Hash
 		
 		//result.setElement(element);
-		
+		// calculateTCC(cu,elements);
 		ElementResult elementResult = new ElementResult();
 		
 		resultSet.add(elementResult);
 		
 		return resultSet;
+	}
+
+	private Map getClassMethods( CompilationUnit cu){
+
+        Map<String,String> methods = new HashMap<String,String>();
+
+        cu.findAll( MethodDeclaration.class ).stream().forEach( mD -> methods.put(mD.getNameAsString(),"") );
+
+        return methods;
+
+    }
+
+	private Integer calculateTCC( CompilationUnit cu, List<AbstractElement> elements ){
+
+		final AtomicInteger count = new AtomicInteger(0);
+
+		Map<String,String> methods = getClassMethods(cu);
+
+		Map<String,TreeSet<String>> methodCallToOtherMethods = new HashMap<String,TreeSet<String>>();
+
+        Map<String,TreeSet<String>> classVariablesInMethods = new HashMap<String,TreeSet<String>>();
+
+		cu.findAll( MethodDeclaration.class ).stream().forEach(
+				mD -> {
+
+					mD.getBody().get().asBlockStmt().getStatements().stream().forEach(
+						stmt -> {
+
+							if( stmt.isExpressionStmt() ){
+								log.info("Heere");
+								Expression exprStmt = ((ExpressionStmt) stmt).getExpression();
+								if(exprStmt.isVariableDeclarationExpr()){
+									// skip
+                                    // TODO caso extremo: variavel declarada no metodo tem mesmo nome da variavel de classe
+								} else if( exprStmt.isMethodCallExpr() ){
+									log.info("pego info do metodo e vejo se eh chamada a metodo da mesma classe");
+									MethodCallExpr mce = exprStmt.asMethodCallExpr();
+									String methodName = mce.getName().asString();
+									if(methods.get(methodName) != null){
+                                        TreeSet<String> tree = methodCallToOtherMethods.get( mD.getNameAsString() );
+                                        if(tree != null){
+                                            tree.add( methodName );
+                                        } else{
+                                            tree = new TreeSet<String>();
+                                            tree.add( methodName );
+                                            methodCallToOtherMethods.put( mD.getNameAsString(), tree );
+                                        }
+
+									} else if( mce.getScope().isPresent() && mce.getScope().get().isNameExpr() ){
+
+									    String attr = mce.getScope().get().asNameExpr().getName().asString();
+
+									    // vejo se eh chamada de metodo dos atributos da classe
+                                        Long isVariableFromClass = elements
+                                                .stream()
+                                                .filter( p -> p.getName().contentEquals( attr ) )
+                                                .count();
+
+                                        if( isVariableFromClass > 0 ){
+
+                                            TreeSet<String> tree = classVariablesInMethods.get( mD.getNameAsString() );
+                                            if(tree != null){
+                                                tree.add( attr );
+                                            } else{
+                                                tree = new TreeSet<String>();
+                                                tree.add( attr );
+                                                classVariablesInMethods.put( mD.getNameAsString(), tree );
+                                            }
+
+                                        }
+                                    }
+
+								}
+							}
+						}
+					);
+				}
+		);
+
+		return null;
+
 	}
 
 }

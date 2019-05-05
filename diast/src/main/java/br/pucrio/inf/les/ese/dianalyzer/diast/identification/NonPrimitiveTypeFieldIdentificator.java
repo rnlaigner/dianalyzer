@@ -2,7 +2,6 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.identification;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AttributeElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionAnnotation;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
 import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
 import br.pucrio.inf.les.ese.dianalyzer.repository.model.Tuple;
@@ -31,13 +30,6 @@ public class NonPrimitiveTypeFieldIdentificator extends AbstractIdentificator {
 			.filter(f ->
 				 !f.getVariable(0).getTypeAsString()
 						.matches("String|int|Integer|Double|double|char|Long|long|List|Collection|Map|HashMap")
-//						&&
-//						!f.getAnnotations()
-//						.stream()
-//						.anyMatch(a -> a
-//								.getName()
-//								.getIdentifier()
-//								.matches(InjectionAnnotation.getInjectionAnnotationsRegex()))
 			 )
 			.forEach(f -> {
 				AttributeElement elem = new AttributeElement();
