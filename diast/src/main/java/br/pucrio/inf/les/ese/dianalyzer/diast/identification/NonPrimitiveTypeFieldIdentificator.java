@@ -1,6 +1,9 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.identification;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.*;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AttributeElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionAnnotation;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
 import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
 import br.pucrio.inf.les.ese.dianalyzer.repository.model.Tuple;
 import br.pucrio.inf.les.ese.dianalyzer.repository.source.IBeanDataSource;
@@ -10,14 +13,12 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIdentificator {
+public class NonPrimitiveTypeFieldIdentificator extends AbstractIdentificator {
 
 	private final IBeanDataSource dataSource;
 
-	public FieldDeclarationInjectionIdentificator() {
-		super(InjectionType.FIELD);
+	public NonPrimitiveTypeFieldIdentificator() {
 		this.dataSource = (IBeanDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
 	}
 
@@ -27,17 +28,19 @@ public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIde
 		List<AbstractElement> elements = new ArrayList<AbstractElement>();
 		
 		cu.findAll(FieldDeclaration.class).stream()
-			.filter(f -> { 
-				return 
-						f.getAnnotations()
-						.stream()
-						.anyMatch(a -> a
-								.getName()
-								.getIdentifier()
-								.matches(InjectionAnnotation.getInjectionAnnotationsRegex()));
-			} )
+			.filter(f ->
+				 !f.getVariable(0).getTypeAsString()
+						.matches("String|int|Integer|Double|double|char|Long|long|List|Collection|Map|HashMap")
+//						&&
+//						!f.getAnnotations()
+//						.stream()
+//						.anyMatch(a -> a
+//								.getName()
+//								.getIdentifier()
+//								.matches(InjectionAnnotation.getInjectionAnnotationsRegex()))
+			 )
 			.forEach(f -> {
-				InjectedElement elem = new InjectedElement();
+				AttributeElement elem = new AttributeElement();
 				
 				List<String> modifiers = new ArrayList<String>();
 				f.getModifiers().stream().forEach( m -> { modifiers.add( m.asString() ); } );
@@ -47,8 +50,6 @@ public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIde
 				VariableDeclarator variable = f.getVariables().get(0);
 				
 				elem.setType(variable.getType().asString());
-				
-				elem.setInjectionType(InjectionType.FIELD);
 
 				// primeiro busco em memoria, se nao encontrar, me baseio na informacao do javaparser
 				Tuple tuple = (Tuple) dataSource.getBeanByName(elem.getType());
@@ -68,31 +69,8 @@ public class FieldDeclarationInjectionIdentificator extends AbstractInjectionIde
 					}
 				}
 				
-				List<String> annotations = f.getAnnotations()
-											.stream()
-											.distinct()
-											.map(e -> e.getName().asString().replace( "javax.annotation.","" )  )
-											.collect( Collectors.toList() );							
-				
 				elem.setName(variable.getName().toString());
-				
-				InjectionAnnotation injectionAnnotation = null;
-				for(String annotation : annotations){
-					try{
-						injectionAnnotation = InjectionAnnotation.getFromString(annotation);
-						if (injectionAnnotation != null){
-							break;
-						}
-					}
-					catch(Exception e){}
-				}
-				
-				try {
-					elem.setAnnotation(injectionAnnotation);
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-				
+
 				elements.add( elem );
 			}
 		);

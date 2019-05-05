@@ -1,24 +1,19 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.identification;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.*;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.CastExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.*;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.utils.Log;
-
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ContainerClassType;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.VariableDeclarationElement;
-
-public class ContainerCallIdentificator extends AbstractIdentificator {
+public class ContainerCallIdentificator extends AbstractInjectionIdentificator {
 	
 	public ContainerCallIdentificator() {
 		super(InjectionType.CONTAINER);
@@ -39,8 +34,6 @@ public class ContainerCallIdentificator extends AbstractIdentificator {
 									.matches(getContainerClassTypeRegex()));
 			} )
 			.forEach(f -> {
-
-				// TODO refactor
 
 				VariableDeclarationElement variableDeclarationElement = new VariableDeclarationElement();
 				
@@ -143,7 +136,7 @@ public class ContainerCallIdentificator extends AbstractIdentificator {
 	}
 	
 	private String getContainerClassTypeRegex(){
-		return ContainerClassType.SPRING.getClassName().toString() + "|" + ContainerClassType.CDI.getClassName().toString();
+		return ContainerClassType.SPRING.getClassName() + "|" + ContainerClassType.CDI.getClassName();
 	}
 	
 }

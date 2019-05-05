@@ -1,28 +1,51 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.identification;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionAnnotation;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
+import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
+import br.pucrio.inf.les.ese.dianalyzer.repository.model.Tuple;
+import br.pucrio.inf.les.ese.dianalyzer.repository.source.IBeanDataSource;
 
 public abstract class AbstractInjectionIdentificator extends AbstractIdentificator {
-	
+
+	private final InjectionType injectionType;
+
+	private final IBeanDataSource dataSource;
+
 	public AbstractInjectionIdentificator(InjectionType injectionType) {
-		super(injectionType);
+		this.injectionType = injectionType;
+		this.dataSource = (IBeanDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
 	}
 
-	protected String getInjectAnnotationsRegex(){
-		return InjectionAnnotation.getInjectionAnnotationsRegex();
+	public InjectionType getInjectionType() {
+		return injectionType;
 	}
-	
-	protected InjectionAnnotation getInjectionAnnotationFromString(String annotation) throws Exception {
-		
-		InjectionAnnotation annotationFromString = InjectionAnnotation.getFromString(annotation);
 
-		if(annotationFromString == null)
-		{
-			throw new Exception("Annotation '"+ annotation +"' is not recognized");
+	protected ObjectType getObjectTypeFromString(String objectType) throws Exception {
+
+		Tuple tuple = (Tuple) dataSource.getBeanByName(objectType);
+
+		if(tuple != null){
+			log.info("Associated tuple found");
+			if(tuple.isInterface){
+				return ObjectType.INTERFACE;
+			} else{
+				return ObjectType.CLASS;
+			}
+		} else {
+
+			if (objectType.toLowerCase().contains(ObjectType.CLASS.getValue())) {
+				return ObjectType.CLASS;
+			}
+
+			if (objectType.equals(ObjectType.INTERFACE.getValue())) {
+				return ObjectType.INTERFACE;
+			}
+
+			throw new Exception("Errado");
+
 		}
 
-		return annotationFromString;
 	}
 
 }

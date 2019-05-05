@@ -102,13 +102,13 @@ public class MethodParameterInjectionAssignedToMoreThanOneAttribute extends Abst
 					
 					InjectedElement methodParameter = new InjectedElement();
 					
-					//TODO aqui poderia ser set_method tambem
+					// TODO aqui poderia ser set_method tambem
 					methodParameter.setInjectionType(InjectionType.METHOD);
 					
-					//TODO verificar se eh interface precisa do hashmap de todos os compilation unit
+					// TODO verificar se eh interface precisa do hashmap de todos os compilation unit
 					methodParameter.setObjectType(ObjectType.CLASS);
 					
-					//TODO methodParameter recebe annotation caso methoddeclaration tenha
+					// TODO methodParameter recebe annotation caso methoddeclaration tenha
 					
 					methodParameter.setType(parameter.getTypeAsString());
 					

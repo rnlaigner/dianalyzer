@@ -29,7 +29,6 @@ public class NotificationEventListener implements PostInsertEventListener, PostU
         final NotificationEvent notificationEvent =
                 new NotificationEvent(postInsertEvent.getEntity(), NotificationEventType.INSERT);
 
-        // TODO: fill event properties
 
         notificationBusiness.handleNotificationEvent(notificationEvent);
     }
@@ -44,7 +43,6 @@ public class NotificationEventListener implements PostInsertEventListener, PostU
         final NotificationEvent notificationEvent =
                 new NotificationEvent(postUpdateEvent.getEntity(), NotificationEventType.UPDATE);
 
-        // TODO: fill event properties
 
         notificationBusiness.handleNotificationEvent(notificationEvent);
     }

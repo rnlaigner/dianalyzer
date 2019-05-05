@@ -214,7 +214,6 @@ public class AssignedHoursToOrderElementModel implements IAssignedHoursToOrderEl
         if (orderElement == null) {
             return EffortDuration.zero();
         }
-        // TODO this must be changed when changing HoursGroup
         return EffortDuration.hours(orderElement.getWorkHours());
     }
 

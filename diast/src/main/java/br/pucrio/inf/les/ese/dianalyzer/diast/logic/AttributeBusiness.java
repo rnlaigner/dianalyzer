@@ -9,9 +9,9 @@ import com.github.javaparser.ast.CompilationUnit;
 
 import java.util.List;
 
-public class InjectionBusiness {
+public class AttributeBusiness {
 
-    public static List<AbstractElement> getInjectedElementsFromClass(CompilationUnit cu){
+    public static List<AbstractElement> getAttributesFromClass(CompilationUnit cu){
 
         FieldDeclarationInjectionIdentificator fieldId = new FieldDeclarationInjectionIdentificator();
         ConstructorInjectionIdentificator constructorId = new ConstructorInjectionIdentificator();
@@ -26,7 +26,5 @@ public class InjectionBusiness {
         return  elements;
 
     }
-
-
 
 }

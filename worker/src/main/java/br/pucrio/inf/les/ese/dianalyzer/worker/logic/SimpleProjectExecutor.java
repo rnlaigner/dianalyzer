@@ -19,7 +19,7 @@ import java.util.Set;
 		BadPracticeThree.class,
 		/*BadPracticeFour.class,*/
 		BadPracticeFive.class,
-		/*BadPracticeSix.class,*/
+		BadPracticeSix.class,
 		BadPracticeSeven.class,
 		BadPracticeEight.class,
 		BadPracticeNine.class,

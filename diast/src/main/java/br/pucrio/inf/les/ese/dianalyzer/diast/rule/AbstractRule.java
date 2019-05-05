@@ -1,5 +1,5 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
-;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

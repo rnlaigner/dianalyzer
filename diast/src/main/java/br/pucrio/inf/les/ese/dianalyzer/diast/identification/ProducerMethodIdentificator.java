@@ -1,21 +1,18 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.identification;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerMethodElement;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.MethodDeclaration;
-
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerMethodElement;
-
 public class ProducerMethodIdentificator extends AbstractIdentificator {
 
-	public ProducerMethodIdentificator() {
-		super(null);
-	}
+	public ProducerMethodIdentificator() {}
 
 	@Override
 	public List<AbstractElement> identify(CompilationUnit cu) {

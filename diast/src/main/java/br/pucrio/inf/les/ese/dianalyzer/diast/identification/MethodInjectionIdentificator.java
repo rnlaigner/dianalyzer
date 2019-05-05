@@ -1,13 +1,13 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.identification;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionAnnotation;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MethodInjectionIdentificator extends AbstractMethodInjectionIdentificator {
 
@@ -28,7 +28,7 @@ public class MethodInjectionIdentificator extends AbstractMethodInjectionIdentif
 						.anyMatch(a -> a
 								.getName()
 								.getIdentifier()
-								.matches(getInjectAnnotationsRegex()));
+								.matches(InjectionAnnotation.getInjectionAnnotationsRegex()));
 			} )
 			//esse filtro garante que nao sejam metodos set
 			.filter(f -> { 

@@ -1,10 +1,6 @@
 package br.pucrio.inf.les.ese.dianalyzer.worker.logic;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.environment.ParseException;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ConstructorInjectionIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.FieldDeclarationInjectionIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.MethodInjectionIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.logic.InjectionBusiness;
 import br.pucrio.inf.les.ese.dianalyzer.diast.logic.ScopeBusiness;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
@@ -14,7 +10,6 @@ import br.pucrio.inf.les.ese.dianalyzer.repository.locator.ServiceLocator;
 import br.pucrio.inf.les.ese.dianalyzer.repository.model.AssociatedTuple;
 import br.pucrio.inf.les.ese.dianalyzer.repository.model.Tuple;
 import br.pucrio.inf.les.ese.dianalyzer.repository.source.IBeanDataSource;
-import br.pucrio.inf.les.ese.dianalyzer.repository.source.IDataSource;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
@@ -26,7 +21,7 @@ import java.util.List;
 		BadPracticeThree.class,
 		/*BadPracticeFour.class,*/
 		BadPracticeFive.class,
-		/*BadPracticeSix.class,*/
+		BadPracticeSix.class,
 		BadPracticeSeven.class,
 		BadPracticeEight.class,
 		BadPracticeNine.class,

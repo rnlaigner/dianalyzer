@@ -17,7 +17,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.rule.ReferenceOnConcreteClass;
 
 public class BadPracticeTwo extends AbstractPractice {
 	
-	private ReferenceOnConcreteClass rule;
+	private final ReferenceOnConcreteClass rule;
 
 	public BadPracticeTwo() {
 		rule = new ReferenceOnConcreteClass();

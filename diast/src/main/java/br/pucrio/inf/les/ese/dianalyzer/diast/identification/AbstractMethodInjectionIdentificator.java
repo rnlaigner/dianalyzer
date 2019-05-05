@@ -1,9 +1,10 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.identification;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import br.pucrio.inf.les.ese.dianalyzer.diast.logic.AssignmentBusiness;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionAnnotation;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
@@ -13,9 +14,9 @@ import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.stmt.Statement;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.logic.AssignmentBusiness;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 /*
  * It serves Constructor and Method injection identifier
  */
@@ -55,13 +56,10 @@ public abstract class AbstractMethodInjectionIdentificator extends AbstractInjec
 				elem.setType(parameter.getType().asString());
 				
 				try {
-					elem.setObjectType( getObjectTypeFromString
-										(parameter.getChildNodes().
-												get(0).
-												getClass().
-												getSimpleName() ) );
-				} catch (Exception e2) {
-					e2.printStackTrace();
+					elem.setObjectType( getObjectTypeFromString(elem.getType()) );
+				} catch (Exception e) {
+					log.info("Type "+elem.getType()+" not found. Make sure it is an external class");
+					elem.setType( ObjectType.CLASS.getValue() );
 				}
 				
 				String annotation = f.getAnnotations()
@@ -72,7 +70,7 @@ public abstract class AbstractMethodInjectionIdentificator extends AbstractInjec
 						.get(0);
 				
 				try {
-					elem.setAnnotation(getInjectionAnnotationFromString(annotation));
+					elem.setAnnotation(InjectionAnnotation.getFromString(annotation));
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -104,7 +102,7 @@ public abstract class AbstractMethodInjectionIdentificator extends AbstractInjec
 		
 	}
 	
-	//FIXME based on assumption for Java language
+	// FIXME based on assumption for Java language
 	protected boolean isSetMethod(MethodDeclaration f){
 		return f.getName().getIdentifier().startsWith("set");
 	}

@@ -105,7 +105,7 @@ public class DirectContainerCall extends AbstractMethodCallVisitorWithElement {
 			log.error(e.getMessage());
 		}
 
-		// FIXME need to figure out if it is an interface or class
+		// TODO need to figure out if it is an interface or class, however, it is not important in this bad practice
 		element.setObjectType(ObjectType.CLASS);
 
 		element.setInjectionType(InjectionType.CONTAINER);
