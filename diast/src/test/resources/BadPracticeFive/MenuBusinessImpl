@@ -1,184 +1,287 @@
-package fi.hut.soberit.agilefant.business.impl;
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ *
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
+package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.Entity;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.support.PropertyComparator;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import fi.hut.soberit.agilefant.business.AuthorizationBusiness;
-import fi.hut.soberit.agilefant.business.IterationBusiness;
-import fi.hut.soberit.agilefant.business.MenuBusiness;
-import fi.hut.soberit.agilefant.business.ProductBusiness;
-import fi.hut.soberit.agilefant.business.TransferObjectBusiness;
-import fi.hut.soberit.agilefant.business.UserBusiness;
-import fi.hut.soberit.agilefant.db.IterationDAO;
-import fi.hut.soberit.agilefant.db.ProjectDAO;
-import fi.hut.soberit.agilefant.db.StoryDAO;
-import fi.hut.soberit.agilefant.model.Backlog;
-import fi.hut.soberit.agilefant.model.Iteration;
-import fi.hut.soberit.agilefant.model.Product;
-import fi.hut.soberit.agilefant.model.Project;
-import fi.hut.soberit.agilefant.model.Story;
-import fi.hut.soberit.agilefant.model.User;
-import fi.hut.soberit.agilefant.security.SecurityUtil;
-import fi.hut.soberit.agilefant.transfer.BacklogType;
-import fi.hut.soberit.agilefant.transfer.MenuDataNode;
-import fi.hut.soberit.agilefant.util.MyAssignmentsMenuBuilder;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
 
 /**
- * The implementation class for calculating data to the lefthand menu.
- * 
- * @author rjokelai
+ * This implementation validates each {@link Property} from the given {@link Entity} according to the
+ * {@link ValidationConfiguration}s associated with it.
+ *
+ * @author Phillip Verheyden
+ * @see {@link EntityValidatorService}
+ * @see {@link ValidationConfiguration}
  */
-@Service("menuBusiness")
-@Transactional
-public class MenuBusinessImpl implements MenuBusiness {
+@Service("blEntityValidatorService")
+public class EntityValidatorServiceImpl implements EntityValidatorService {
+	protected static final Log LOG = LogFactory.getLog(EntityValidatorServiceImpl.class);
+
+    @Resource(name = "blGlobalEntityPropertyValidators")
+    protected List<GlobalPropertyValidator> globalEntityValidators;
 
     @Autowired
-    private IterationDAO iterationDAO;
-    
-    @Autowired
-    private ProjectDAO projectDAO;
-    
-    @Autowired
-    private StoryDAO storyDAO;
-    
-    @Autowired
-    private ProductBusiness productBusiness;
-    
-    @Autowired
-    private IterationBusiness iterationBusiness;
+    protected ApplicationContext applicationContext;
 
-    @Autowired
-    private TransferObjectBusiness transferObjectBusiness;
-    
-    @Autowired
-    private UserBusiness userBusiness;
-    
-    @Autowired
-    private AuthorizationBusiness authorizationBusiness;
+    @Resource(name = "blRowLevelSecurityService")
+    protected RowLevelSecurityService securityService;
 
-    @SuppressWarnings("unchecked")
-    public List<MenuDataNode> constructBacklogMenuData() {
-    	
-        List<MenuDataNode> nodes = new ArrayList<MenuDataNode>();
-        List<Product> products = new ArrayList<Product>(productBusiness
-                .retrieveAllOrderByName());
-        Collections.sort(products, new PropertyComparator("name", true, true));
+    private Map<String, List<BroadleafEntityValidator<?>>> formFoxValidatorMap;
 
-        for (Product prod : products) {
-        	if (checkAccess(prod)) {
-                nodes.add(constructMenuDataNode(prod));
+	@PostConstruct
+	public void populateFormFoxValidatorMap() {
+		String[] beanNames = applicationContext.getBeanNamesForType(BroadleafEntityValidator.class);
+		formFoxValidatorMap = new HashMap<>(beanNames.length);
+
+		for (String beanName : beanNames) {
+			BroadleafEntityValidator<?> formFoxValidator = applicationContext.getBean(beanName,
+					BroadleafEntityValidator.class);
+			Class<?> entityType = GenericTypeResolver.resolveTypeArgument(formFoxValidator.getClass(),
+					BroadleafEntityValidator.class);
+			if (entityType != null) {
+				String entityClassName = entityType.getName();
+				LOG.info(String.format("Registering validator %s for entity type %s",
+						formFoxValidator.getClass().getName(), entityClassName));
+
+				List<BroadleafEntityValidator<?>> registeredValidatorsForType = formFoxValidatorMap
+						.get(entityClassName);
+				if (registeredValidatorsForType == null) {
+					registeredValidatorsForType = new ArrayList<>();
+					formFoxValidatorMap.put(entityClassName, registeredValidatorsForType);
+				}
+				registeredValidatorsForType.add(formFoxValidator);
+			} else {
+				LOG.warn("Could not determine entity type for " + formFoxValidator.getClass().getName());
+			}
+		}
+	}
+
+
+    @Override
+    public void validate(Entity submittedEntity, @Nullable Serializable instance, Map<String, FieldMetadata> propertiesMetadata,
+            RecordHelper recordHelper, boolean validateUnsubmittedProperties) {
+        Object idValue = null;
+        if (instance != null) {
+            String idField = (String) ((BasicPersistenceModule) recordHelper.getCompatibleModule(OperationType.BASIC)).
+                getPersistenceManager().getDynamicEntityDao().getIdMetadata(instance.getClass()).get("name");
+            try {
+                idValue = recordHelper.getFieldManager().getFieldValue(instance, idField);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (FieldNotAvailableException e) {
+                throw new RuntimeException(e);
             }
         }
-        
-        final List<Iteration> standAloneIterations = new ArrayList<Iteration>(iterationBusiness.retrieveAllStandAloneIterations());
-        
-        List<MenuDataNode> standaloneIterationNodes = new LinkedList<MenuDataNode>();
-        for (Iteration iteration: standAloneIterations) {
-            if (checkAccess(iteration)) {
-                standaloneIterationNodes.add(constructMenuDataNode(iteration));
+        Entity entity;
+        boolean isUpdateRequest;
+        if (idValue == null) {
+            //This is for an add, or if the instance variable is null (e.g. PageTemplateCustomPersistenceHandler)
+            entity = submittedEntity;
+            isUpdateRequest = false;
+        } else {
+            if (validateUnsubmittedProperties) {
+                //This is for an update, as the submittedEntity instance will likely only contain the dirty properties
+                entity = recordHelper.getRecord(propertiesMetadata, instance, null, null);
+                //acquire any missing properties not harvested from the instance and add to the entity. A use case for this
+                //would be the confirmation field for a password validation
+                for (Map.Entry<String, FieldMetadata> entry : propertiesMetadata.entrySet()) {
+                    if (entity.findProperty(entry.getKey()) == null) {
+                        Property myProperty = submittedEntity.findProperty(entry.getKey());
+                        if (myProperty != null) {
+                            entity.addProperty(myProperty);
+                        }
+                    } else if (submittedEntity.findProperty(entry.getKey()) != null) {
+                        entity.findProperty(entry.getKey()).setValue(submittedEntity.findProperty(entry.getKey()).getValue());
+                        entity.findProperty(entry.getKey()).setIsDirty(submittedEntity.findProperty(entry.getKey()).getIsDirty());
+                    }
+                }
+            } else {
+                entity = submittedEntity;
+            }
+            isUpdateRequest = true;
+        }
+
+        List<String> types = getTypeHierarchy(entity);
+        //validate each individual property according to their validation configuration
+        for (Entry<String, FieldMetadata> metadataEntry : propertiesMetadata.entrySet()) {
+            FieldMetadata metadata = metadataEntry.getValue();
+
+            //Don't test this field if it was not inherited from our polymorphic type (or supertype)
+            if (instance != null && (types.contains(metadata.getInheritedFromType())
+                    || instance.getClass().getName().equals(metadata.getInheritedFromType()))) {
+
+                Property property = entity.getPMap().get(metadataEntry.getKey());
+
+                // This property should be set to false only in the case where we are adding a member to a collection
+                // that has type of lookup. In this case, we don't have the properties from the target in our entity,
+                // and we don't need to validate them.
+                if (!validateUnsubmittedProperties && property == null) {
+                    continue;
+                }
+
+                //for radio buttons, it's possible that the entity property was never populated in the first place from the POST
+                //and so it will be null
+                String propertyName = metadataEntry.getKey();
+                String propertyValue = (property == null) ? null : property.getValue();
+
+                if (metadata instanceof BasicFieldMetadata) {
+                    //First execute the global field validators
+                    if (CollectionUtils.isNotEmpty(globalEntityValidators)) {
+                        for (GlobalPropertyValidator validator : globalEntityValidators) {
+                            PropertyValidationResult result = validator.validate(entity,
+                                    instance,
+                                    propertiesMetadata,
+                                    (BasicFieldMetadata)metadata,
+                                    propertyName,
+                                    propertyValue);
+                            if (!result.isValid()) {
+                                submittedEntity.addValidationError(propertyName, result.getErrorMessage());
+                            }
+                        }
+                    }
+
+                    //Now execute the validators configured for this particular field
+                    Map<String, List<Map<String, String>>> validations =
+                            ((BasicFieldMetadata) metadata).getValidationConfigurations();
+                    for (Map.Entry<String, List<Map<String, String>>> validation : validations.entrySet()) {
+                        String validationImplementation = validation.getKey();
+
+                        for (Map<String, String> configuration : validation.getValue()) {
+
+                            PropertyValidator validator = null;
+
+                            //attempt bean resolution to find the validator
+                            if (applicationContext.containsBean(validationImplementation)) {
+                                validator = applicationContext.getBean(validationImplementation, PropertyValidator.class);
+                            }
+
+                            //not a bean, attempt to instantiate the class
+                            if (validator == null) {
+                                try {
+                                    validator = (PropertyValidator) Class.forName(validationImplementation).newInstance();
+                                } catch (Exception e) {
+                                    //do nothing
+                                }
+                            }
+
+                            if (validator == null) {
+                                throw new PersistenceException("Could not find validator: " + validationImplementation +
+                                        " for property: " + propertyName);
+                            }
+
+                            PropertyValidationResult result = validator.validate(entity,
+                                                                            instance,
+                                                                            propertiesMetadata,
+                                                                            configuration,
+                                                                            (BasicFieldMetadata)metadata,
+                                                                            propertyName,
+                                                                            propertyValue);
+                            if (!result.isValid()) {
+                                for (String message : result.getErrorMessages()) {
+                                    submittedEntity.addValidationError(propertyName, message);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
-        if (standAloneIterations.size() > 0) {
-            MenuDataNode standaloneIterationsParentNode = new MenuDataNode();
-            standaloneIterationsParentNode.setTitle("[Standalone iterations]");
-            standaloneIterationsParentNode.setType(BacklogType.PRODUCT);
-            standaloneIterationsParentNode.setId(-1);
-            standaloneIterationsParentNode.setChildren(standaloneIterationNodes);
-            nodes.add(standaloneIterationsParentNode);
-        }
-        
-        return nodes;
+        if (instance != null) {
+			List<BroadleafEntityValidator<?>> formFoxValidators = formFoxValidatorMap
+					.get(instance.getClass().getName());
+			if (formFoxValidators != null) {
+				for (BroadleafEntityValidator<?> formFoxValidator : formFoxValidators) {
+					LOG.debug("Calling validator " + formFoxValidator.getClass().getName());
+					formFoxValidator.validate(submittedEntity, instance, propertiesMetadata, recordHelper,
+							validateUnsubmittedProperties);
+				}
+			}
+		}
     }
 
-    @SuppressWarnings("unchecked")
-    private MenuDataNode constructMenuDataNode(Backlog backlog) {
-        MenuDataNode mdn = new MenuDataNode();
-        mdn.setTitle(backlog.getName());
-        mdn.setId(backlog.getId());
-        mdn.setScheduleStatus(transferObjectBusiness
-                .getBacklogScheduleStatus(backlog));
-        List<Backlog> children = Collections.EMPTY_LIST;
-        if (!(backlog instanceof Iteration)) { // optimization
-            children = new ArrayList<Backlog>();
-            children.addAll(backlog.getChildren());
-            Collections.sort(children, new PropertyComparator("startDate",
-                    true, true));
+    /**
+     * <p>
+     * Returns the type hierarchy of the given <b>entity</b> in ascending order of type, stopping at Object
+     *
+     * <p>
+     * For instance, if this entity's {@link Entity#getType()} is {@link ProductBundleImpl}, then the result will be:
+     *
+     * [org.broadleafcommerce.core.catalog.domain.ProductBundleImpl, org.broadleafcommerce.core.catalog.domain.ProductImpl]
+     *
+     * @param entity
+     * @return
+     */
+    protected List<String> getTypeHierarchy(Entity entity) {
+        List<String> types = new ArrayList<String>();
+        Class<?> myType;
+        try {
+            myType = Class.forName(entity.getType()[0]);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
-        
-        final BacklogType backlogClassType = BacklogType.forBacklog(backlog);
-        if (backlogClassType != null) {
-            mdn.setType(backlogClassType);
+        types.add(myType.getName());
+        boolean eof = false;
+        while (!eof) {
+            myType = myType.getSuperclass();
+            if (myType != null && !myType.getName().equals(Object.class.getName())) {
+                types.add(myType.getName());
+            } else {
+                eof = true;
+            }
         }
-        
-        for (Backlog child : children) {
-            mdn.getChildren().add(constructMenuDataNode(child));
-        }
-
-        return mdn;
-    }
-    
-    @Transactional(readOnly = true)
-    public List<MenuDataNode> constructMyAssignmentsData(User user) {
-        List<Project> projects = projectDAO.retrieveActiveWithUserAssigned(user.getId());
-        List<Iteration> iterations = iterationDAO.retrieveActiveWithUserAssigned(user.getId());
-        List<Story> stories = storyDAO.retrieveActiveIterationStoriesWithUserResponsible(user.getId());
-        MyAssignmentsMenuBuilder builder = new MyAssignmentsMenuBuilder();
-        
-        for (Project project : projects) {
-            builder.insert(project);
-        }
-        for (Iteration iteration : iterations) {
-            builder.insert(iteration);
-        }
-        for (Story story : stories) {
-            builder.insert(story);
-        }
-        
-        return builder.getNodes();
-    }
-    
-    private boolean checkAccess(Backlog bl){
-        return this.authorizationBusiness.isBacklogAccessible(bl.getId(), SecurityUtil.getLoggedUser());
+        return types;
     }
 
-    public void setProductBusiness(ProductBusiness productBusiness) {
-        this.productBusiness = productBusiness;
-    }
-    
-    public void setIterationBusiness(IterationBusiness iterationBusiness) {
-        this.iterationBusiness = iterationBusiness;
+    @Override
+    public List<GlobalPropertyValidator> getGlobalEntityValidators() {
+        return globalEntityValidators;
     }
 
-    public void setTransferObjectBusiness(
-            TransferObjectBusiness transferObjectBusiness) {
-        this.transferObjectBusiness = transferObjectBusiness;
+    @Override
+    public void setGlobalEntityValidators(List<GlobalPropertyValidator> globalEntityValidators) {
+        this.globalEntityValidators = globalEntityValidators;
     }
-    
-    public void setIterationDAO(IterationDAO iterationDAO) {
-        this.iterationDAO = iterationDAO;
-    }
-    
-    public void setProjectDAO(ProjectDAO projectDAO) {
-        this.projectDAO = projectDAO;
-    }
-    
-    public void setStoryDAO(StoryDAO storyDAO) {
-        this.storyDAO = storyDAO;
-    }
-    
-    public void setUserBusiness(UserBusiness userBusiness) {
-    	this.userBusiness = userBusiness;
-    }
-    
-    public void setAuthorizationBusiness(AuthorizationBusiness authorizationBusiness) {
-    	this.authorizationBusiness = authorizationBusiness;
-    }
-    
 }

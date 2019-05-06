@@ -7,8 +7,6 @@ import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-import java.util.NoSuchElementException;
-
 public abstract class AbstractMethodCallVisitorWithElement extends AbstractRuleWithElement {
 	
 	protected MethodCallVisitor methodCallVisitor;
@@ -38,9 +36,9 @@ public abstract class AbstractMethodCallVisitorWithElement extends AbstractRuleW
     	return element.getName().equals(nodeName);
     }
 	
-	protected String getNodeName(MethodCallExpr methodCall)
+	protected String getNodeName(Expression expression)
 	{
-		Expression definitiveExpr = methodCall.clone();
+		Expression definitiveExpr = expression.clone();
 
 		// enquanto for methodcallexpr eh pq nao chegou ao elemento raiz
 		while (definitiveExpr.isMethodCallExpr()
@@ -57,7 +55,15 @@ public abstract class AbstractMethodCallVisitorWithElement extends AbstractRuleW
 			return definitiveExpr.asNameExpr().getNameAsString();
 		}
 
-		return methodCall.getChildNodes().get(0).toString();
+		String toReturn = null;
+		try{
+			toReturn = expression.getChildNodes().get(0).toString();
+		} catch(Exception e){
+			toReturn = "";
+			log.info("Type of element: "+expression.getClass().getCanonicalName());
+		}
+
+		return toReturn;
 	}
 	
 	protected String getMethodCall(MethodCallExpr methodCall) {

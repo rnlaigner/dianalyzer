@@ -33,33 +33,30 @@ public class IsNonUsedInjection extends AbstractMethodCallVisitorWithElement {
 
 	@Override
 	protected void visitMethodCallImpl(MethodCallExpr methodCall, AbstractElement element) {
-        
-		String nodeName = getNodeName(methodCall);
-		
+
 		//recursive call if parameter is a methodcallexpr
 		for(Expression expr : methodCall.getArguments()){
 			if(expr instanceof MethodCallExpr){
 				visitMethodCallImpl((MethodCallExpr)expr,element);
-
-				for(Expression argExpr : expr.asMethodCallExpr().getArguments()){
-
-					if(argExpr instanceof MethodCallExpr ){
-						visitMethodCallImpl((MethodCallExpr)argExpr,element);
-					}
-
-				}
-
+			} else {
+				increaseNumberOfAppearancesIfElementAppears( expr, element );
 			}
 		}
-    	
+
+		increaseNumberOfAppearancesIfElementAppears( methodCall, element );
+
+	}
+
+	private void increaseNumberOfAppearancesIfElementAppears( Expression expr, AbstractElement element ){
+
+		String nodeName = getNodeName(expr);
+
 		Boolean itDoesAppear = doesItAppear( nodeName, element );
-		
+
 		if(itDoesAppear) {
 			numberOfAppearances++;
 		}
-    		
+
 	}
-
-
 
 }
