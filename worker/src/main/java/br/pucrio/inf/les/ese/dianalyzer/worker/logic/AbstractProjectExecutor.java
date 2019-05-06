@@ -75,17 +75,27 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 		workbookCreator.create(report, outputPath);
 	}
 
-	protected void addToReportIfBadPracticeIsApplied(Set<CompilationUnitResult> results, Report report, CompilationUnit parsedObject, AbstractPractice practice, CompilationUnitResult result) {
+	protected void addToReportIfBadPracticeIsApplied(Set<CompilationUnitResult> results,
+													 Report report,
+													 CompilationUnit parsedObject,
+													 AbstractPractice practice,
+													 CompilationUnitResult result) {
 
 		if(result.badPracticeIsApplied()) {
 
 			results.add(result);
 
-			List<String> elementsInvolved = result
-					.getElementResults()
-					.stream()
-					.map( p -> p.getElement().getName() )
-					.collect(Collectors.toList());
+			List<String> elementsInvolved;
+			String elements = "";
+
+			if(result.getElementResults().size() > 0){
+				elementsInvolved = result.
+									getElementResults().
+									stream().
+									map( p -> p.getElement().getName() ).
+									collect(Collectors.toList());
+				elements = String.join(",", elementsInvolved);
+			}
 
 			String className = null;
 			if(parsedObject.getTypes().size() > 1){
@@ -95,7 +105,7 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 				className = parsedObject.getTypes().get(0).getNameAsString();
 			}
 
-			String elements = String.join(",", elementsInvolved);
+
 
 			//Mount report line
 			List<String> line = new ArrayList<String>();

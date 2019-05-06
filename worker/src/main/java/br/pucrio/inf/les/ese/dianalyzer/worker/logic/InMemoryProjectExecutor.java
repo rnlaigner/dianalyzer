@@ -39,13 +39,6 @@ public class InMemoryProjectExecutor extends AbstractProjectExecutor {
 		buildBadPracticesApplied();
 		this.dataSource = (IBeanDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
 	}
-	
-	/*
-	   FIXME
-
-	   Exception in thread "main" java.lang.OutOfMemoryError: GC overhead limit exceeded
-
-	  */
 
 	private void preProcessProjectClasses(List<String> files){
 
