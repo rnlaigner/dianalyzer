@@ -1,14 +1,13 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
-import java.util.NoSuchElementException;
-
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
+import java.util.NoSuchElementException;
 
 public abstract class AbstractMethodCallVisitorWithElement extends AbstractRuleWithElement {
 	
@@ -25,8 +24,7 @@ public abstract class AbstractMethodCallVisitorWithElement extends AbstractRuleW
 	protected abstract void visitMethodCallImpl(MethodCallExpr methodCall, AbstractElement arg);
 	
 	private class MethodCallVisitor extends VoidVisitorAdapter<AbstractElement> {
-		
-		
+
 		@Override
 	    public void visit(MethodCallExpr methodCall, AbstractElement arg)
 	    {
@@ -42,16 +40,23 @@ public abstract class AbstractMethodCallVisitorWithElement extends AbstractRuleW
 	
 	protected String getNodeName(MethodCallExpr methodCall)
 	{
-		try{
-			Expression expr = methodCall.getScope().get();
-			if(expr instanceof FieldAccessExpr){
-				return ((FieldAccessExpr) expr).getNameAsString();
-			}
+		Expression definitiveExpr = methodCall.clone();
+
+		// enquanto for methodcallexpr eh pq nao chegou ao elemento raiz
+		while (definitiveExpr.isMethodCallExpr()
+				&& ((MethodCallExpr) definitiveExpr).getScope().isPresent()
+			){
+			definitiveExpr = ((MethodCallExpr) definitiveExpr).getScope().get();
 		}
-		catch(NoSuchElementException e){
-			//Nothing to do
+
+		if(definitiveExpr.isFieldAccessExpr()){
+			return ((FieldAccessExpr) definitiveExpr).getNameAsString();
 		}
-		
+
+		if(definitiveExpr.isNameExpr()){
+			return definitiveExpr.asNameExpr().getNameAsString();
+		}
+
 		return methodCall.getChildNodes().get(0).toString();
 	}
 	
