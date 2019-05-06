@@ -1,10 +1,15 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.practices;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.github.javaparser.ast.CompilationUnit;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
 
 public abstract class AbstractPractice {
+	
+	protected final Log log = LogFactory.getLog(getClass());
 
 	private String name;
 	

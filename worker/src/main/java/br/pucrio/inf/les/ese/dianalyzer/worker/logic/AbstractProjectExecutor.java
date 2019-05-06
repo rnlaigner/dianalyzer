@@ -33,8 +33,7 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 		this.parser = new JavaParserParser();
 	}
 
-	protected void process(String projectPath, String outputPath, List<String> files) throws IOException {
-		Set<CompilationUnitResult> results = new HashSet<CompilationUnitResult>();
+	protected void process(final String projectPath, String outputPath, final List<String> files) throws IOException {
 
 		Report report = buildReportInfo(projectPath);
 
@@ -47,17 +46,22 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 			log.info("File "+index+" of "+size+" parsed");
 
 			CompilationUnit parsedObject = null;
+			
 			try{
 
 				parsedObject = (CompilationUnit) parser.parse(file);
 
-				for(AbstractPractice practice : badPracticesApplied){
+				for(final AbstractPractice practice : badPracticesApplied){
 
 					log.info("Bad practice being searched: "+ practice.getName());
 
-					CompilationUnitResult result = practice.process( parsedObject );
+					final CompilationUnitResult result = practice.process( parsedObject );
 
-					addToReportIfBadPracticeIsApplied(results, report, parsedObject, practice, result);
+					log.info( "Bad practice applied: "+result.badPracticeIsApplied() );
+					
+					log.info("Number of elements: "+ result.getElementResults().size()  );
+
+					addToReportIfBadPracticeIsApplied( report, parsedObject, practice, result);
 
 				}
 
@@ -75,49 +79,53 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 		workbookCreator.create(report, outputPath);
 	}
 
-	protected void addToReportIfBadPracticeIsApplied(Set<CompilationUnitResult> results,
-													 Report report,
-													 CompilationUnit parsedObject,
-													 AbstractPractice practice,
-													 CompilationUnitResult result) {
+	protected void addToReportIfBadPracticeIsApplied(//final Set<CompilationUnitResult> results,
+													 final Report report,
+													 final CompilationUnit parsedObject,
+													 final AbstractPractice practice,
+													 final CompilationUnitResult result) {
 
-		if(result.badPracticeIsApplied()) {
-
-			results.add(result);
-
-			List<String> elementsInvolved;
-			String elements = "";
-
-			if(result.getElementResults().size() > 0){
-				elementsInvolved = result.
-									getElementResults().
-									stream().
-									map( p -> p.getElement().getName() ).
-									collect(Collectors.toList());
-				elements = String.join(",", elementsInvolved);
-			}
-
-			String className = null;
-			if(parsedObject.getTypes().size() > 1){
-				List<String> list = parsedObject.getTypes().stream().map(p->p.getNameAsString()).collect(Collectors.toList());
-				className = String.join(",",list);
-			}else{
-				className = parsedObject.getTypes().get(0).getNameAsString();
-			}
-
-
-
-			//Mount report line
-			List<String> line = new ArrayList<String>();
-
-			line.add( practice.getNumber().toString() );
-			line.add( practice.getName() );
-			line.add( className );
-			line.add( elements );
-
-			report.addLine(line);
-
+		if(!result.badPracticeIsApplied()) {
+			return;
 		}
+
+		//results.add(result);
+
+		log.info("Bad practice being put on spreadsheet: "+practice.getName());
+
+		List<String> elementsInvolved;
+		String elements = "";
+
+		if(result.getElementResults().size() > 0){
+			elementsInvolved = result.
+								getElementResults().
+								stream().
+								map( p -> p.getElement().getName() ).
+								collect(Collectors.toList());
+			elements = String.join(",", elementsInvolved);
+		}
+
+		String className = null;
+		if(parsedObject.getTypes().size() > 1){
+			List<String> list = parsedObject.getTypes()
+									.stream()
+									.map(p->p.getNameAsString())
+									.collect(Collectors.toList());
+			className = String.join(",",list);
+		}else{
+			className = parsedObject.getTypes().get(0).getNameAsString();
+		}
+
+		//Mount report line
+		List<String> line = new ArrayList<String>();
+
+		line.add( practice.getNumber().toString() );
+		line.add( practice.getName() );
+		line.add( className );
+		line.add( elements );
+
+		report.addLine(line);
+
 	}
 
 	protected Report buildReportInfo(String projectPath){

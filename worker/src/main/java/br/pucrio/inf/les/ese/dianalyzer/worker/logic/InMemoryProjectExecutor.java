@@ -40,7 +40,7 @@ public class InMemoryProjectExecutor extends AbstractProjectExecutor {
 		this.dataSource = (IBeanDataSource) ServiceLocator.getInstance().getBeanInstance("IDataSource");
 	}
 
-	private void preProcessProjectClasses(List<String> files){
+	private void preProcessProjectClasses(final List<String> files){
 
 		Integer index = 0;
 
@@ -63,7 +63,6 @@ public class InMemoryProjectExecutor extends AbstractProjectExecutor {
 				} finally {
 
 					if (type == null) {
-
 						try {
 							type = parsedObject.getPrimaryTypeName().get();
 						} catch (Exception e) {
