@@ -10,10 +10,11 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
-import com.github.javaparser.ast.stmt.ExpressionStmt;
-import com.github.javaparser.ast.stmt.IfStmt;
+import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.utils.Pair;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,14 +32,28 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
 	private Map<String,TreeSet<String>> tightClassCohesionMetric =
 			new HashMap<String, TreeSet<String>>();
 
+    private TreeSet<String> elementsForCyclomaticComplexity = new TreeSet<String>();
+
 	public GodDependencyInjectionClass() {
 		super();
+
+        elementsForCyclomaticComplexity.add( IfStmt.class.getName() );
+        elementsForCyclomaticComplexity.add(WhileStmt.class.getName() );
+        elementsForCyclomaticComplexity.add(DoStmt.class.getName() );
+        elementsForCyclomaticComplexity.add(ForStmt.class.getName() );
+        elementsForCyclomaticComplexity.add(ForeachStmt.class.getName() );
+        elementsForCyclomaticComplexity.add(CatchClause.class.getName() );
+        elementsForCyclomaticComplexity.add(SwitchStmt.class.getName() );
+        elementsForCyclomaticComplexity.add(SwitchEntryStmt.class.getName() );
+        elementsForCyclomaticComplexity.add( ReturnStmt.class.getName() );
+        elementsForCyclomaticComplexity.add(ThrowStmt.class.getName() );
+
 	}
 	
-	private class MethodCallExprVisitor extends VoidVisitorAdapter<List<AbstractElement>> {
+	private class MethodCallExprVisitor extends VoidVisitorAdapter<Pair<List<AbstractElement>,List<String>>> {
 		
 		@Override
-	    public void visit(MethodCallExpr methodCallExpr, List<AbstractElement> injectedElements)
+	    public void visit(MethodCallExpr methodCallExpr, Pair<List<AbstractElement>,List<String>> injectedAndMethodElements)
 	    {
 			//get method the call belongs to
 			Node node = methodCallExpr.getParentNode().get();
@@ -73,7 +88,6 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
             } else {
 			    elements = new TreeSet<String>();
             }
-
 
             // se eh variabledeclaration
             boolean isVariableDeclaration = false;
@@ -120,7 +134,7 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
             if( methodDeclaration.getParameterByName( variable ).isPresent() ){
                 // esta nos parametros
             } else if ( ! methodDeclaration.getNameAsString().contentEquals( methodCallExpr.getNameAsString() )
-                    && injectedElements.contains(variable) ) {
+                    && injectedAndMethodElements.a.contains(variable) ) {
                 // nao eh chamada recursiva
                 //e pertence a variaveis da classe, adiciono
 
@@ -141,11 +155,26 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
 
                         final String var = variable;
 
-                        if(injectedElements.stream().filter(p->p.getName().contentEquals(var)).count() > 0){
+                        if(injectedAndMethodElements.a.stream().filter(p->p.getName().contentEquals(var)).count() > 0){
                             elements.add(variable);
                             tightClassCohesionMetric.put(methodDeclaration.getNameAsString(), elements );
                         }
 
+                    } else if (  argument instanceof NameExpr) {
+
+                        // TODO pode ser passagem de atributo injetado, dessa forma, conto tambem
+                        log.info("passagem de atributo");
+                        variable = ((NameExpr) argument).asNameExpr().getNameAsString();
+
+                        final String var = variable;
+
+                        if(injectedAndMethodElements.a.stream().filter(p->p.getName().contentEquals(var)).count() > 0){
+                            elements.add(variable);
+                            tightClassCohesionMetric.put(methodDeclaration.getNameAsString(), elements );
+                        }
+
+                    } else{
+                        log.info("Dont know");
                     }
 
                 }
@@ -154,6 +183,29 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
 	    }
 		
 	}
+
+	private int getCyclomaticComplexity( Node node ){
+
+        int childComplexityReturn = 0;
+
+	    if (!node.getChildNodes().isEmpty()){
+	        for( Node child : node.getChildNodes() ){
+                childComplexityReturn = childComplexityReturn + getCyclomaticComplexity(child);
+            }
+        }
+
+	    if ( elementsForCyclomaticComplexity.contains( node.getClass().getCanonicalName() ) ){
+            childComplexityReturn++;
+
+            if(node instanceof IfStmt && ((IfStmt) node).asIfStmt().hasElseBlock()){
+                childComplexityReturn++;
+            }
+
+        }
+
+	    return childComplexityReturn;
+
+    }
 	
 	@Override
 	public List<ElementResult> processRule(CompilationUnit cu) {
@@ -166,20 +218,46 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
 		 	Weighted Method Count (WMC(C)) is the sum of the
 			cyclomatic complexity of all methods in C [3] [20].
 		 */
-		
-		int complexity = 0;
-		
-		for ( MethodDeclaration mtdDecl : cu.getChildNodesByType(MethodDeclaration.class) ) {
-			for ( IfStmt ifStmt : mtdDecl.getChildNodesByType(IfStmt.class) ) {
-	            complexity++;
-	            if (ifStmt.getElseStmt().isPresent()) {
-	                if (!(ifStmt.getElseStmt().get() instanceof IfStmt)) {
-	                    complexity++;
-	                }
-	            }
-			}
-		}
-		
+
+		// https://sbforge.org/sonar/rules/show/squid:MethodCyclomaticComplexity?modal=true&layout=false
+        // The Cyclomatic Complexity is measured by the number of (&&, ||) operators and (if, while, do, for, ?:, catch, switch, case, return, throw)
+
+//        for ( MethodDeclaration mtdDecl : cu.getChildNodesByType(MethodDeclaration.class) ) {
+//			for ( IfStmt ifStmt : mtdDecl.getChildNodesByType(IfStmt.class) ) {
+//	            complexity++;
+//	            if (ifStmt.getElseStmt().isPresent()) {
+//	                //if (!(ifStmt.getElseStmt().get() instanceof IfStmt)) {
+//	                    complexity++;
+//	                //}
+//	            }
+//			}
+//            for ( WhileStmt whileStmt : mtdDecl.getChildNodesByType(WhileStmt.class) ) {
+//                complexity++;
+//            }
+//            for (DoStmt doStmt : mtdDecl.getChildNodesByType(DoStmt.class) ) {
+//                complexity++;
+//            }
+//            for (ForStmt forStmt : mtdDecl.getChildNodesByType(ForStmt.class) ) {
+//                complexity++;
+//            }
+//            for (CatchClause catchStmt : mtdDecl.getChildNodesByType(CatchClause.class) ) {
+//                complexity++;
+//            }
+//            for (SwitchStmt switchStmt : mtdDecl.getChildNodesByType(SwitchStmt.class) ) {
+//                complexity++;
+//                Long entriesCount = switchStmt.getEntries().stream().count();
+//                complexity = complexity + entriesCount.intValue();
+//            }
+//            for (ReturnStmt returnStmt : mtdDecl.getChildNodesByType(ReturnStmt.class) ) {
+//                complexity++;
+//            }
+//            for (ThrowStmt throwStmt : mtdDecl.getChildNodesByType(ThrowStmt.class) ) {
+//                complexity++;
+//            }
+//		}
+
+        int complexity = getCyclomaticComplexity(cu);
+
 		boolean WMCisApplied = complexity > WMC ? true : false;
 		
 		/* DEFINITION 1
@@ -206,14 +284,25 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElementMultip
 		 Which methods are related? Methods a and b are related if:
 	     they both access the same class-level variable, or a calls b, or b calls a.
 		 */
-		methodDeclarationVisitor.visit(cu,injectedElements);
-		
-		//TODO agora basta verificar quais atributos aparecem em ambos metodos no Hash
+        // Map<String,String> methods = getClassMethods(cu);
+
+        // Pair<List<AbstractElement>,List<String>> pair = new Pair(injectedElements,methods);
+
+        // Nao esta pegando os elementos abaixo:
+        /*
+        while (this.userBusiness.retrieveByLoginName(user.getLoginName())!=null) {
+				user.setLoginName(user.getLoginName() + generateDuplicateIdentifier());
+			}
+         */
+		// methodDeclarationVisitor.visit(cu,pair);
 		
 		//result.setElement(element);
 		// calculateTCC(cu,elements);
+
 		ElementResult elementResult = new ElementResult();
-		
+
+		elementResult.setResult( WMCisApplied && ATFDisApplied );
+
 		resultSet.add(elementResult);
 		
 		return resultSet;
