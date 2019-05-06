@@ -1,12 +1,9 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.practices;
 
-import java.util.List;
-
-import com.github.javaparser.ast.CompilationUnit;
-
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.rule.GodDependencyInjectionClass;
+import com.github.javaparser.ast.CompilationUnit;
 
 public class BadPracticeFour extends AbstractPractice {
 	
@@ -23,9 +20,9 @@ public class BadPracticeFour extends AbstractPractice {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 		
-		List<ElementResult> results = rule.processRule(cu);
+		ElementResult result = rule.processRule(cu);
 		
-		cuResult.addAllElementResultToList(results);
+		cuResult.addElementResultToList(result);
    
 		return cuResult;
 		

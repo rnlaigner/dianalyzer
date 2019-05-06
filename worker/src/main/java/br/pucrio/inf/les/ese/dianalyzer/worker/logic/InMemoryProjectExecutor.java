@@ -19,7 +19,7 @@ import java.util.List;
 		BadPracticeOne.class,
 		BadPracticeTwo.class,
 		BadPracticeThree.class,
-		/*BadPracticeFour.class,*/
+		BadPracticeFour.class,
 		BadPracticeFive.class,
 		BadPracticeSix.class,
 		BadPracticeSeven.class,
