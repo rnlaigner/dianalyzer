@@ -4,7 +4,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.environment.IParser;
 import br.pucrio.inf.les.ese.dianalyzer.diast.environment.JavaParserParser;
 import br.pucrio.inf.les.ese.dianalyzer.diast.environment.ParseException;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.practices.*;
+import br.pucrio.inf.les.ese.dianalyzer.diast.practices.AbstractPractice;
 import br.pucrio.inf.les.ese.dianalyzer.worker.environment.Environment;
 import br.pucrio.inf.les.ese.dianalyzer.worker.report.IWorkbookCreator;
 import br.pucrio.inf.les.ese.dianalyzer.worker.report.Report;
@@ -15,7 +15,10 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class AbstractProjectExecutor implements IProjectExecutor {

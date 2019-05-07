@@ -1,10 +1,9 @@
 package br.pucrio.inf.les.ese.dianalyzer.repextractor.logic;
 
+import br.pucrio.inf.les.ese.dianalyzer.repextractor.exception.GitHubQueryException;
+import br.pucrio.inf.les.ese.dianalyzer.repextractor.model.GitHubQueryProperties;
 import org.kohsuke.github.GHRepositorySearchBuilder;
 import org.kohsuke.github.GitHub;
-
-import br.pucrio.inf.les.ese.dianalyzer.repextractor.model.GitHubQueryProperties;
-import br.pucrio.inf.les.ese.dianalyzer.repextractor.exception.GitHubQueryException;
 
 public class GitHubSearchBuilder {
 	

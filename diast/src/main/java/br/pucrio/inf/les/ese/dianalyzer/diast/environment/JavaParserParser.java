@@ -1,12 +1,11 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.environment;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.TokenMgrException;
 import com.github.javaparser.ast.CompilationUnit;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class JavaParserParser implements IParser {
 	

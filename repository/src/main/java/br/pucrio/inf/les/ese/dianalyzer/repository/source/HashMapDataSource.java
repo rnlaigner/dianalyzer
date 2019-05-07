@@ -1,6 +1,5 @@
 package br.pucrio.inf.les.ese.dianalyzer.repository.source;
 
-import br.pucrio.inf.les.ese.dianalyzer.repository.model.AbstractTuple;
 import br.pucrio.inf.les.ese.dianalyzer.repository.model.AssociatedTuple;
 import br.pucrio.inf.les.ese.dianalyzer.repository.model.Tuple;
 

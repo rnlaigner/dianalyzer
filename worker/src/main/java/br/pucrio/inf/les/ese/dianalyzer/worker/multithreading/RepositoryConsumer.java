@@ -2,9 +2,10 @@ package br.pucrio.inf.les.ese.dianalyzer.worker.multithreading;
 
 // Consumer.java
 // Consumer's run method loops ten times reading a value from buffer.
-import java.util.Random;
 
 import org.repodriller.scm.GitRemoteRepository;
+
+import java.util.Random;
 
 public class RepositoryConsumer implements Runnable 
 { 

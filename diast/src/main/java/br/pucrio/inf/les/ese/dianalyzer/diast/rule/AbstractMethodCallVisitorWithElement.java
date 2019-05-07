@@ -2,8 +2,6 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 

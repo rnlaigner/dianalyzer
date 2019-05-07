@@ -1,28 +1,23 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast_test.practices;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast_test.annotation.BadPracticeApplied;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import org.junit.Test;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.AbstractPractice;
-import org.junit.runner.RunWith;
-
+import br.pucrio.inf.les.ese.dianalyzer.diast_test.annotation.BadPracticeApplied;
 import br.pucrio.inf.les.ese.dianalyzer.diast_test.env.Environment;
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.assertThat;
-
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(JUnitParamsRunner.class)
 public abstract class AbstractBadPracticeTest {

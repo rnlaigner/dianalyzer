@@ -1,8 +1,9 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
-import java.util.List;
-import com.github.javaparser.ast.CompilationUnit;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
+import com.github.javaparser.ast.CompilationUnit;
+
+import java.util.List;
 
 public abstract class AbstractRuleWithNoElementMultipleResults extends AbstractRule {
 	

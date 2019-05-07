@@ -1,15 +1,14 @@
 package br.pucrio.inf.les.ese.dianalyzer.repextractor.logic;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import br.pucrio.inf.les.ese.dianalyzer.repextractor.model.RepositoryUrlSizeDTO;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHRepositorySearchBuilder;
 import org.kohsuke.github.PagedSearchIterable;
 
-import br.pucrio.inf.les.ese.dianalyzer.repextractor.model.RepositoryUrlSizeDTO;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GitHubSearchExecutor {
 

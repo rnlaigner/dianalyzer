@@ -1,8 +1,9 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-
+import br.pucrio.inf.les.ese.dianalyzer.diast.logic.AssignmentBusiness;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -10,10 +11,8 @@ import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.logic.AssignmentBusiness;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class InjectionAssignedToMoreThanOneAttribute extends AbstractRuleWithElement {
 	

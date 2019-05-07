@@ -3,11 +3,10 @@ package br.pucrio.inf.les.ese.dianalyzer.diast.practices;
 import br.pucrio.inf.les.ese.dianalyzer.diast.identification.NonPrimitiveTypeFieldIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AttributeElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.rule.IsStaticOrConcreteFabricOrFactory;
 import com.github.javaparser.ast.CompilationUnit;
-
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
 
 import java.util.List;
 

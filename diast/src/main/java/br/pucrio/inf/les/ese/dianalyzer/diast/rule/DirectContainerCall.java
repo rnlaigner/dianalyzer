@@ -1,9 +1,6 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.*;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.VariableDeclarator;
@@ -13,14 +10,9 @@ import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ContainerClassType;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectionType;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ObjectType;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.VariableDeclarationElement;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class DirectContainerCall extends AbstractMethodCallVisitorWithElement {
 	

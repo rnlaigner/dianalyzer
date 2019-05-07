@@ -1,14 +1,13 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.logic;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.Statement;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MethodCallBusiness {
 	

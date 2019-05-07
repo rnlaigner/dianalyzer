@@ -1,8 +1,7 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.practices;
 
-import com.github.javaparser.ast.CompilationUnit;
-
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
+import com.github.javaparser.ast.CompilationUnit;
 
 public abstract class AbstractPractice {
 

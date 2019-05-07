@@ -1,15 +1,14 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
+import com.github.javaparser.ast.CompilationUnit;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import com.github.javaparser.ast.CompilationUnit;
-
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 
 public class MultipleFormsOfInjection extends AbstractRuleWithElements {
 

@@ -1,16 +1,15 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.ProducerAnnotation;
 
 public class InjectionOpenForExternalAccessOrExternalPassing extends AbstractMethodCallVisitorWithElement {
 	

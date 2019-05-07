@@ -1,9 +1,10 @@
 package br.pucrio.inf.les.ese.dianalyzer.worker.multithreading;
 
 import java.util.List;
+import java.util.Random;
+
 // Producer.java
 // Producer's run method stores the values 1 to 10 in buffer.
-import java.util.Random;
 
 public class RepositoryProducer implements Runnable 
 {

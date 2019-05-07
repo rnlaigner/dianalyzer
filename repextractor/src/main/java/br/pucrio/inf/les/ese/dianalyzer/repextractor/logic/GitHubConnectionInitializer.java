@@ -1,13 +1,11 @@
 package br.pucrio.inf.les.ese.dianalyzer.repextractor.logic;
 
-import java.io.File;
-import java.io.IOException;
-
+import br.pucrio.inf.les.ese.dianalyzer.repextractor.exception.GitHubConnectionException;
+import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 
-import br.pucrio.inf.les.ese.dianalyzer.repextractor.exception.GitHubConnectionException;
-
-import org.kohsuke.github.GitHub;
+import java.io.File;
+import java.io.IOException;
 
 public class GitHubConnectionInitializer {
 	

@@ -1,9 +1,5 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.rule;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.ConstructorInjectionIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.FieldDeclarationInjectionIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.MethodInjectionIdentificator;
-import br.pucrio.inf.les.ese.dianalyzer.diast.identification.SetMethodInjectionIdentificator;
 import br.pucrio.inf.les.ese.dianalyzer.diast.logic.InjectionBusiness;
 import br.pucrio.inf.les.ese.dianalyzer.diast.logic.ScopeBusiness;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
