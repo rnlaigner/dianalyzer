@@ -20,9 +20,7 @@ public class MetricBusiness {
         return instance;
     }
 
-
     private MetricBusiness(){
-
         elementsForCyclomaticComplexity.add( IfStmt.class.getName() );
         elementsForCyclomaticComplexity.add(WhileStmt.class.getName() );
         elementsForCyclomaticComplexity.add(DoStmt.class.getName() );
@@ -33,7 +31,6 @@ public class MetricBusiness {
         elementsForCyclomaticComplexity.add(SwitchEntryStmt.class.getName() );
         elementsForCyclomaticComplexity.add( ReturnStmt.class.getName() );
         elementsForCyclomaticComplexity.add(ThrowStmt.class.getName() );
-
     }
 
     public int getCyclomaticComplexity( Node node ){

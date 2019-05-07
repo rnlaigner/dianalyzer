@@ -22,9 +22,9 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 
 	protected Set<AbstractPractice> badPracticesApplied;
 
-	protected Environment env;
+	protected final Environment env;
 
-	protected IParser parser;
+	protected final IParser parser;
 
 	protected final Log log = LogFactory.getLog(getClass());
 
@@ -34,7 +34,6 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 	}
 
 	protected void process(String projectPath, String outputPath, List<String> files) throws IOException {
-		Set<CompilationUnitResult> results = new HashSet<CompilationUnitResult>();
 
 		Report report = buildReportInfo(projectPath);
 
@@ -57,7 +56,7 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 
 					CompilationUnitResult result = practice.process( parsedObject );
 
-					addToReportIfBadPracticeIsApplied(results, report, parsedObject, practice, result);
+					addToReportIfBadPracticeIsApplied(report, parsedObject, practice, result);
 
 				}
 
@@ -75,52 +74,49 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 		workbookCreator.create(report, outputPath);
 	}
 
-	protected void addToReportIfBadPracticeIsApplied(Set<CompilationUnitResult> results,
-													 Report report,
+	protected void addToReportIfBadPracticeIsApplied(Report report,
 													 CompilationUnit parsedObject,
 													 AbstractPractice practice,
 													 CompilationUnitResult result) {
 
-		if(result.badPracticeIsApplied()) {
-
-			results.add(result);
-
-			List<String> elementsInvolved;
-			String elements = "";
-
-			if(result.getElementResults().size() > 0){
-				elementsInvolved = result.
-									getElementResults().
-									stream().
-									map( p -> p.getElement().getName() ).
-									collect(Collectors.toList());
-				elements = String.join(",", elementsInvolved);
-			}
-
-			String className = null;
-			if(parsedObject.getTypes().size() > 1){
-				List<String> list = parsedObject.getTypes().stream().map(p->p.getNameAsString()).collect(Collectors.toList());
-				className = String.join(",",list);
-			}else{
-				className = parsedObject.getTypes().get(0).getNameAsString();
-			}
-
-
-
-			//Mount report line
-			List<String> line = new ArrayList<String>();
-
-			line.add( practice.getNumber().toString() );
-			line.add( practice.getName() );
-			line.add( className );
-			line.add( elements );
-
-			report.addLine(line);
-
+		if(!result.badPracticeIsApplied()) {
+			return;
 		}
+
+		List<String> elementsInvolved;
+		String elements = "";
+
+		if(result.getElementResults().size() > 0){
+			elementsInvolved = result.
+								getElementResults().
+								stream().
+								map( p -> p.getElement().getName() ).
+								collect(Collectors.toList());
+			elements = String.join(",", elementsInvolved);
+		}
+
+		String className = null;
+		if (parsedObject.getTypes().size() > 1){
+			List<String> list = parsedObject.getTypes().stream().map(p->p.getNameAsString()).collect(Collectors.toList());
+			className = String.join(",",list);
+		} else {
+			className = parsedObject.getTypes().get(0).getNameAsString();
+		}
+
+		//Mount report line
+		List<String> line = new ArrayList<String>();
+
+		line.add( practice.getNumber().toString() );
+		line.add( practice.getName() );
+		line.add( className );
+		line.add( elements );
+
+		report.addLine(line);
+
 	}
 
 	protected Report buildReportInfo(String projectPath){
+
 		Report report = new Report();
 
 		String projectName = projectPath.substring(projectPath.lastIndexOf("\\")+1);
@@ -145,15 +141,14 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 
 		return report;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	protected void buildBadPracticesApplied(){
 
 	    try {
 	    	
 	    	BadPracticesApplied annotations = (BadPracticesApplied) getClass().getAnnotation(BadPracticesApplied.class);
 
-	    	badPracticesApplied = new HashSet<AbstractPractice>();
+	    	this.badPracticesApplied = new HashSet<AbstractPractice>();
 	    	
 	        for(Class<? extends AbstractPractice> clazz : annotations.values()){
 	        	
