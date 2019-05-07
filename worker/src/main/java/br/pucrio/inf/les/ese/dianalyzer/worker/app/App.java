@@ -1,29 +1,27 @@
 package br.pucrio.inf.les.ese.dianalyzer.worker.app;
 
-
 import br.pucrio.inf.les.ese.dianalyzer.worker.logic.IProjectExecutor;
 import br.pucrio.inf.les.ese.dianalyzer.worker.logic.InMemoryProjectExecutor;
+import br.pucrio.inf.les.ese.dianalyzer.worker.logic.SimpleProjectExecutor;
 
-// @PropertySource("classpath:hibernate.properties")
 public class App {
 
 	public static void main(String[] args) {
 
-		String projectPath;
-		//projectPath = "C:\\Users\\Henrique\\workspace\\agilefant\\webapp\\src\\main\\java\\fi\\hut\\soberit\\agilefant";
-		//projectPath = projectPath + "\\business\\impl";
-
-		//TODO read from args
-
-		projectPath = "C:\\Users\\Henrique\\workspace\\BroadleafCommerce";
-		
-		String outputPath = "C:\\Users\\Henrique";
+		String projectPath = args[0];
+		String outputPath = args[1];
+		Boolean inMemory = Boolean.getBoolean(args[2]);
 		
 		IProjectExecutor projectExecutor = null;
 
-		// projectExecutor = new SimpleProjectExecutor();
-		projectExecutor =  new InMemoryProjectExecutor();
-		
+		if ( inMemory ) {
+
+			projectExecutor = new InMemoryProjectExecutor();
+		}
+		else {
+			projectExecutor = new SimpleProjectExecutor();
+		}
+
 		try {
 			projectExecutor.execute(projectPath,outputPath);
 		} catch (Exception e) {

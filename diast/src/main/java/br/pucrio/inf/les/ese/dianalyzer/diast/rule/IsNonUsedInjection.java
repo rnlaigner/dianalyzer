@@ -15,7 +15,7 @@ public class IsNonUsedInjection extends AbstractRuleWithElement {
 	public ElementResult processRule(CompilationUnit cu, AbstractElement element) {
 		
 		//Start a new search
-		Integer numberOfAppearances = OccurrenceBusiness.getInstance().countOccurrences(cu, element);
+		final Integer numberOfAppearances = OccurrenceBusiness.getInstance().countOccurrences(cu, element);
 
 		// checkStatementsForOccurrence(cu,element);
 		
