@@ -116,29 +116,22 @@ public class MethodParameterInjectionAssignedToMoreThanOneAttribute extends Abst
 					methodElement.setModifiers(methodDeclaration.getModifiers().stream().map(p->p.asString()).collect(Collectors.toList()));
 					
 					methodElement.setBody(methodDeclaration.getBody().get());
-					
-					//aqui eh uma string montada: exemplo -> tal parametro injetado eh atribuido a dois outros elementos
-					StringBuilder sb = new StringBuilder("Attributes ");
-					
-					sb.append( String.join(",", assignmentsFromCurrentParameter
-							.stream()
-							.filter(p -> p.getTarget() instanceof FieldAccessExpr)
-							.map(p-> ((FieldAccessExpr)p.getTarget()).getNameAsString())
-							.collect(Collectors.toList()))
-							);
-					
-					//assignmentsFromCurrentParameter.stream().forEach(p -> sb.append(p.toString()));
-					
-					sb.append(" on method "+ methodDeclaration.getNameAsString());
-					
-					methodElement.setName(sb.toString());
-					
-					//methodElement.setName( methodDeclaration.getNameAsString() );
-					
+
 					methodElement.setModifiers( methodDeclaration.getModifiers().stream().map(p->p.asString()).collect(Collectors.toList()) );
+
+					List<String> elems = assignmentsFromCurrentParameter
+							.stream()
+							.filter(p -> p.getTarget().isFieldAccessExpr())
+							.map(p-> p.getTarget().asFieldAccessExpr().getNameAsString())
+							.distinct()
+							.collect(Collectors.toList());
 					
-					methodParameterAssignedToMoreThanOneAttributeList.add( methodElement );
-					
+					for( String elem : elems){
+						MethodElement newMethodElement = methodElement.clone();
+						newMethodElement.setName(elem);
+						methodParameterAssignedToMoreThanOneAttributeList.add( newMethodElement );
+					}
+
 				}
 				
 			}

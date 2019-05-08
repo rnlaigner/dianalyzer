@@ -44,7 +44,20 @@ public class MethodElement extends AbstractElement {
 	public void setBody(BlockStmt body) {
 		this.body = body;
 	}
-	
-	
+
+	@Override
+	public MethodElement clone(){
+
+		MethodElement newMethodElement = new MethodElement();
+
+		newMethodElement.setBody( this.body );
+		newMethodElement.setParameters( this.parameters );
+		newMethodElement.setReturnType( this.returnType );
+		newMethodElement.setModifiers( this.getModifiers() );
+		newMethodElement.setName( this.getName() );
+
+		return newMethodElement;
+
+	}
 
 }
