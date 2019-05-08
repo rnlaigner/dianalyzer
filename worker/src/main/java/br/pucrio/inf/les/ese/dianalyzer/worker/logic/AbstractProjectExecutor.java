@@ -4,6 +4,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.environment.IParser;
 import br.pucrio.inf.les.ese.dianalyzer.diast.environment.JavaParserParser;
 import br.pucrio.inf.les.ese.dianalyzer.diast.environment.ParseException;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
+import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.practices.AbstractPractice;
 import br.pucrio.inf.les.ese.dianalyzer.worker.environment.Environment;
 import br.pucrio.inf.les.ese.dianalyzer.worker.report.IWorkbookCreator;
@@ -86,18 +87,6 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 			return;
 		}
 
-		List<String> elementsInvolved;
-		String elements = "";
-
-		if(result.getElementResults().size() > 0){
-			elementsInvolved = result.
-								getElementResults().
-								stream().
-								map( p -> p.getElement().getName() ).
-								collect(Collectors.toList());
-			elements = String.join(",", elementsInvolved);
-		}
-
 		String className = null;
 		if (parsedObject.getTypes().size() > 1){
 			List<String> list = parsedObject.getTypes().stream().map(p->p.getNameAsString()).collect(Collectors.toList());
@@ -106,15 +95,21 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 			className = parsedObject.getTypes().get(0).getNameAsString();
 		}
 
-		//Mount report line
-		List<String> line = new ArrayList<String>();
+		for( ElementResult element : result.getElementResults() ) {
 
-		line.add( practice.getNumber().toString() );
-		line.add( practice.getName() );
-		line.add( className );
-		line.add( elements );
+			String elementName = element.getElement().getName();
 
-		report.addLine(line);
+			//Mount report line
+			List<String> line = new ArrayList<String>();
+
+			line.add(practice.getNumber().toString());
+			line.add(practice.getName());
+			line.add(className);
+			line.add(elementName);
+
+			report.addLine(line);
+
+		}
 
 	}
 
