@@ -97,17 +97,14 @@ public class AppearsInEveryMethod extends AbstractRuleWithElement {
 		
 		methodDeclarationVisitor.visit(cu,element);
 		
-		ElementResult result = new ElementResult();
-		
-		result.setElement(element);
-		
-		result.setResult(false);
-		
-		if(numberOfAppearances == numberOfMethods){
-			result.setResult(true);
+		if(numberOfAppearances >= numberOfMethods){
+			final ElementResult result = new ElementResult(true,element);
+			return result;
+		} else {
+			final ElementResult result = new ElementResult(false,element);
+			return result;
 		}
-		
-        return result;
+
 	}
 	
 }

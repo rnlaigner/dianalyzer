@@ -31,9 +31,7 @@ public class IsPrototypeScopeBeanAsSingleton extends AbstractRuleWithNoElement {
 
 		// if it is not prototype, return
 		if(annotationAsString != null && !annotationAsString.equalsIgnoreCase("prototype")){
-			ElementResult result = new ElementResult();
-			result.setElement(null);
-			result.setResult(false);
+			final ElementResult result = new ElementResult(false,null);
 			return result;
 		}
 
@@ -72,17 +70,13 @@ public class IsPrototypeScopeBeanAsSingleton extends AbstractRuleWithNoElement {
 			 String annotation_AsString = ScopeBusiness.extractScopeAnnotationValueAsString(cu);
 
 			 if(annotation_AsString != null && !annotation_AsString.equalsIgnoreCase("prototype")){
-				 ElementResult result = new ElementResult();
-				 result.setElement(element);
-				 result.setResult(true);
+				 final ElementResult result = new ElementResult(true,element);
 				 return result;
 			 }
 
 		}
 
-		ElementResult result = new ElementResult();
-		result.setElement(null);
-		result.setResult(false);
+		final ElementResult result = new ElementResult(false,null);
 		return result;
 
 	}

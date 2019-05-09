@@ -19,11 +19,6 @@ public class ReferenceOnConcreteClass extends AbstractRuleWithElement {
 
 	@Override
 	public ElementResult processRule(CompilationUnit cu, AbstractElement element) {
-		
-		ElementResult elementResult = new ElementResult();
-		
-		elementResult.setElement(element);
-		elementResult.setResult(false);
 
 		InjectedElement injectedElement = null;
 
@@ -35,14 +30,16 @@ public class ReferenceOnConcreteClass extends AbstractRuleWithElement {
 			if(tuple != null){
 				log.info("Associated tuple found");
 				if(!tuple.isInterface){
-					elementResult.setResult(true);
+					ElementResult elementResult = new ElementResult(true,element);
+					return elementResult;
 				}
 			}
 
 		} catch(Exception e){
 			log.info("Noooo");
 		}
-		
+
+		ElementResult elementResult = new ElementResult(false,element);
 		return elementResult;
 	}
 	

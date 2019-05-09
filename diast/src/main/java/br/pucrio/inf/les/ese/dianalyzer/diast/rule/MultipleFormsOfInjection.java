@@ -6,24 +6,24 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.InjectedElement;
 import com.github.javaparser.ast.CompilationUnit;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MultipleFormsOfInjection extends AbstractRuleWithElements {
 
 	@Override
 	public List<ElementResult> processRule(CompilationUnit cu, List<AbstractElement> elements) {
 				
-		List<ElementResult> results = new ArrayList<ElementResult>();
+		final List<ElementResult> results = new ArrayList<ElementResult>();
 		
 		//busco por elementos repetidos
 		
-		Map<String,Integer> elementCountMap = new HashMap<String,Integer>();
+		final Map<String,Integer> elementCountMap = new ConcurrentHashMap<>();
 		
-		for(AbstractElement element : elements){
+		for(AbstractElement elementBase : elements){
 
-			element = (InjectedElement) element;
+			final InjectedElement element = (InjectedElement) elementBase;
 			
 			String key = element.getName();
 			
@@ -34,8 +34,7 @@ public class MultipleFormsOfInjection extends AbstractRuleWithElements {
 				
 				//valor um apenas uma vez
 				if(value == 1){
-					ElementResult result = new ElementResult();
-					result.setElement(element);
+					final ElementResult result = new ElementResult(true,element);
 					//nao preciso colocar result para esse bad practice
 					results.add(result);
 				}

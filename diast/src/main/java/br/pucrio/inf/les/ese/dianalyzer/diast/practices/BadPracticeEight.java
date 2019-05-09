@@ -11,7 +11,7 @@ import java.util.List;
 
 public class BadPracticeEight extends AbstractPractice {
 	
-	private InjectionOpenForExternalAccessOrExternalPassing rule;
+	private final InjectionOpenForExternalAccessOrExternalPassing rule;
 
 	public BadPracticeEight() {
 		rule = new InjectionOpenForExternalAccessOrExternalPassing();
@@ -22,12 +22,12 @@ public class BadPracticeEight extends AbstractPractice {
 	@Override
 	public CompilationUnitResult process(final CompilationUnit cu) {
 		
-		CompilationUnitResult cuResult = new CompilationUnitResult();
+		final CompilationUnitResult cuResult = new CompilationUnitResult();
 
-		List<AbstractElement> elements = InjectionBusiness.getInjectedElementsFromClass(cu);
+		final List<AbstractElement> elements = InjectionBusiness.getInjectedElementsFromClass(cu);
         
-        for (AbstractElement elem : elements) {
-        	ElementResult result = rule.processRule(cu, elem);
+        for (final AbstractElement elem : elements) {
+        	final ElementResult result = rule.processRule(cu, elem);
         	if(result.getResult()){
         		cuResult.addElementResultToList(result);
         	}

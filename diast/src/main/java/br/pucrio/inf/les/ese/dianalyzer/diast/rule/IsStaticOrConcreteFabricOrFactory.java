@@ -15,11 +15,6 @@ public class IsStaticOrConcreteFabricOrFactory extends AbstractRuleWithElement {
 
 	@Override
 	public ElementResult processRule(CompilationUnit cu, AbstractElement element) {
-		
-		ElementResult elementResult = new ElementResult();
-		
-		elementResult.setElement(element);
-		elementResult.setResult(false);
 
 		AttributeElement attributeElement = (AttributeElement) element;
 
@@ -28,13 +23,14 @@ public class IsStaticOrConcreteFabricOrFactory extends AbstractRuleWithElement {
 
 			// TODO outra heuristica seria a existencia de metodo createInstance, createBean, create, por exemplo
 			//if(attributeElement.getObjectType() == ObjectType.CLASS){
-				elementResult.setResult(true);
+			final ElementResult result = new ElementResult(true,element);
+			return result;
 			//}
 
 		}
 
-		return elementResult;
-		
+		final ElementResult result = new ElementResult(false,element);
+		return result;
 
 	}
 	

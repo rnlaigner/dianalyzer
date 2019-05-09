@@ -96,16 +96,14 @@ public class InjectionAssignedToMoreThanOneAttribute extends AbstractRuleWithEle
 		attributeAssignment = 0;
 		
 		//iterate through method declarations
-		methodDeclarationVisitor.visit(cu, element);		
+		methodDeclarationVisitor.visit(cu, element);
 		
-		ElementResult result = new ElementResult();
-		
-		result.setElement(element);
-		
-		result.setResult(false);
-		
-		if (attributeAssignment > 1) result.setResult(true);
-		
+		if (attributeAssignment > 1) {
+            final ElementResult result = new ElementResult(true,element);
+            return result;
+        }
+
+        final ElementResult result = new ElementResult(false,element);
         return result;
 		
 	}

@@ -1,6 +1,5 @@
 package br.pucrio.inf.les.ese.dianalyzer.diast.practices;
 
-import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.CompilationUnitResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import br.pucrio.inf.les.ese.dianalyzer.diast.rule.GodDependencyInjectionClass;
@@ -21,15 +20,10 @@ public class BadPracticeFour extends AbstractPractice {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 		
-		ElementResult result = rule.processRule(cu);
+		final ElementResult result = rule.processRule(cu);
 
 		//is non used injection?
 		if ( result.getResult() ) {
-			// FIXME deixar de ter isso. fazer cuResult ter haveElement?
-			AbstractElement element = new AbstractElement();
-			element.setName("");
-
-			result.setElement( element );
 			cuResult.addElementResultToList(result);
 		}
    

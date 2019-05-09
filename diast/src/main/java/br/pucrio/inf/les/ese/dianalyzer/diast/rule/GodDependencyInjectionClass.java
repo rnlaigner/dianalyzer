@@ -22,19 +22,21 @@ public class GodDependencyInjectionClass extends AbstractRuleWithNoElement {
 	@Override
 	public ElementResult processRule(CompilationUnit cu) {
 		
-		int complexity = MetricBusiness.getInstance().getCyclomaticComplexity(cu);
+		final int complexity = MetricBusiness.getInstance().getCyclomaticComplexity(cu);
 
-		boolean WMCisApplied = complexity > WMC ? true : false;
+		final boolean WMCisApplied = complexity > WMC ? true : false;
 
-		List<AbstractElement> injectedElements = InjectionBusiness.getInjectedElementsFromClass(cu);
+		final List<AbstractElement> injectedElements = InjectionBusiness.getInjectedElementsFromClass(cu);
 		
-		boolean ATFDisApplied = injectedElements.size() > ATFD ? true : false;
+		final boolean ATFDisApplied = injectedElements.size() > ATFD ? true : false;
 
-		ElementResult elementResult = new ElementResult();
-
-		elementResult.setResult( WMCisApplied && ATFDisApplied );
-		
-		return elementResult;
+		if( WMCisApplied && ATFDisApplied ){
+			final ElementResult result = new ElementResult(true,null);
+			return result;
+		} else {
+			final ElementResult result = new ElementResult(false,null);
+			return result;
+		}
 	}
 
 }

@@ -103,19 +103,15 @@ public class InjectionOpenForExternalAccessOrExternalPassing extends AbstractMet
 		//iterate through method declarations
 		methodDeclarationVisitor.visit(cu, element);
 		
-		ElementResult result = new ElementResult();
-		
-		result.setElement(element);
-		
-		result.setResult(false);
-		
 		if(methodPassing > 0 || methodOpening > 0){
-			result.setResult(true);
+			shutdown();
+			final ElementResult result = new ElementResult(true,element);
+			return result;
 		}
-		
+
 		shutdown();
-		
-        return result;
+		final ElementResult result = new ElementResult(false,element);
+		return result;
 		
 	}
 	

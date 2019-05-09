@@ -29,9 +29,16 @@ public class BadPracticeFive extends AbstractPractice {
         
         for (AbstractElement element : elements) {
         	
-        	InjectedElement elem = (InjectedElement) element;
-        	
-        	ElementResult result = rule.processRule(cu, elem);
+        	final InjectedElement elem = (InjectedElement) element;
+
+        	// in order to avoid racing conditions
+//			try {
+//				Thread.sleep(1);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+
+			final ElementResult result = rule.processRule(cu, elem);
         	
         	//is non used injection?
         	if ( result.getResult() ) {

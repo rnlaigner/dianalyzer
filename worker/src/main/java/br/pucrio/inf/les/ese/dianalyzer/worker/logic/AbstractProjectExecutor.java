@@ -97,7 +97,7 @@ public abstract class AbstractProjectExecutor implements IProjectExecutor {
 
 		for( ElementResult element : result.getElementResults() ) {
 
-			String elementName = element.getElement().getName();
+			String elementName = element.getElement() != null ? element.getElement().getName() : "";
 
 			//Mount report line
 			List<String> line = new ArrayList<String>();

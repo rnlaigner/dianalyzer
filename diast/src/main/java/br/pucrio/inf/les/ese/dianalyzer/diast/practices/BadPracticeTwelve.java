@@ -11,11 +11,10 @@ import java.util.List;
 
 public class BadPracticeTwelve extends AbstractPractice {
 	
-	private MultipleFormsOfInjection rule;
+	private final MultipleFormsOfInjection rule;
 
 	public BadPracticeTwelve() {
 		rule = new MultipleFormsOfInjection();
-		
 		setName("Multiple forms of injection for a given element");
 		setNumber(12);
 	}
@@ -25,11 +24,11 @@ public class BadPracticeTwelve extends AbstractPractice {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 
-		List<AbstractElement> elements = InjectionBusiness.getInjectedElementsFromClass(cu);
+		final List<AbstractElement> elements = InjectionBusiness.getInjectedElementsFromClass(cu);
         
-        List<ElementResult> results = rule.processRule(cu, elements);
+        final List<ElementResult> results = rule.processRule(cu, elements);
         
-        results.stream().forEach(p -> cuResult.addElementResultToList(p));
+        cuResult.addAllElementResultToList(results);
     
         return cuResult;
 		

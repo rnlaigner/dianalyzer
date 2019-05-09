@@ -5,15 +5,11 @@ import java.util.List;
 
 public class ElementResult {
 	
-	private boolean result;
+	private final boolean result;
 	
-	private AbstractElement element;
+	private final AbstractElement element;
 	
-	private List<AbstractElement> children;
-	
-	public ElementResult() {
-		this.children = new ArrayList<AbstractElement>();
-	}
+	private final List<AbstractElement> children;
 	
 	public ElementResult(boolean result, AbstractElement element){
 		this.result = result;
@@ -29,24 +25,12 @@ public class ElementResult {
 		return children;
 	}
 
-	public void setChildren(List<AbstractElement> children) {
-		this.children = children;
-	}
-
 	public boolean getResult() {
 		return result;
 	}
 
-	public void setResult(boolean result) {
-		this.result = result;
-	}
-
 	public AbstractElement getElement() {
 		return element;
-	}
-
-	public void setElement(AbstractElement element) {
-		this.element = element;
 	}
 
 }

@@ -103,12 +103,6 @@ public class InjectionOpenedForChange extends AbstractRuleWithElement {
 		
 		methodDeclarationVisitor.visit(cu,element);
 		
-		ElementResult result = new ElementResult();
-		
-		result.setElement(element);
-		
-		result.setResult(false);
-		
 		Boolean isPublic = false;
 		
 		try{
@@ -118,9 +112,13 @@ public class InjectionOpenedForChange extends AbstractRuleWithElement {
 			log.error(e.getMessage());
 		}
 		
-		if(methodLikeSetter > 0 || isPublic) result.setResult(true);
-		
-        return result;
+		if(methodLikeSetter > 0 || isPublic) {
+			final ElementResult result = new ElementResult(true,element);
+			return result;
+		}
+
+		final ElementResult result = new ElementResult(false,element);
+		return result;
 	}
 
 

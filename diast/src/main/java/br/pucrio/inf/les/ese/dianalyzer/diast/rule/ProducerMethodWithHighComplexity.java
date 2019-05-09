@@ -20,13 +20,11 @@ public class ProducerMethodWithHighComplexity extends AbstractRuleWithElement {
 			cyclomatic complexity of all methods in C [3] [20].
 		 */
 
-        int complexity = MetricBusiness.getInstance().getCyclomaticComplexity(producerMethodElement.getBody());
+        final int complexity = MetricBusiness.getInstance().getCyclomaticComplexity(producerMethodElement.getBody());
 
-        boolean WMCisApplied = complexity >= WMC ? true : false;
+        final boolean WMCisApplied = complexity >= WMC ? true : false;
 
-        ElementResult result = new ElementResult();
-        result.setElement(element);
-        result.setResult(WMCisApplied);
-		return result;
+        final ElementResult result = new ElementResult(WMCisApplied,element);
+        return result;
 	}
 }

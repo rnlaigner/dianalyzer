@@ -24,9 +24,7 @@ public class FrameworkSpecificAnnotation extends AbstractRuleWithElements {
 							|| (p instanceof ProducerMethodElement
 							&& ((ProducerMethodElement) p).getAnnotation().isSpecific()))
 					.forEach(p -> {
-						ElementResult result = new ElementResult();
-						result.setElement(p);
-						result.setResult(true);
+						final ElementResult result = new ElementResult(true,p);
 						results.add(result);
 					});
 		}

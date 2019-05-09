@@ -111,15 +111,14 @@ public class DirectContainerCall extends AbstractMethodCallVisitorWithElement {
 		
 		visit(cu,element);
 		
-		ElementResult result = new ElementResult();
-		
-		result.setElement(element);
-		
-		result.setResult(false);
-		
-		if(containerCallElements.size() > 0) result.setResult(true);
-		
-        return result;
+		if(containerCallElements.size() > 0) {
+
+			final ElementResult result = new ElementResult(true,element);
+			return result;
+		} else {
+			final ElementResult result = new ElementResult(false,element);
+			return result;
+		}
 		
 	}
 
