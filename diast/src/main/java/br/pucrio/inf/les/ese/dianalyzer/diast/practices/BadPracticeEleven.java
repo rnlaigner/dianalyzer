@@ -67,8 +67,6 @@ public class BadPracticeEleven extends AbstractPractice {
 
 		}
 
-
-        
         return cuResult;
 		
 	}

@@ -25,11 +25,10 @@ public class OccurrenceBusiness {
         return instance;
     }
 
-    public Integer countOccurrences(CompilationUnit cu, AbstractElement element) {
+    public synchronized Integer countOccurrences(final List<MethodCallExpr> methodCalls,
+                                                 final AbstractElement element) {
 
         Integer numberOfAppearances = 0;
-
-        List<MethodCallExpr> methodCalls = cu.findAll( MethodCallExpr.class );
 
         for( MethodCallExpr methodCall : methodCalls ) {
 

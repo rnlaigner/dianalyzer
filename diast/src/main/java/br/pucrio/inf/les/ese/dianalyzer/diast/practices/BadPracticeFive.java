@@ -21,17 +21,17 @@ public class BadPracticeFive extends AbstractPractice {
 	}
 
 	@Override
-	public CompilationUnitResult process(final CompilationUnit cu) {
+	public synchronized CompilationUnitResult process(final CompilationUnit cu) {
 		
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 
-		List<AbstractElement> elements = InjectionBusiness.getInjectedElementsFromClass(cu);
+		final List<AbstractElement> elements = InjectionBusiness.getInjectedElementsFromClass(cu);
         
         for (AbstractElement element : elements) {
         	
-        	InjectedElement elem = (InjectedElement) element;
+        	final InjectedElement elem = (InjectedElement) element;
         	
-        	ElementResult result = rule.processRule(cu, elem);
+        	final ElementResult result = rule.processRule(cu, elem);
         	
         	//is non used injection?
         	if ( result.getResult() ) {

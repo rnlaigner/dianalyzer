@@ -5,6 +5,7 @@ import br.pucrio.inf.les.ese.dianalyzer.diast.model.AbstractElement;
 import br.pucrio.inf.les.ese.dianalyzer.diast.model.ElementResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.ForStmt;
 
 import java.util.List;
@@ -12,16 +13,18 @@ import java.util.List;
 public class IsNonUsedInjection extends AbstractRuleWithElement {
 
 	@Override
-	public ElementResult processRule(CompilationUnit cu, AbstractElement element) {
+	public synchronized ElementResult processRule(CompilationUnit cu, AbstractElement element) {
 
 		// tentar resolver com thread sleep de um segundo
 
+		final List<MethodCallExpr> methodCalls = cu.findAll( MethodCallExpr.class );
+
 		//Start a new search
-		final Integer numberOfAppearances = OccurrenceBusiness.getInstance().countOccurrences(cu, element);
+		final Integer numberOfAppearances = OccurrenceBusiness.getInstance().countOccurrences(methodCalls, element);
 
 		// checkStatementsForOccurrence(cu,element);
 		
-		ElementResult result = new ElementResult();
+		final ElementResult result = new ElementResult();
 
 		if(numberOfAppearances == 0) {
 			result.setResult(true);

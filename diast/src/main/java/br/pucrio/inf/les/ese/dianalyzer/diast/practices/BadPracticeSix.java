@@ -28,6 +28,9 @@ public class BadPracticeSix extends AbstractPractice {
 
 		CompilationUnitResult cuResult = new CompilationUnitResult();
 
+		// FIXME resultado na coluna class = ResourceLoadModel,PeriodBuilderFactory,PeriodsBuilder
+		// deixar apenas um
+
 		List<AbstractElement> elements = nonPrimitiveTypeFieldIdentificator.identify(cu);
 
 		for(AbstractElement elem : elements){

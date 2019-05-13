@@ -34,10 +34,7 @@ public class IsStaticOrConcreteFabricOrFactory extends AbstractRuleWithElement {
 		}
 
 		return elementResult;
-		
 
 	}
-	
-	
 
 }
