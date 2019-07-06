@@ -1,9 +1,9 @@
 package br.pucrio.inf.les.ese.dianalyzer.repextractor.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class GitHubQueryProperties 
-{
+public class GitHubQueryProperties {
 
 	private String language;
 	
@@ -25,6 +25,14 @@ public class GitHubQueryProperties
 
 	public void setQ(List<String> q) {
 		this.q = q;
+	}
+
+	public void addQ(String queryString){
+		if(this.q == null){
+			this.q = new ArrayList<String>();
+		}
+
+		this.q.add(queryString);
 	}
 	
 }
