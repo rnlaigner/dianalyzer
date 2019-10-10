@@ -41,6 +41,9 @@ public class BadPracticeSix extends AbstractPractice {
 
 		}
 
+		// look for methods that contains Factory()
+		// List<AbstractElement> elements = nonPrimitiveTypeFieldIdentificator.identify(cu);
+
         return cuResult;
 	}
 

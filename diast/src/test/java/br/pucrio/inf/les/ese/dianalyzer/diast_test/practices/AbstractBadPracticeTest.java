@@ -21,73 +21,83 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(JUnitParamsRunner.class)
 public abstract class AbstractBadPracticeTest {
-	
-	protected final Log log = LogFactory.getLog(getClass());
 
-	public AbstractBadPracticeTest(){
-	    log.info("Initiating abstract test behavior");
+    protected final Log log = LogFactory.getLog(getClass());
+
+    public AbstractBadPracticeTest(){
+        log.info("Initiating abstract test behavior");
     }
-	
-	public abstract List<String> setUp();
 
-	// https://github.com/Pragmatists/JUnitParams/wiki/Quickstart
+    public abstract List<String> setUp();
 
-	@Test
-	@Parameters(method = "setUp")
-	public void execute(String file) throws
-								 SecurityException, 
-								 InstantiationException, 
-								 IllegalAccessException, 
-								 IllegalArgumentException {
+    // https://github.com/Pragmatists/JUnitParams/wiki/Quickstart
+
+    @Test
+    @Parameters(method = "setUp")
+    public void execute(String file) throws
+            SecurityException,
+            InstantiationException,
+            IllegalAccessException,
+            IllegalArgumentException {
+
+        log.info("File received as parameter for testing");
 
         Class<? extends AbstractPractice> clazz =  getBadPracticeApplied( getClass() );
 
         CompilationUnit cu = JavaParser.parse(file);
 
+        log.info("File parsed as compilation unit");
+
         AbstractPractice practice = clazz.newInstance();
+
+        log.info("Starting processing of anti-pattern: "+practice.getName());
 
         CompilationUnitResult cuResult = practice.process(cu);
 
-       //O ideal eh que esse assert seja uma classe abstrata
-       //implementada pela classe concreta
-       //A classe concreta teria os elementos esperados,
-       //retornados dentro do cuResult
+        log.info("Anti-pattern processed");
+
+        //O ideal eh que esse assert seja uma classe abstrata
+        //implementada pela classe concreta
+        //A classe concreta teria os elementos esperados,
+        //retornados dentro do cuResult
         assertThat( cuResult.badPracticeIsApplied(), is(Boolean.TRUE) );
-		
-	}
 
-	protected List<String> getClassesToParse() {
+        log.info("Test execution finished");
 
-		Class<? extends AbstractBadPracticeTest> clazz = getClass();
+    }
 
-		String folder = clazz.getCanonicalName();
+    protected List<String> getClassesToParse() {
 
-		// remove test from the final
-		folder = folder.replace("Test","");
+        Class<? extends AbstractBadPracticeTest> clazz = getClass();
 
-		folder = folder.substring( folder.lastIndexOf(".") + 1 );
+        String folder = clazz.getCanonicalName();
 
-		String resourceFolder = "src//test//resources//" + folder;
+        // remove test from the final
+        folder = folder.replace("Test","");
 
-		List<String> classes = null;
-		try {
-			classes = Environment.readFilesFromFolder(resourceFolder, true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        folder = folder.substring( folder.lastIndexOf(".") + 1 );
 
-		return classes;
-	}
-	
-	private Class<? extends AbstractPractice> getBadPracticeApplied(Class<? extends AbstractBadPracticeTest> c){
-		try {
-			BadPracticeApplied anno = c.getAnnotation(BadPracticeApplied.class);
-			return anno.value();
-		}
-		catch(Exception e){
-			log.error(e.getStackTrace());
-		}
-		return null;
-	}
+        String resourceFolder = "src//test//resources//" + folder;
+
+        List<String> classes = null;
+        try {
+            classes = Environment.readFilesFromFolder(resourceFolder, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return classes;
+    }
+
+    private Class<? extends AbstractPractice> getBadPracticeApplied(Class<? extends AbstractBadPracticeTest> c){
+        try {
+            BadPracticeApplied anno = c.getAnnotation(BadPracticeApplied.class);
+            return anno.value();
+        }
+        catch(Exception e){
+            log.error(e.getStackTrace());
+        }
+        return null;
+    }
 
 }

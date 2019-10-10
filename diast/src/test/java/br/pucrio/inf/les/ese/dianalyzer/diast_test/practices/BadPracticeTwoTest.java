@@ -8,9 +8,9 @@ import java.util.List;
 @BadPracticeApplied(BadPracticeTwo.class)
 public class BadPracticeTwoTest extends AbstractBadPracticeTest {
 
-	@Override
-	public List<String> setUp() {
-		return super.getClassesToParse();
-	}
+    @Override
+    public List<String> setUp() {
+        return super.getClassesToParse();
+    }
 
 }
