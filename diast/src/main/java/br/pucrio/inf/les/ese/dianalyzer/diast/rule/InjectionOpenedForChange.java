@@ -7,6 +7,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
@@ -81,16 +82,29 @@ public class InjectionOpenedForChange extends AbstractRuleWithElement {
 			//search body for reassignment of element
 			for(Statement stmt : statements){
 				
-				if (stmt.isExpressionStmt() && stmt.asExpressionStmt().getExpression().isAssignExpr()){
+				if (stmt.isExpressionStmt() && stmt.asExpressionStmt().getExpression().isAssignExpr()) {
 					AssignExpr expr = stmt.asExpressionStmt().getExpression().asAssignExpr();
-					
-					FieldAccessExpr target = (FieldAccessExpr) expr.getTarget();
-					
-					if(target.getName().toString().equals(element.getName())){
-						methodLikeSetter++;
+
+					if (expr.getTarget() != null) {
+
+						if (expr.getTarget() instanceof FieldAccessExpr) {
+							FieldAccessExpr target = (FieldAccessExpr) expr.getTarget();
+
+							if (target.getName().toString().equals(element.getName())) {
+								methodLikeSetter++;
+							}
+						} else if (expr.getTarget() instanceof NameExpr) {
+							NameExpr target = (NameExpr) expr.getTarget();
+
+							if (target.getName().toString().equals(element.getName())) {
+								methodLikeSetter++;
+							}
+						} else {
+							System.out.println("ACHEI UMA COISA ESTRANHA...");
+						}
+
 					}
 				}
-				
 			}
 	    }
 		
