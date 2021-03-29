@@ -28,7 +28,37 @@ Maven and JDK >= 8
 
 Please reference the following work when referring to DIAnalyzer:
 
-**Template** [Credits](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
+```
+@inproceedings{10.1145/3350768.3350771,
+author = {Laigner, Rodrigo and Kalinowski, Marcos and Carvalho, Luiz and Mendon\c{c}a, Diogo and Garcia, Alessandro},
+title = {Towards a Catalog of Java Dependency Injection Anti-Patterns},
+year = {2019},
+isbn = {9781450376518},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3350768.3350771},
+doi = {10.1145/3350768.3350771},
+booktitle = {Proceedings of the XXXIII Brazilian Symposium on Software Engineering},
+pages = {104–113},
+numpages = {10},
+keywords = {inversion of control, java, catalog, anti-pattern, dependency injection, coupling, dependency inversion, modularization},
+location = {Salvador, Brazil},
+series = {SBES 2019}
+}
+
+@mastersthesis{LaignerMaster20,
+  author    = {Rodrigo Nunes Laigner}, 
+  title     = {Cataloging Dependency Injection Anti-Patterns in Software Systems},
+  school    = {Pontifical Catholic University of Rio de Janeiro (PUC-Rio)},
+  year      = {2020},
+  doi = {https://doi.org/10.17771/PUCRio.acad.47298},
+  url       = {https://www.maxwell.vrac.puc-rio.br/48681/48681.PDF}
+}
+```
+
+## Credits
+
+[Template](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
 
 ## License
 
