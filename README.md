@@ -4,11 +4,11 @@ Software analysis for Java dependency injection anti-patterns.
 
 ## Documentation & Instructions
 
-The instructions and project documentation are found in the [docs](https://github.com/rnlaigner/dianalyzer/docs/Programming_Conclusion_Project.pdf) folder.
+The instructions and project documentation are found in the [docs](docs/Programming_Conclusion_Project.pdf) folder.
 
 ### Prerequisites
 
-Maven, JDK >= 8
+Maven and JDK >= 8
 
 ## Built With
 
